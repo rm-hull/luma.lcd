@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import wiringpi
+import time
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
@@ -122,21 +123,22 @@ default_FONT = {
 def init(SCLK = 24, DIN = 23, DC = 22, RST = 18, LED = 17, RS = 4, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
     wiringpi.wiringPiSetupGpio()
-    pins = [SCLK, DIN,DC, RST, LED, PS]
+    pins = [SCLK, DIN,DC, RST, LED, RS]
     pin_SCLK, pin_DIN, pin_DC, pin_RST, pin_LED, pin_RS = pins
-    map(lambda p: wiringpi,pinMode(p, ON), pins)
+    map(lambda p: wiringpi.pinMode(p, ON), pins)
     wiringpi.digitalWrite(pin_RST, OFF)
-    sleep(0.1)
+    time.sleep(0.1)
     wiringpi.digitalWrite(pin_RST, ON)
     map(writec, [0x21, 0x14, contrast, 0x20, 0x0c])
     cls()
     backlight(OFF)
+    position(0, 0)
 
 def backlight(status):
     """ control backlight """
     wiringpi.digitalWrite(pin_LED, 1 - status)
 
-def SPI(v):
+def SPI(value):
     """ send data, MSB first """
     for i in reversed(range(8)):
         wiringpi.digitalWrite(pin_DIN, (value>>i) & 0x01)
@@ -150,8 +152,8 @@ def writec(v):
 
 def writed(v):
     """ write data """
-    wiringpi.digitalWrite(pin_DC, on)
-    spi(v)
+    wiringpi.digitalWrite(pin_DC, ON)
+    SPI(v)
 
 def position(x, y):
     """ goto to column y in seg x """
@@ -161,7 +163,7 @@ def position(x, y):
 def cls():
     """ clear screen """
     position(0, 0)
-    map(lambda c: writed(0x00), xrange(HEIGHT * WIDTH / 8))
+    map(lambda c: writed(0x00), xrange(0, HEIGHT * WIDTH / 8))
 
 def locate(x, y):
     """ goto row x and columd y to pain an character """

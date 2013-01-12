@@ -9,13 +9,22 @@ screen to a Rasbperry Pi.
 Further technical details for the LCD screen can be found in the 
 [datasheet](https://raw.github.com/rm-hull/pcd8544/master/doc/datasheet.pdf) [PDF].
 
+Pre-requisites
+--------------
+Compile and install the wiringPi python bindings from https://github.com/rm-hull/wiringPi
+
 Building and installing the software
 ------------------------------------
 TODO
 
 Wiring schematic
 ----------------
-TODO
+There appears to be different pin-out configurations on PCD8544 modules - beware!
+
+![Wiring Schematic](https://raw.github.com/rm-hull/pcd8544/master/doc/wiring-diagram.png)
+
+Modified for my wiring setup from an SVG from http://http://shiro.be/ - all 
+rights of the original author respected.
 
 References
 ----------

@@ -140,7 +140,7 @@ def init(CLK = 24, DIN = 23, DC = 22, RST = 18, LIGHT = 17, CE = 4, contrast = d
 
 def contrast(value):
     """ sets the LCD contrast """
-    map(command, [0x21, 0x14, contrast, 0x20, 0x0c])
+    command([0x21, 0x14, contrast, 0x20, 0x0c])
 
 def backlight(status):
     """ control backlight """
@@ -153,30 +153,27 @@ def SPI(value):
         wiringPy.digital_write(pin_CLK, ON)
         wiringPy.digital_write(pin_CLK, OFF)
 
-def command(v):
-    """ write command """
-    wiringPy.digital_write(pin_DC, OFF)
-    SPI(v)
+def command(arr):
+    """ write commands """
+    bitmap(arr, OFF)
 
-def data(v):
-    """ write a single byte of data at the current position """
-    wiringPy.digital_write(pin_DC, ON)
-    SPI(v)
+def data(arr):
+    """ write data """
+    bitmap(arr, ON)
 
-def bitmap(arr):
-    """ write a bitmap at the current position"""
-    wiringPy.digital_write(pin_DC, ON)
+def bitmap(arr, dc):
+    """ write a sequence of bytes, either as data or command"""
+    wiringPy.digital_write(pin_DC, dc)
     map(lambda b: SPI(b), arr)
 
 def position(x, y):
     """ goto to column y in seg x """
-    command(y + 0x80)
-    command(x + 0x40)
+    command([y + 0x80, x + 0x40])
 
 def cls():
     """ clear screen """
     position(0, 0)
-    bitmap([0] * (HEIGHT * WIDTH / 8))
+    data([0] * (HEIGHT * WIDTH / 8))
 
 def locate(x, y):
     """ goto row x and columd y to pain an character """
@@ -184,5 +181,5 @@ def locate(x, y):
 
 def text(string, font = default_FONT, align = 'left'):
     """ draw string """
-    map(lambda c: bitmap(font[c] + [0x00]), string)
+    map(lambda c: data(font[c] + [0x00]), string)
 

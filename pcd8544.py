@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import wiringpi
+import wiringPy
 import time
 
 # screen size in pixel
@@ -122,59 +123,65 @@ default_FONT = {
 
 def init(SCLK = 24, DIN = 23, DC = 22, RST = 18, LED = 17, RS = 4, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
-    wiringpi.wiringPiSetupGpio()
+    wiringPy.setup()
     pins = [SCLK, DIN,DC, RST, LED, RS]
     pin_SCLK, pin_DIN, pin_DC, pin_RST, pin_LED, pin_RS = pins
-    map(lambda p: wiringpi.pinMode(p, ON), pins)
-    wiringpi.digitalWrite(pin_RST, OFF)
+    map(lambda p: wiringPy.pin_mode(p, ON), pins)
+
+    wiringPy.digital_write(pin_RST, OFF)
     time.sleep(0.1)
-    wiringpi.digitalWrite(pin_RST, ON)
-    map(writec, [0x21, 0x14, contrast, 0x20, 0x0c])
+    wiringPy.digital_write(pin_RST, ON)
+
+    contrast(contrast)
     cls()
     backlight(OFF)
     position(0, 0)
 
+def contrast(value):
+    """ sets the LCD contrast """
+    map(command, [0x21, 0x14, contrast, 0x20, 0x0c])
+
 def backlight(status):
     """ control backlight """
-    wiringpi.digitalWrite(pin_LED, 1 - status)
+    wiringPy.digital_write(pin_LED, 1 - status)
 
 def SPI(value):
     """ send data, MSB first """
     for i in reversed(range(8)):
-        wiringpi.digitalWrite(pin_DIN, (value>>i) & 0x01)
-        wiringpi.digitalWrite(pin_SCLK, ON)
-        wiringpi.digitalWrite(pin_SCLK, OFF)
+        wiringPy.digital_write(pin_DIN, (value>>i) & 0x01)
+        wiringPy.digital_write(pin_SCLK, ON)
+        wiringPy.digital_write(pin_SCLK, OFF)
 
-def writec(v):
+def command(v):
     """ write command """
-    wiringpi.digitalWrite(pin_DC, OFF)
+    wiringPy.digital_write(pin_DC, OFF)
     SPI(v)
 
-def writed(v):
-    """ write data """
-    wiringpi.digitalWrite(pin_DC, ON)
+def data(v):
+    """ write a single byte of data at the current position"""
+    wiringPy.digital_write(pin_DC, ON)
     SPI(v)
+
+def bitmap(arr):
+    """ write a bitmap at the current position"""
+    wiringPy.digital_write(pin_DC, ON)
+    map(lambda b: SPI(b), arr)
 
 def position(x, y):
     """ goto to column y in seg x """
-    writec(y + 0x80)
-    writec(x + 0x40)
+    command(y + 0x80)
+    command(x + 0x40)
 
 def cls():
     """ clear screen """
     position(0, 0)
-    map(lambda c: writed(0x00), xrange(0, HEIGHT * WIDTH / 8))
+    bitmap([0] * (HEIGHT * WIDTH / 8))
 
 def locate(x, y):
     """ goto row x and columd y to pain an character """
     position(x, y * 6)
 
-def text(string, font = default_FONT, position = 0, row = -1):
-    """ draw string  """
-    if position == 0:
-        map(lambda c: map(writed, font[c] + [0x00]), string)
-    elif row != -1:
-        position(row, max(0, (WIDTH - len(string)) / 2))
-    else:
-        raise Exception
+def text(string, font = default_FONT, align = 'left'):
+    """ draw string """
+    map(lambda c: bitmap(font[c] + [0x00]), string)
 

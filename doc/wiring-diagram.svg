@@ -67,7 +67,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -830,10 +830,10 @@
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.19772792;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 355.99636,77.630299 0,88.935341 -167.688,0 0.70711,-86.106214 -42.87531,-0.353556"
+       d="m 355.99636,77.630299 0,88.935341 -167.688,0 0.35356,-92.116622 -36.80559,-0.288927 -5.71617,5.945779"
        id="path4431"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       sodipodi:nodetypes="cccccc" />
     <path
        style="fill:none;stroke:#d4aa00;stroke-width:1.26754844;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 338.82966,77.15146 0.0626,80.84374 -142.01062,-0.7071 0.70711,-91.359089 -55.65905,0.353551 -4.75464,-3.995261"
@@ -855,14 +855,14 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="157.97099"
-       y="77.502785"
+       x="158.67809"
+       y="72.55304"
        id="text4442-3-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-4"
-         x="157.97099"
-         y="77.502785"
+         x="158.67809"
+         y="72.55304"
          style="font-size:7px">GND</tspan></text>
     <text
        xml:space="preserve"
@@ -950,7 +950,7 @@
          style="font-size:10px">PCD8544</tspan></text>
     <path
        style="fill:none;stroke:#ff00c6;stroke-width:1.0080688;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.60621,106.60432 4.69781,-4.82065 63.38009,-0.43486 -0.45025,45.48312 142.24901,0.098 0.16249,-69.577279"
+       d="m 137.60621,106.60432 4.69781,-4.82065 63.02654,-0.0813 -0.0967,45.12957 142.24901,0.098 0.16249,-69.577279"
        id="path4435-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
@@ -978,5 +978,36 @@
          y="46.380386"
          id="tspan9438"
          style="font-size:6px">Note: BCM GPIO pin names</tspan></text>
+    <path
+       style="fill:none;stroke:#00ff2a;stroke-width:1.31811023;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 136.69976,89.601352 4.90458,-4.518911 72.41966,0.211128 -0.0146,17.287831 89.12493,0 -0.14915,-25.074348"
+       id="path4435-57"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
+       x="158.33684"
+       y="82.516045"
+       id="text4442-3-7-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4444-8-4-9"
+         x="158.33684"
+         y="82.516045"
+         style="font-size:7px">GPIO 4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
+       x="84.841797"
+       y="-304.87338"
+       id="text4442-7-5-3-7"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4444-9-4-1-1"
+         x="84.841797"
+         y="-304.87338"
+         style="font-size:7px">CE</tspan></text>
   </g>
 </svg>

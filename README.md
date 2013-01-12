@@ -23,7 +23,7 @@ There appears to be different pin-out configurations on PCD8544 modules - beware
 
 ![Wiring Schematic](https://raw.github.com/rm-hull/pcd8544/master/doc/wiring-diagram.png)
 
-Modified for my wiring setup from an SVG from http://http://shiro.be/ - all 
+Modified for my wiring setup from an SVG from http://shiro.be/ - all 
 rights of the original author respected.
 
 References

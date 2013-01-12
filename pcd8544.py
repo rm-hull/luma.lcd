@@ -8,12 +8,12 @@ import time
 HEIGHT = WIDTH = 84
 
 # default PINs, BCM GPIO
-pin_SCLK = 24
-pin_DIN  = 23
-pin_DC   = 22
-pin_RST  = 18
-pin_LED  = 17
-pin_RS   = 4
+pin_CLK   = 24
+pin_DIN   = 23
+pin_DC    = 22
+pin_RST   = 18
+pin_LIGHT = 17
+pin_CE    = 4
 
 # useful constants
 ON,   OFF = [1, 0]
@@ -121,13 +121,14 @@ default_FONT = {
     '~': [0x10, 0x08, 0x08, 0x10, 0x08],
 }
 
-def init(SCLK = 24, DIN = 23, DC = 22, RST = 18, LED = 17, RS = 4, contrast = default_contrast):
+def init(CLK = 24, DIN = 23, DC = 22, RST = 18, LIGHT = 17, CE = 4, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
-    wiringPy.setup()
-    pins = [SCLK, DIN,DC, RST, LED, RS]
-    pin_SCLK, pin_DIN, pin_DC, pin_RST, pin_LED, pin_RS = pins
+    wiringPy.setup_gpio()
+    pins = [CLK, DIN, DC, RST, LIGHT]
+    pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
     map(lambda p: wiringPy.pin_mode(p, ON), pins)
 
+    # Reset the device
     wiringPy.digital_write(pin_RST, OFF)
     time.sleep(0.1)
     wiringPy.digital_write(pin_RST, ON)
@@ -143,14 +144,14 @@ def contrast(value):
 
 def backlight(status):
     """ control backlight """
-    wiringPy.digital_write(pin_LED, 1 - status)
+    wiringPy.digital_write(pin_LIGHT, 1 - status)
 
 def SPI(value):
     """ send data, MSB first """
     for i in reversed(range(8)):
         wiringPy.digital_write(pin_DIN, (value>>i) & 0x01)
-        wiringPy.digital_write(pin_SCLK, ON)
-        wiringPy.digital_write(pin_SCLK, OFF)
+        wiringPy.digital_write(pin_CLK, ON)
+        wiringPy.digital_write(pin_CLK, OFF)
 
 def command(v):
     """ write command """
@@ -158,7 +159,7 @@ def command(v):
     SPI(v)
 
 def data(v):
-    """ write a single byte of data at the current position"""
+    """ write a single byte of data at the current position """
     wiringPy.digital_write(pin_DC, ON)
     SPI(v)
 

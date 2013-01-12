@@ -7,7 +7,7 @@ screen to a Rasbperry Pi.
 ![PCD8544](https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png) ![Spec](https://raw.github.com/rm-hull/pcd8544/master/doc/spec.png)
 
 Further technical details for the LCD screen can be found in the 
-[datasheet](https://raw.github.com/rm-hull/pcd8544/master/doc/spec.png).
+[datasheet](https://raw.github.com/rm-hull/pcd8544/master/doc/datasheet.pdf) [PDF].
 
 Building and installing the software
 ------------------------------------

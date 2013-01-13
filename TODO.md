@@ -4,5 +4,7 @@ TODO
 
 * Examples
 
-* Wiring schematic
+* Implement video ram & get/set_pixel
+
+* Setup / installer
 

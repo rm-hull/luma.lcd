@@ -34,3 +34,4 @@ References
 
 * https://projects.drogon.net/raspberry-pi/wiringpi/pins/
 
+* http://www.henningkarlsen.com/electronics/t_imageconverter_mono.php

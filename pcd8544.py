@@ -3,7 +3,6 @@
 
 import wiringPy
 import time
-import sys
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
@@ -122,10 +121,10 @@ default_FONT = {
     '~': [0x10, 0x08, 0x08, 0x10, 0x08],
 }
 
-def init(CLK = 5, DIN = 4, DC = 3, RST = 1, LIGHT = 0, CE = 7, contrast = default_contrast):
+def init(CLK = 24, DIN = 23, DC =22, RST = 18, LIGHT = 17, CE = 4, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
     wiringPy.debug(0)
-    wiringPy.setup()
+    wiringPy.setup_gpio()
     pins = [CLK, DIN, DC, RST, LIGHT, CE]
     pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
     map(lambda p: wiringPy.pin_mode(p, ON), pins)
@@ -134,8 +133,9 @@ def init(CLK = 5, DIN = 4, DC = 3, RST = 1, LIGHT = 0, CE = 7, contrast = defaul
     wiringPy.digital_write(pin_RST, OFF)
     time.sleep(0.1)
     wiringPy.digital_write(pin_RST, ON)
-    wiringPy.digital_write(pin_CE, ON)
-    #set_contrast(contrast)
+    wiringPy.digital_write(pin_CE, OFF)
+    set_contrast(contrast)
+    cls()
 
 def set_contrast(value):
     """ sets the LCD contrast """
@@ -176,17 +176,13 @@ def cls():
     position(0, 0)
 
 def locate(x, y):
-    """ goto row x and columd y to pain an character """
+    """ goto row x and columd y to paint a character """
     position(x, y * 6)
 
 def text(string, font = default_FONT, align = 'left'):
     """ draw string """
     map(lambda c: data(font[c] + [0x00]), string)
 
-if __name__ == "__main__":
-    init()
-    backlight(ON)
-    position(0,0)
-    text("Hello world!")
+
     
     

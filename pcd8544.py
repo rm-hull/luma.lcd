@@ -3,6 +3,7 @@
 
 import wiringPy
 import time
+import sys
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
@@ -121,10 +122,11 @@ default_FONT = {
     '~': [0x10, 0x08, 0x08, 0x10, 0x08],
 }
 
-def init(CLK = 24, DIN = 23, DC = 22, RST = 18, LIGHT = 17, CE = 4, contrast = default_contrast):
+def init(CLK = 5, DIN = 4, DC = 3, RST = 1, LIGHT = 0, CE = 7, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
-    wiringPy.setup_gpio()
-    pins = [CLK, DIN, DC, RST, LIGHT]
+    wiringPy.debug(0)
+    wiringPy.setup()
+    pins = [CLK, DIN, DC, RST, LIGHT, CE]
     pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
     map(lambda p: wiringPy.pin_mode(p, ON), pins)
 
@@ -132,15 +134,12 @@ def init(CLK = 24, DIN = 23, DC = 22, RST = 18, LIGHT = 17, CE = 4, contrast = d
     wiringPy.digital_write(pin_RST, OFF)
     time.sleep(0.1)
     wiringPy.digital_write(pin_RST, ON)
+    wiringPy.digital_write(pin_CE, ON)
+    #set_contrast(contrast)
 
-    contrast(contrast)
-    cls()
-    backlight(OFF)
-    position(0, 0)
-
-def contrast(value):
+def set_contrast(value):
     """ sets the LCD contrast """
-    command([0x21, 0x14, contrast, 0x20, 0x0c])
+    command([0x21, 0x14, value, 0x20, 0x0c])
 
 def backlight(status):
     """ control backlight """
@@ -174,6 +173,7 @@ def cls():
     """ clear screen """
     position(0, 0)
     data([0] * (HEIGHT * WIDTH / 8))
+    position(0, 0)
 
 def locate(x, y):
     """ goto row x and columd y to pain an character """
@@ -183,3 +183,10 @@ def text(string, font = default_FONT, align = 'left'):
     """ draw string """
     map(lambda c: data(font[c] + [0x00]), string)
 
+if __name__ == "__main__":
+    init()
+    backlight(ON)
+    position(0,0)
+    text("Hello world!")
+    
+    

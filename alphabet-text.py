@@ -1,4 +1,4 @@
-import rpi5110 as lcd
+import pcd8544 as lcd
 
 def main():
     lcd.init()

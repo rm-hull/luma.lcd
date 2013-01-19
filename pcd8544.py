@@ -7,6 +7,8 @@ import time
 # screen size in pixel
 HEIGHT = WIDTH = 84
 
+fd = -1
+
 # default PINs, BCM GPIO
 pin_CLK   = 24
 pin_DIN   = 23
@@ -122,9 +124,15 @@ default_FONT = {
 }
 
 def init(CLK = 24, DIN = 23, DC =22, RST = 18, LIGHT = 17, CE = 4, contrast = default_contrast):
-    """ init screen, trun off backlight, clearscreen """
+    """ init screen, clearscreen """
+    wiringPy.debug(0)
+
     if wiringPy.setup_gpio() != 0:
         raise IOError("Failed to initialize wiringPy properly")
+
+    fd = wiringPy.setup_bitbang(CE, DIN, CLK, 1)
+    if fd == -1:
+        raise IOError("Failed to initialize bitbang properly")
 
     pins = [CLK, DIN, DC, RST, LIGHT, CE]
     pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
@@ -134,7 +142,6 @@ def init(CLK = 24, DIN = 23, DC =22, RST = 18, LIGHT = 17, CE = 4, contrast = de
     wiringPy.digital_write(pin_RST, OFF)
     time.sleep(0.1)
     wiringPy.digital_write(pin_RST, ON)
-    wiringPy.digital_write(pin_CE, OFF)
     set_contrast(contrast)
     cls()
 
@@ -145,13 +152,6 @@ def set_contrast(value):
 def backlight(status):
     """ control backlight """
     wiringPy.digital_write(pin_LIGHT, 1 - status)
-
-def SPI(value):
-    """ send data, MSB first """
-    for i in reversed(range(8)):
-        wiringPy.digital_write(pin_DIN, (value>>i) & 0x01)
-        wiringPy.digital_write(pin_CLK, ON)
-        wiringPy.digital_write(pin_CLK, OFF)
 
 def command(arr):
     """ write commands """
@@ -164,7 +164,7 @@ def data(arr):
 def bitmap(arr, dc):
     """ write a sequence of bytes, either as data or command"""
     wiringPy.digital_write(pin_DC, dc)
-    map(lambda b: SPI(b), arr)
+    map(lambda b: wiringPy.digital_write_serial(0, b), arr)
 
 def position(x, y):
     """ goto to column y in seg x """
@@ -185,5 +185,5 @@ def text(string, font = default_FONT, align = 'left'):
     map(lambda c: data(font[c] + [0x00]), string)
 
 
-    
-    
+
+

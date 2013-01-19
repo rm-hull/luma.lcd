@@ -123,8 +123,9 @@ default_FONT = {
 
 def init(CLK = 24, DIN = 23, DC =22, RST = 18, LIGHT = 17, CE = 4, contrast = default_contrast):
     """ init screen, trun off backlight, clearscreen """
-    wiringPy.debug(0)
-    wiringPy.setup_gpio()
+    if wiringPy.setup_gpio() != 0:
+        raise IOError("Failed to initialize wiringPy properly")
+
     pins = [CLK, DIN, DC, RST, LIGHT, CE]
     pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
     map(lambda p: wiringPy.pin_mode(p, ON), pins)

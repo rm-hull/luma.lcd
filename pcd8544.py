@@ -3,6 +3,7 @@
 
 import wiringPy
 import time
+import struct
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
@@ -130,7 +131,7 @@ def init(CLK = 24, DIN = 23, DC =22, RST = 18, LIGHT = 17, CE = 4, contrast = de
     if wiringPy.setup_gpio() != 0:
         raise IOError("Failed to initialize wiringPy properly")
 
-    fd = wiringPy.setup_bitbang(CE, DIN, CLK, 1)
+    fd = wiringPy.setup_bitbang(CE, DIN, CLK, 0)
     if fd == -1:
         raise IOError("Failed to initialize bitbang properly")
 
@@ -164,7 +165,7 @@ def data(arr):
 def bitmap(arr, dc):
     """ write a sequence of bytes, either as data or command"""
     wiringPy.digital_write(pin_DC, dc)
-    map(lambda b: wiringPy.digital_write_serial(0, b), arr)
+    wiringPy.digital_write_serial_array(0, struct.pack('B'*len(arr), *arr))
 
 def position(x, y):
     """ goto to column y in seg x """

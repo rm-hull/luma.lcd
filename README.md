@@ -4,10 +4,10 @@ PDC8544 LCD python bindings for the Raspberry Pi
 Documentation and Python library module for interfacing a PCD8544 LCD 
 screen to a Rasbperry Pi.
 
-![PCD8544](https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png) ![Spec](https://raw.github.com/rm-hull/pcd8544/master/doc/spec.png)
+![PCD8544](https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png) ![Spec](https://raw.github.com/rm-hull/pcd8544/master/doc/tech-spec/spec.png)
 
 Further technical details for the LCD screen can be found in the 
-[datasheet](https://raw.github.com/rm-hull/pcd8544/master/doc/datasheet.pdf) [PDF].
+[datasheet](https://raw.github.com/rm-hull/pcd8544/master/doc/tech-spec/datasheet.pdf) [PDF].
 
 Pre-requisites
 --------------
@@ -26,6 +26,13 @@ There appears to be different pin-out configurations on PCD8544 modules - beware
 Modified for my wiring setup from an SVG from http://shiro.be/ - all 
 rights of the original author respected.
 
+Stripboard Layout
+-----------------
+With 4 push-buttons, resistor values 10K.
+
+![Stripboard Layout](https://raw.github.com/rm-hull/pcd8544/master/doc/schematic_bb.png)
+
+
 TODO
 ----
 * Documentation
@@ -42,6 +49,10 @@ References
 
 * http://www.avdweb.nl/arduino/hardware-interfacing/nokia-5110-lcd.html
 
+* http://www.raspberrypi.org/phpBB3/viewtopic.php?f=32&t=9814&start=100
+
 * https://projects.drogon.net/raspberry-pi/wiringpi/pins/
 
 * http://www.henningkarlsen.com/electronics/t_imageconverter_mono.php
+
+* http://fritzing.org

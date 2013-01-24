@@ -26,6 +26,16 @@ There appears to be different pin-out configurations on PCD8544 modules - beware
 Modified for my wiring setup from an SVG from http://shiro.be/ - all 
 rights of the original author respected.
 
+TODO
+----
+* Documentation
+
+* Examples
+
+* Implement video ram & get/set_pixel
+
+* Setup / installer
+
 References
 ----------
 * http://binerry.de/post/25787954149/pcd8544-library-for-raspberry-pi

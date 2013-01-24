@@ -26,7 +26,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="176.7096"
+     inkscape:cx="134.63675"
      inkscape:cy="108.63087"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -67,7 +67,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -79,91 +79,91 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="85.775299"
+       x="85.180176"
        y="-340.82498"
        id="text4442"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444"
-         x="85.775299"
+         x="85.180176"
          y="-340.82498"
          style="font-size:7px">VCC</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="85.720612"
+       x="84.841797"
        y="-357.85104"
        id="text4442-7"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444-9"
-         x="85.720612"
+         x="84.841797"
          y="-357.85104"
          style="font-size:7px">GND</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="85.061356"
+       x="84.547852"
        y="-349.25803"
        id="text4442-7-5"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444-9-4"
-         x="85.061356"
+         x="84.547852"
          y="-349.25803"
          style="font-size:7px">LIGHT</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="85.168816"
+       x="84.547852"
        y="-295.7905"
        id="text4442-7-5-3"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444-9-4-1"
-         x="85.168816"
+         x="84.547852"
          y="-295.7905"
          style="font-size:7px">RST</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="84.815262"
+       x="84.547852"
        y="-313.92276"
        id="text4442-7-5-3-2"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444-9-4-1-3"
-         x="84.815262"
+         x="84.547852"
          y="-313.92276"
          style="font-size:7px">DC</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="84.815262"
+       x="84.547852"
        y="-322.17563"
        id="text4442-7-5-3-2-3"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan4444-9-4-1-3-4"
-         x="84.815262"
+         x="84.547852"
          y="-322.17563"
          style="font-size:7px">DIN</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="85.061356"
+       x="84.841797"
        y="-331.82025"
        id="text4442-7-5-3-2-3-1"
        sodipodi:linespacing="125%"
        transform="matrix(0,1,-1,0,0,0)"><tspan
          sodipodi:role="line"
-         x="85.061356"
+         x="84.841797"
          y="-331.82025"
          style="font-size:7px"
          id="tspan4572">CLK</tspan></text>
@@ -806,13 +806,13 @@
     </g>
     <path
        style="fill:none;stroke:#552200;stroke-width:1.03194487;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 146.05728,107.33126 4.74006,3.88909 179.21274,-1e-5 -0.47883,-34.380039"
+       d="m 137.21845,161.77848 5.44716,4.5962 187.34447,-0.35356 -0.47883,-89.180819"
        id="path4439"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
-       style="fill:none;stroke:#ff8000;stroke-width:1.13209176000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 146.10738,125.00479 4.68996,3.88909 169.79933,0 0.20633,-52.003507"
+       style="fill:none;stroke:#ff8000;stroke-width:1.13209176;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 137.6221,143.03601 6.10417,4.5962 177.93106,-1.06066 -0.85433,-69.681177"
        id="path4437"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
@@ -824,44 +824,44 @@
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#808080;stroke-width:1.05764019;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.2166,125.77559 6.02803,-5.21885 168.44903,-1.06066 0.32456,-41.935826"
+       d="m 145.70188,125.42204 6.02803,3.61998 160.3173,-0.35355 -0.029,-51.128216"
        id="path4433"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.19772792;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 355.99636,77.630299 0,88.935341 -167.688,0 0.35356,-92.116622 -36.80559,-0.288927 -5.71617,5.945779"
+       d="m 355.99636,77.630299 0,34.841671 -14.63375,0 -107.79942,0 -0.35355,-38.022952 -81.35331,-0.288927 -5.71617,5.945779"
        id="path4431"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
+       sodipodi:nodetypes="ccccccc" />
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:1.26754844000000011;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 338.82966,77.15146 0.0626,80.84374 -142.01062,-0.7071 0.70711,-91.359089 -55.65905,0.353551 -4.75464,-3.995261"
+       style="fill:none;stroke:#ff0000;stroke-width:1.26754844;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 338.82966,77.15146 1.12326,27.10362 -97.46289,10e-6 0,-38.326079 -100.56033,0.353551 -4.75464,-3.995261"
        id="path4424"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.73277"
+       x="158.1844"
        y="63.566967"
        id="text4442-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8"
-         x="158.73277"
+         x="158.1844"
          y="63.566967"
          style="font-size:7px">3V3</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.67809"
+       x="158.32454"
        y="72.55304"
        id="text4442-3-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-4"
-         x="158.67809"
+         x="158.32454"
          y="72.55304"
          style="font-size:7px">GND</tspan></text>
     <text
@@ -879,51 +879,51 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.15364"
-       y="127.55247"
+       x="158.32454"
+       y="145.23013"
        id="text4442-3-2-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-7-9"
-         x="158.15364"
-         y="127.55247"
-         style="font-size:7px">GPIO 23</tspan></text>
+         x="158.32454"
+         y="145.23013"
+         style="font-size:7px">GPIO 10 (SPI MOSI)</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.6781"
-       y="118.34015"
+       x="158.32454"
+       y="127.17899"
        id="text4442-3-2-7-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-7-9-1"
-         x="158.6781"
-         y="118.34015"
+         x="158.32454"
+         y="127.17899"
          style="font-size:7px">GPIO 22</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.68492"
-       y="109.56568"
+       x="158.32454"
+       y="164.36646"
        id="text4442-3-2-7-3-9"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4444-8-7-9-1-8"
-         x="158.68492"
-         y="109.56568"
-         style="font-size:7px">GPIO 18</tspan></text>
+         x="158.32454"
+         y="164.36646"
+         style="font-size:7px"
+         id="tspan3303">GPIO 11 (SPI CLK)</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="159.0795"
+       x="158.32454"
        y="99.577591"
        id="text4442-3-2-7-3-9-6"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-7-9-1-8-5"
-         x="159.0795"
+         x="158.32454"
          y="99.577591"
-         style="font-size:7px">GPIO 17</tspan></text>
+         style="font-size:7px">GPIO 18 (PCM_CLK)</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
@@ -950,7 +950,7 @@
          style="font-size:10px">PCD8544</tspan></text>
     <path
        style="fill:none;stroke:#ff00c6;stroke-width:1.0080688;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.60621,106.60432 4.69781,-4.82065 63.02654,-0.0813 -0.0967,45.12957 142.24901,0.098 0.16249,-69.577279"
+       d="m 145.73794,106.95787 6.11202,-5.1742 71.86538,0.27226 0.25685,19.67372 123.51068,-0.25555 0.16249,-44.121439"
        id="path4435-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
@@ -980,22 +980,22 @@
          style="font-size:6px">Note: BCM GPIO pin names</tspan></text>
     <path
        style="fill:none;stroke:#00ff2a;stroke-width:1.31811023;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 136.69976,89.601352 4.90458,-4.518911 72.41966,0.211128 -0.0146,17.287831 89.12493,0 -0.14915,-25.074348"
+       d="m 145.89215,161.37269 4.90458,-5.57957 62.87372,-0.14243 89.43441,-0.38984 0.0295,-52.67945 -0.14915,-25.074348"
        id="path4435-57"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"
-       x="158.33684"
-       y="82.516045"
+       x="158.32454"
+       y="154.28738"
        id="text4442-3-7-1"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4444-8-4-9"
-         x="158.33684"
-         y="82.516045"
-         style="font-size:7px">GPIO 4</tspan></text>
+         x="158.32454"
+         y="154.28738"
+         style="font-size:7px">GPIO 8 (SPI CS0)</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial Unicode MS;-inkscape-font-specification:Arial Unicode MS"

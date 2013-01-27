@@ -13,7 +13,7 @@ fd = -1
 # default PINs, BCM GPIO
 pin_CLK   = 11
 pin_DIN   = 10
-pin_DC    = 22
+pin_DC    = 23
 pin_RST   = 24
 pin_LIGHT = 18
 pin_CE    = 8
@@ -124,7 +124,7 @@ default_FONT = {
     '~': [0x10, 0x08, 0x08, 0x10, 0x08],
 }
 
-def init(CLK = 11, DIN = 10, DC = 22, RST = 24, LIGHT = 18, CE = 8, contrast = default_contrast):
+def init(CLK = 11, DIN = 10, DC = 23, RST = 24, LIGHT = 18, CE = 8, contrast = default_contrast):
     """ init screen, clearscreen """
     wiringPy.debug(0)
 

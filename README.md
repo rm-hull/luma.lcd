@@ -52,7 +52,7 @@ TODO
 References
 ----------
 * http://elinux.org/Rpi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29
-* 
+
 * http://binerry.de/post/25787954149/pcd8544-library-for-raspberry-pi
 
 * http://www.avdweb.nl/arduino/hardware-interfacing/nokia-5110-lcd.html

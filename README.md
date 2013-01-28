@@ -55,7 +55,7 @@ Buttons (from top to bottom) are wired onto BCM pins as follows:
 
 The finished article:
 
-![Built stripboard](https://github.com/rm-hull/pcd8544/blob/master/doc/images/IMG_2544.JPG)
+![Built stripboard](https://github.com/rm-hull/pcd8544/blob/master/doc/images/IMG_2544.JPG?raw=true)
 
 TODO
 ----

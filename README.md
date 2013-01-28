@@ -15,7 +15,21 @@ Compile and install the wiringPi python bindings from https://github.com/rm-hull
 
 Building and installing the software
 ------------------------------------
-TODO
+After having cloned from github:
+
+     $ python setup.py clean build
+     $ sudo python setup.py install
+
+This should install the files in your local dist-files ares (somewhere
+like `/usr/local/lib/python2.7/distfiles/pcd8544`).
+
+Next, test at the hardware and software is working:
+
+    $ cd examples
+    $ sudo ./alphabet-text.py
+
+Most of the ASCII character set should be displayed. There are a few
+other examples of graphics rendering in the same directory.
 
 Wiring schematic
 ----------------
@@ -32,16 +46,17 @@ With 4 push-buttons, resistor values 10K.
 
 ![Stripboard Layout](https://raw.github.com/rm-hull/pcd8544/master/doc/schematic_bb.png)
 
+The finished article:
+
+![Built stripboard](https://github.com/rm-hull/pcd8544/blob/master/doc/images/IMG_2544.JPG)
 
 TODO
 ----
 * Documentation
 
-* Examples
+* More examples
 
 * Implement video ram & get/set_pixel
-
-* Setup / installer
 
 References
 ----------

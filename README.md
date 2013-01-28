@@ -16,12 +16,16 @@ Compile and install the wiringPi python bindings from https://github.com/rm-hull
 This library specifically requires the python binding baked into this software, which have
 not been pushed back to drogon.
 
+Next, install PIL (Python Imaging Library) as follows:
+
+    $ sudo pip install PIL
+
 Building and installing the software
 ------------------------------------
 After having cloned from github:
 
-     $ python setup.py clean build
-     $ sudo python setup.py install
+    $ python setup.py clean build
+    $ sudo python setup.py install
 
 This should install the files in your local dist-files ares (somewhere
 like `/usr/local/lib/python2.7/distfiles/pcd8544`).

@@ -12,7 +12,7 @@ def main():
     lcd.data(smiley)
     lcd.locate(2,2)
     lcd.data(ch)
-    lcd.locate(0,3)
+    lcd.locate(3,0)
     lcd.text("c.a.h.")
     lcd.backlight(1)
 

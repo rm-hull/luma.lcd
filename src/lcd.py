@@ -5,12 +5,13 @@ import wiringPy
 import time
 import struct
 
+from PIL import Image
 from pcd8544.font import default_FONT
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
 
-fd = -1
+fd = -1 # FIXME bitbang file descriptor
 
 # default PINs, BCM GPIO
 pin_CLK   = 11
@@ -71,8 +72,8 @@ def bitmap(arr, dc):
     wiringPy.digital_write_serial_array(0, struct.pack('B'*len(arr), *arr))
 
 def position(x, y):
-    """ goto to column y in seg x """
-    command([y + 0x80, x + 0x40])
+    """ goto to column x in seg y """
+    command([x + 0x80, y + 0x40])
 
 def cls():
     """ clear screen """
@@ -81,13 +82,20 @@ def cls():
     position(0, 0)
 
 def locate(x, y):
-    """ goto row x and columd y to paint a character """
-    position(x, y * 6)
+    """ goto (x,y) to paint a character """
+    position(x * 6, y)
 
 def text(string, font = default_FONT, align = 'left'):
     """ draw string """
     map(lambda c: data(font[c] + [0x00]), string)
 
 
-
-
+def image(im):
+    """ draw image """
+    position(0, 0)
+    command([0x22])  # Change display to vertical write mode for graphics
+    # Rotate the image
+    rim = im.rotate(270) #.transpose(Image.FLIP_LEFT_RIGHT)
+    wiringPy.digital_write(pin_DC, ON)
+    wiringPy.digital_write_serial_array(0, rim.tostring())
+    command([0x20])  # Switch back to horizontal write mode for text

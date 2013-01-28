@@ -61,13 +61,13 @@ def stats():
     lcd.cls()
     lcd.locate(0,0)
     lcd.text(cpu_usage())
-    lcd.locate(1,0)
+    lcd.locate(0,1)
     lcd.text(mem_usage())
-    lcd.locate(2,0)
+    lcd.locate(0,2)
     lcd.text(disk_usage('/'))
-    lcd.locate(3,0)
+    lcd.locate(0,3)
     lcd.text(network('wlan0'))
-    lcd.locate(4,0)
+    lcd.locate(0,4)
         
 def main():
     lcd.init()

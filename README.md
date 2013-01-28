@@ -32,6 +32,12 @@ With 4 push-buttons, resistor values 10K.
 
 ![Stripboard Layout](https://raw.github.com/rm-hull/pcd8544/master/doc/schematic_bb.png)
 
+Buttons (from top to bottom) are wired onto BCM pins as follows:
+
+* GPIO 14 (TxD)
+* GPIO 17 
+* GPIO 25
+* GPIO 22 
 
 TODO
 ----
@@ -45,6 +51,8 @@ TODO
 
 References
 ----------
+* http://elinux.org/Rpi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29
+
 * http://binerry.de/post/25787954149/pcd8544-library-for-raspberry-pi
 
 * http://www.avdweb.nl/arduino/hardware-interfacing/nokia-5110-lcd.html

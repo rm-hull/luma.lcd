@@ -3,7 +3,7 @@ PDC8544 LCD python bindings for the Raspberry Pi
 
 Documentation and Python library module for interfacing a PCD8544 LCD 
 screen to a Rasbperry Pi. Cheap Nokia 5110 modules can be picked up
-on ebay with a backing board for a few pounds.
+on ebay with a breakout board for a few pounds.
 
 ![PCD8544](https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png) ![Spec](https://raw.github.com/rm-hull/pcd8544/master/doc/tech-spec/spec.png)
 

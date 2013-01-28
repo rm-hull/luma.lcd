@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import pcd8544 as lcd
+import pcd8544.lcd as lcd
 import time
 
 def main():
@@ -15,7 +15,7 @@ def main():
         lcd.text(time.strftime("%H:%M:%S", time.localtime()))
 
         time.sleep(0.25)
-        
+
 if __name__ == "__main__":
     main()
 

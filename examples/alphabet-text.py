@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import pcd8544 as lcd
+import pcd8544.lcd as lcd
 
 def main():
     lcd.init()

@@ -2,7 +2,8 @@ PDC8544 LCD python bindings for the Raspberry Pi
 ================================================
 
 Documentation and Python library module for interfacing a PCD8544 LCD 
-screen to a Rasbperry Pi.
+screen to a Rasbperry Pi. Cheap Nokia 5110 modules can be picked up
+on ebay with a backing board for a few pounds.
 
 ![PCD8544](https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png) ![Spec](https://raw.github.com/rm-hull/pcd8544/master/doc/tech-spec/spec.png)
 
@@ -11,7 +12,9 @@ Further technical details for the LCD screen can be found in the
 
 Pre-requisites
 --------------
-Compile and install the wiringPi python bindings from https://github.com/rm-hull/wiringPi
+Compile and install the wiringPi python bindings from https://github.com/rm-hull/wiringPi. 
+This library specifically requires the python binding baked into this software, which have
+not been pushed back to drogon.
 
 Building and installing the software
 ------------------------------------
@@ -37,8 +40,9 @@ There appears to be different pin-out configurations on PCD8544 modules - beware
 
 ![Wiring Schematic](https://raw.github.com/rm-hull/pcd8544/master/doc/wiring-diagram.png)
 
-Modified for my wiring setup from an SVG from http://shiro.be/ - all 
-rights of the original author respected.
+Although the python library (currently) used software-base bit-banging to do the SPI chattering, 
+the pins chosen should be compatible with hardware SPI. The above diagram was modified for 
+*my* wiring setup from an SVG from http://shiro.be/ - all rights of the original author reserved.
 
 Stripboard Layout
 -----------------
@@ -66,6 +70,8 @@ TODO
 * Implement video ram & get/set_pixel (or PIL Image bitblt)
 
 * Implement module for scanning push buttons 
+
+* Hardware SPI rather than software emulation
 
 References
 ----------

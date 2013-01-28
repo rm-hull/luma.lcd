@@ -89,13 +89,21 @@ def text(string, font = default_FONT, align = 'left'):
     """ draw string """
     map(lambda c: data(font[c] + [0x00]), string)
 
+def bit_reverse(value, width=8):
+  result = 0
+  for _ in xrange(width):
+    result = (result << 1) | (value & 1)
+    value >>= 1
+
+  return result
+
+BITREVERSE = map(bit_reverse, xrange(256))
 
 def image(im):
     """ draw image """
-    position(0, 0)
+    # Rotate and mirror the image
+    rim = im.rotate(-90).transpose(Image.FLIP_LEFT_RIGHT)
     command([0x22])  # Change display to vertical write mode for graphics
-    # Rotate the image
-    rim = im.rotate(270) #.transpose(Image.FLIP_LEFT_RIGHT)
-    wiringPy.digital_write(pin_DC, ON)
-    wiringPy.digital_write_serial_array(0, rim.tostring())
+    position(0, 0)
+    data([BITREVERSE[ord(x)] for x in list(rim.tostring())])
     command([0x20])  # Switch back to horizontal write mode for text

@@ -1,2 +1,4 @@
 *.pyc
 temp/*
+build/
+dist/

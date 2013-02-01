@@ -37,10 +37,11 @@ logo = [
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 ]
 
-def main():
-    lcd.init()
+def demo():
+    lcd.locate(0,0)
     lcd.data(logo)
-    lcd.backlight(1)
-
+    
 if __name__ == "__main__":
-    main()
+    lcd.init()
+    lcd.backlight(1)
+    demo()

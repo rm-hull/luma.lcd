@@ -7,6 +7,7 @@ import struct
 
 from PIL import Image
 from pcd8544.font import default_FONT
+from pcd8544.util import flatten
 
 # screen size in pixel
 HEIGHT = WIDTH = 84
@@ -86,8 +87,16 @@ def locate(x, y):
     position(x * 6, y)
 
 def text(string, font = default_FONT, align = 'left'):
-    """ draw string """
+    """ draw string at current position """
     map(lambda c: data(font[c] + [0x00]), string)
+
+def smooth_hscroll(string, row, iterations, delay=0.2, font=default_FONT):
+    """ scrolls string at given row """
+    bytes = list(flatten(map(lambda c: font[c] + [0x00], string)))
+    for i in xrange(iterations):
+        position(0, row)
+        data(bytes[i:i+84])
+        time.sleep(delay)
 
 def bit_reverse(value, width=8):
   result = 0

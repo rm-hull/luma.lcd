@@ -5,8 +5,10 @@
 # Adapted from:
 #    https://github.com/rm-hull/maze/blob/master/src/maze/generator.clj
 
-#import pcd8544.lcd as lcd
-#from PIL import Image,ImageDraw
+import sys
+import time
+import pcd8544.lcd as lcd
+from PIL import Image,ImageDraw
 from random import randrange
 
 NORTH=1
@@ -14,15 +16,19 @@ WEST=2
 
 class Maze:
 
-    def __init__(self, width, height):
-        self.size = width * height
-        self.width = width
-        self.height = height
+    def __init__(self, size):
+        self.width = size[0]
+        self.height = size[1]
+        self.size = self.width * self.height
         self.generate()
 
-    def offset(self, x, y):
+    def offset(self, coords):
         """ Converts [x,y] co-ords into an offset in the maze data """
-        return ((y % self.height) * self.width) + (x % self.width)
+        return ((coords[1] % self.height) * self.width) + (coords[0] % self.width)
+
+    def coords(self, offset):
+        """ Converts offset to [x,y] co-ords """
+        return (offset % self.width, offset / self.width)
 
     def neighbours(self, pos):
         neighbours = []
@@ -89,6 +95,30 @@ class Maze:
                     stack.pop()
                 stack.append(np)
 
+    def to_image(self, scale=lambda a: a):
+        im = Image.new('1', map(scale, (self.width+1, self.height+1)))
+        draw = ImageDraw.Draw(im)
+        
+       
+        for i in xrange(self.size):
+            line = []
+            p1 = self.coords(i)
+                
+            if self.data[i] & NORTH > 0:
+                p2 = (p1[0]+1, p1[1])
+                line += p2 + p1
+                
+            if self.data[i] & WEST > 0:
+                p3 = (p1[0], p1[1]+1)
+                line += p1 + p3
+                
+            draw.line(map(scale, line), fill=1)
+       
+        draw.rectangle(map(scale, [0,0,self.width,self.height]), outline=1)
+                 
+        del draw
+        return im
+        
     def to_string(self):
         s = ""
         for y in xrange(self.height):
@@ -111,6 +141,17 @@ class Maze:
 
         return s
 
-if __name__ == "__main__":
-    m = Maze(18,20)
-    print m.to_string()
+def demo(iterations):
+    screen = (84,48)
+    for loop in range(iterations):
+        for scale in [2,3,4,3]:
+            sz = map(lambda z: z/scale-1, screen)
+            im = Maze(sz).to_image(lambda z: z * scale)
+            lcd.image(im)
+            time.sleep(1)
+    
+if __name__ == "__main__":    
+    lcd.init()
+    lcd.backlight(1)
+    demo(20)
+    

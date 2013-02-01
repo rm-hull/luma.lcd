@@ -20,9 +20,6 @@ class Maze:
         self.height = height
         self.generate()
 
-    def __getitem__(self, x, y):
-        return self.data[self.offset(x, y)]
-
     def offset(self, x, y):
         """ Converts [x,y] co-ords into an offset in the maze data """
         return ((y % self.height) * self.width) + (x % self.width)
@@ -46,8 +43,8 @@ class Maze:
 
     def is_wall_between(self, p1, p2):
         """ Checks to see if there is a wall between two (adjacent) points
-            in the maze. The return value will indicate the wall type
-            (:north, :west,..). If the points aren't adjacent, false is
+            in the maze. The return value will indicate true if there is a
+            wall else false. If the points aren't adjacent, false is
             returned. """
         if p1 > p2:
             return self.is_wall_between(p2, p1)

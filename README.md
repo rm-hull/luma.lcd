@@ -92,4 +92,6 @@ References
 
 * http://www.henningkarlsen.com/electronics/t_imageconverter_mono.php
 
+* https://vimeo.com/41393421
+
 * http://fritzing.org

@@ -108,11 +108,12 @@ def bit_reverse(value, width=8):
 
 BITREVERSE = map(bit_reverse, xrange(256))
 
-def image(im):
+def image(im, reverse=False):
     """ draw image """
+    mask = 0xFF if reverse else 0x00
     # Rotate and mirror the image
     rim = im.rotate(-90).transpose(Image.FLIP_LEFT_RIGHT)
     command([0x22])  # Change display to vertical write mode for graphics
     position(0, 0)
-    data([BITREVERSE[ord(x)] for x in list(rim.tostring())])
+    data([BITREVERSE[ord(x)] ^ mask for x in list(rim.tostring())])
     command([0x20])  # Switch back to horizontal write mode for text

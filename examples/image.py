@@ -1,9 +1,28 @@
 #!/usr/bin/env python
 
-import pcd8544.lcd as lcd
-from PIL import Image,ImageDraw,ImageFont
+import time
+from pcd8544 import lcd
+from PIL import Image,ImageDraw,ImageFont,ImageFile
 
 def demo():
+    drawing()
+    time.sleep(5)
+    bitmaps()
+
+def bitmaps():
+    im = Image.new('1',(84,48))
+    for filename in ["small_font.png", "gnome.png", "gogol.png", "car.png"]:
+        bitmap = Image.open("images/" + filename)
+        im.paste(bitmap, (0,0) + bitmap.size)
+
+        lcd.cls()
+        lcd.image(im, reverse=True)
+        time.sleep(5)
+        del bitmap
+
+    del im
+
+def drawing():
     ## Generate an image with PIL and put on the display
     ## First time through is slow as the fonts are not cached
     ##

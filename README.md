@@ -72,7 +72,7 @@ TODO
 
 * More examples
 
-* Implement video ram & get/set_pixel (or PIL Image bitblt)
+* Introduce small/tiny font handling onto drawable PIL surfaces
 
 * Implement module for scanning push buttons 
 

@@ -18,7 +18,7 @@ not been pushed back to drogon.
 
 Next, install PIL (Python Imaging Library) as follows:
 
-    $ sudo apt-get install zlibc libpng3 libfreetype6 libfreetype6-dev
+    $ sudo apt-get install zlibc libpng3 libfreetype6 libfreetype6-dev python-pip
     $ sudo pip install pillow
 
 Building and installing the software

@@ -12,7 +12,7 @@ Further technical details for the LCD screen can be found in the
 
 Pre-requisites
 --------------
-Compile and install the wiringPi python bindings from https://github.com/rm-hull/wiringPi. 
+Compile and install the wiringPi python bindings from https://github.com/rm-hull/wiringPi. Make sure you install both python-dev and libi2c-dev. 
 This library specifically requires the python binding baked into this software, which have
 not been pushed back to drogon.
 
@@ -34,7 +34,7 @@ like `/usr/local/lib/python2.7/distfiles/pcd8544`).
 Next, test at the hardware and software is working:
 
     $ cd examples
-    $ sudo ./alphabet-text.py
+    $ sudo ./alphabet_text.py
 
 Most of the ASCII character set should be displayed. There are a few
 other examples of graphics rendering in the same directory.

@@ -20,7 +20,7 @@ from PIL import Image,ImageDraw
 
 class RingBuffer:
     def __init__(self, size):
-        self.data = [None for i in xrange(size)]
+        self.data = [None for i in range(size)]
 
     def append(self, x):
         self.data.pop(0)
@@ -33,9 +33,12 @@ class RingBuffer:
         return iter(self.data)
 
 class LooseLabels:
-    """ Implements loose axis labelling from "Graphics Gems",
-        /Nice Numbers for Graph Labels/, p. 61-63."""
-    def __init__(self, (low, high), ntick):
+    """
+    Implements loose axis labelling from "Graphics Gems",
+    /Nice Numbers for Graph Labels/, p. 61-63.
+    """
+    def __init__(self, dimensions, ntick):
+        (low, high) = dimensions
         self.range = []
         r = self.__nice_num(high - low, False)
         d = self.__nice_num(r / (ntick - 1), True)
@@ -74,9 +77,12 @@ class LooseLabels:
         return default
 
 class Scale:
-    def __init__(self, (low,high), size):
-        """ Creates a function which will translate any min/max tuple
-            to the correct scaled value for display on the LCD panel """
+    def __init__(self, dimensions, size):
+        """
+        Creates a function which will translate any min/max tuple
+        to the correct scaled value for display on the LCD panel.
+        """
+        (low, high) = dimensions
         self.labels = LooseLabels((low,high), 5)
         offset = -self.labels[0]
         diff = (self.labels[-1] - self.labels[0]) / size
@@ -107,10 +113,12 @@ class CpuTemperature:
         return tuple([float(res.replace("temp=","").replace("'C\n",""))])
 
 def min_max(buf):
-    """ Gets the smallest and largest value from the tuples in the ring buffer """
-    data = filter(lambda x: x <> None, buf)
-    smallest = min(map(min, data))
-    largest = max(map(max, data))
+    """
+    Gets the smallest and largest value from the tuples in the ring buffer.
+    """
+    data = [x for x in buf if x != None]
+    smallest = min(list(map(min, data)))
+    largest = max(list(map(max, data)))
     return (smallest, largest)
 
 def rolling_avg(cumulative_lookup, start, stop, step_size, window_size):
@@ -119,13 +127,15 @@ def rolling_avg(cumulative_lookup, start, stop, step_size, window_size):
         yield total / window_size
 
 def render(buf):
-    """ Returns an image rendering of the data in the buffer """
+    """
+    Returns an image rendering of the data in the buffer.
+    """
     im = Image.new('1', (84,48))
     draw = ImageDraw.Draw(im)
     scale = Scale(min_max(buf), im.size[1])
 
     for x,data in enumerate(buf):
-        if data <> None:
+        if data != None:
             for y in data:
                 draw.point((x,scale(y)), 1)
 

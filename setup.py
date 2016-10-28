@@ -11,5 +11,4 @@ setup(
     keywords = "raspberry pi rpi lcd nokia 5110 pcd8544",
     url = "https://github.com/rm-hull/pcd8544",
     packages=['pcd8544'],
-    package_dir={'pcd8544': 'src'}
 )

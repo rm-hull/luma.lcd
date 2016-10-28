@@ -83,7 +83,7 @@ class Maze:
 
         while len(stack) > 0:
             curr = stack[-1]
-            n = filter(not_visited, self.neighbours(curr))
+            n = list(filter(not_visited, self.neighbours(curr)))
             sz = len(n)
             if sz == 0:
                 stack.pop()
@@ -96,11 +96,11 @@ class Maze:
                 stack.append(np)
 
     def to_image(self, scale=lambda a: a):
-        im = Image.new('1', map(scale, (self.width+1, self.height+1)))
+        im = Image.new('1', list(map(scale, (self.width+1, self.height+1))))
         draw = ImageDraw.Draw(im)
         
        
-        for i in xrange(self.size):
+        for i in range(self.size):
             line = []
             p1 = self.coords(i)
                 
@@ -112,16 +112,16 @@ class Maze:
                 p3 = (p1[0], p1[1]+1)
                 line += p1 + p3
                 
-            draw.line(map(scale, line), fill=1)
+            draw.line(list(map(scale, line)), fill=1)
        
-        draw.rectangle(map(scale, [0,0,self.width,self.height]), outline=1)
+        draw.rectangle(list(map(scale, [0,0,self.width,self.height])), outline=1)
                  
         del draw
         return im
         
     def to_string(self):
         s = ""
-        for y in xrange(self.height):
+        for y in range(self.height):
             for x in range(self.width):
                 s += "+"
                 if self.data[self.offset(x,y)] & NORTH != 0:
@@ -145,7 +145,7 @@ def demo(iterations):
     screen = (84,48)
     for loop in range(iterations):
         for scale in [2,3,4,3]:
-            sz = map(lambda z: z/scale-1, screen)
+            sz = [z/scale-1 for z in screen]
             im = Maze(sz).to_image(lambda z: z * scale)
             lcd.image(im)
             time.sleep(1)

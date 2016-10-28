@@ -20,7 +20,7 @@ from PIL import Image,ImageDraw
 
 class RingBuffer:
     def __init__(self, size):
-        self.data = [None for i in xrange(size)]
+        self.data = [None for i in range(size)]
 
     def append(self, x):
         self.data.pop(0)
@@ -35,7 +35,8 @@ class RingBuffer:
 class LooseLabels:
     """ Implements loose axis labelling from "Graphics Gems",
         /Nice Numbers for Graph Labels/, p. 61-63."""
-    def __init__(self, (low, high), ntick):
+    def __init__(self, xxx_todo_changeme, ntick):
+        (low, high) = xxx_todo_changeme
         self.range = []
         r = self.__nice_num(high - low, False)
         d = self.__nice_num(r / (ntick - 1), True)
@@ -74,9 +75,10 @@ class LooseLabels:
         return default
 
 class Scale:
-    def __init__(self, (low,high), size):
+    def __init__(self, xxx_todo_changeme1, size):
         """ Creates a function which will translate any min/max tuple
             to the correct scaled value for display on the LCD panel """
+        (low,high) = xxx_todo_changeme1
         self.labels = LooseLabels((low,high), 5)
         offset = -self.labels[0]
         diff = (self.labels[-1] - self.labels[0]) / size
@@ -108,9 +110,9 @@ class CpuTemperature:
 
 def min_max(buf):
     """ Gets the smallest and largest value from the tuples in the ring buffer """
-    data = filter(lambda x: x <> None, buf)
-    smallest = min(map(min, data))
-    largest = max(map(max, data))
+    data = [x for x in buf if x != None]
+    smallest = min(list(map(min, data)))
+    largest = max(list(map(max, data)))
     return (smallest, largest)
 
 def rolling_avg(cumulative_lookup, start, stop, step_size, window_size):
@@ -125,7 +127,7 @@ def render(buf):
     scale = Scale(min_max(buf), im.size[1])
 
     for x,data in enumerate(buf):
-        if data <> None:
+        if data != None:
             for y in data:
                 draw.point((x,scale(y)), 1)
 

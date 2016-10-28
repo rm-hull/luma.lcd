@@ -92,7 +92,7 @@ while True:
   latest.execute("select date_time, temp, pressure from sensor_table where date_time between ? and ?",(sqlStart, sqlEnd))
   row = latest.fetchone()
 
-  if row <> None:
+  if row != None:
     l_date = str(row[0])
     l_temp = str(row[1])
     l_press = str(row[2])

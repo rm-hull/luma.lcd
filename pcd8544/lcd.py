@@ -42,7 +42,7 @@ def init(CLK = 11, DIN = 10, DC = 23, RST = 24, LIGHT = 18, CE = 8, contrast = d
 
     pins = [CLK, DIN, DC, RST, LIGHT, CE]
     pin_CLK, pin_DIN, pin_DC, pin_RST, pin_LIGHT, pin_CE = pins
-    map(lambda p: wiringPy.pin_mode(p, ON), pins)
+    list(map(lambda p: wiringPy.pin_mode(p, ON), pins))
 
     # Reset the device
     wiringPy.digital_write(pin_RST, OFF)
@@ -88,25 +88,25 @@ def locate(x, y):
 
 def text(string, font = default_FONT, align = 'left'):
     """ draw string at current position """
-    map(lambda c: data(font[c] + [0x00]), string)
+    list(map(lambda c: data(font[c] + [0x00]), string))
 
 def smooth_hscroll(string, row, iterations, delay=0.2, font=default_FONT):
     """ scrolls string at given row """
-    bytes = list(flatten(map(lambda c: font[c] + [0x00], string)))
-    for i in xrange(iterations):
+    bytes = list(flatten([font[c] + [0x00] for c in string]))
+    for i in range(iterations):
         position(0, row)
         data(bytes[i:i+84])
         time.sleep(delay)
 
 def bit_reverse(value, width=8):
   result = 0
-  for _ in xrange(width):
+  for _ in range(width):
     result = (result << 1) | (value & 1)
     value >>= 1
 
   return result
 
-BITREVERSE = map(bit_reverse, xrange(256))
+BITREVERSE = list(map(bit_reverse, range(256)))
 
 def image(im, reverse=False):
     """ draw image """

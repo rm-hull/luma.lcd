@@ -3,5 +3,5 @@
 # See LICENSE.rst for details.
 
 """
-OLED display driver for SSD1306, SSD1325, SSD1331 and SH1106 devices.
+LCD display driver for PCD8544 devices.
 """

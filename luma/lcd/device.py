@@ -32,7 +32,7 @@
 
 from luma.core.device import device
 import luma.core.error
-import luma.oled.const
+import luma.lcd.const
 
 
 class pcd8544(device):
@@ -43,30 +43,15 @@ class pcd8544(device):
     affect the brightness and other settings.
     """
     def __init__(self, serial_interface=None, width=84, height=48, rotate=0):
-        super(pcd8544, self).__init__(luma.oled.const.pcd8544, serial_interface)
+        super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
         self.capabilities(width, height, rotate)
-        self._pages = self._h // 8
+        self._buffer = [0] * self._w * self._h
 
         if width != 84 or height != 48:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 
-        self.command(
-            self._const.DISPLAYOFF,
-            self._const.MEMORYMODE,
-            self._const.SETHIGHCOLUMN,      0xB0, 0xC8,
-            self._const.SETLOWCOLUMN,       0x10, 0x40,
-            self._const.SETSEGMENTREMAP,
-            self._const.NORMALDISPLAY,
-            self._const.SETMULTIPLEX,       0x3F,
-            self._const.DISPLAYALLON_RESUME,
-            self._const.SETDISPLAYOFFSET,   0x00,
-            self._const.SETDISPLAYCLOCKDIV, 0xF0,
-            self._const.SETPRECHARGE,       0x22,
-            self._const.SETCOMPINS,         0x12,
-            self._const.SETVCOMDETECT,      0x20,
-            self._const.CHARGEPUMP,         0x14)
-
+        self.command(0x20)  # Horizontal write mode
         self.contrast(0x7F)
         self.clear()
         self.show()
@@ -81,4 +66,16 @@ class pcd8544(device):
 
         image = self.preprocess(image)
 
-        raise NotImplementedError()
+        buf = self._buffer
+        for idx, pix in enumerate(image.getdata()):
+            buf[idx] = 1 if pix > 0 else 0
+
+        self.data(buf)
+
+    def contrast(self, value):
+        """
+        Sets the LCD contrast
+        """
+        assert(0 <= value <= 255)
+
+        self.command(0x21, 0x14, value, 0x20, 0x0c)

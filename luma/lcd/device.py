@@ -66,6 +66,8 @@ class pcd8544(device):
 
         image = self.preprocess(image)
 
+        self.command(0x80, 0x40)  # Reset (x,y) to (0,0)
+
         buf = self._buffer
         for idx, pix in enumerate(image.getdata()):
             buf[idx] = 1 if pix > 0 else 0

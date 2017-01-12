@@ -30,6 +30,7 @@
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+import RPi.GPIO as GPIO
 from luma.core.device import device
 import luma.core.error
 import luma.lcd.const
@@ -42,17 +43,21 @@ class pcd8544(device):
     to properly configure it. Further control commands can then be called to
     affect the brightness and other settings.
     """
-    def __init__(self, serial_interface=None, width=84, height=48, rotate=0):
+    def __init__(self, serial_interface=None, width=84, height=48, rotate=0,
+                 backlight=18):
         super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
         self.capabilities(width, height, rotate)
-        self._buffer = [0] * self._w * self._h
 
         if width != 84 or height != 48:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 
-        self.command(0x20)  # Horizontal write mode
-        self.contrast(0x7F)
+        if backlight:
+            self._backlight = backlight
+            GPIO.setup(backlight, GPIO.OUT)
+            self.backlight(True)
+
+        self.contrast(0xB0)
         self.clear()
         self.show()
 
@@ -66,18 +71,27 @@ class pcd8544(device):
 
         image = self.preprocess(image)
 
-        self.command(0x80, 0x40)  # Reset (x,y) to (0,0)
+        self.command(0x20, 0x80, 0x40)
 
-        buf = self._buffer
+        buf = bytearray(self._w * self._h // 8)
+        w = self._w
+
         for idx, pix in enumerate(image.getdata()):
-            buf[idx] = 1 if pix > 0 else 0
+            bit = 1 << (idx // w) % 8
+            bank = idx // (w * 8)
+            offset = (bank * w) + (idx % w)
+            buf[offset] |= bit if pix > 0 else 0
 
-        self.data(buf)
+        self.data(list(buf))
+
+    def backlight(self, value):
+        assert(value in [True, False])
+        if self._backlight:
+            GPIO.output(self._backlight, 0 if value else 1)
 
     def contrast(self, value):
         """
         Sets the LCD contrast
         """
         assert(0 <= value <= 255)
-
-        self.command(0x21, 0x14, value, 0x20, 0x0c)
+        self.command(0x21, 0x14, value | 0x80, 0x20)

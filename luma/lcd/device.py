@@ -18,7 +18,7 @@
 #
 # As soon as the with-block scope level is complete, the graphics primitives
 # will be flushed to the device.
-#device
+#
 # Creating a new canvas is effectively 'carte blanche': If you want to retain
 # an existing canvas, then make a reference like:
 #
@@ -71,7 +71,6 @@ class pcd8544(device):
         self.command(0x20, 0x80, 0x40)
 
         buf = bytearray(self._w * self._h // 8)
-        w = self._w
         off = self._offsets
         mask = self._mask
 

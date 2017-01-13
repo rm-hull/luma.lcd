@@ -25,15 +25,14 @@ def setup_function(function):
 def test_init_84x48():
     pcd8544(serial)
     serial.command.assert_has_calls([
-        call(32),
-        call(33, 20, 127, 32, 12),
-        call(128, 64),
-        call(175)
+        call(33, 20, 176, 32),
+        call(32, 128, 64),
+        call(12)
     ])
 
     # Next 1024 are all data: zero's to clear the RAM
     # (1024 = 128 * 64 / 8)
-    serial.data.assert_called_once_with([0] * (84 * 48))
+    serial.data.assert_called_once_with([0] * (84 * 48 // 8))
 
 
 def test_init_invalid_dimensions():
@@ -46,14 +45,14 @@ def test_hide():
     device = pcd8544(serial)
     serial.reset_mock()
     device.hide()
-    serial.command.assert_called_once_with(174)
+    serial.command.assert_called_once_with(8)
 
 
 def test_show():
     device = pcd8544(serial)
     serial.reset_mock()
     device.show()
-    serial.command.assert_called_once_with(175)
+    serial.command.assert_called_once_with(12)
 
 
 def test_display():
@@ -65,7 +64,7 @@ def test_display():
         baseline_data.primitives(device, draw)
 
     # Initial command to reset the display
-    serial.command.assert_called_once_with(128, 64)
+    serial.command.assert_called_once_with(32, 128, 64)
 
     # Next 1024 bytes are data representing the drawn image
     serial.data.assert_called_once_with(baseline_data.demo_pcd8544)

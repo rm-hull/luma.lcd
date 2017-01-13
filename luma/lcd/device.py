@@ -10,7 +10,7 @@
 #   from PIL import ImageDraw
 #
 #   serial = spi(device=0, bus=0)
-#   device = ssd1306(serial)
+#   device = pcd8544(serial)
 #
 #   with canvas(device) as draw:
 #      draw.rectangle(device.bounding_box, outline="white", fill="black")
@@ -75,7 +75,8 @@ class pcd8544(device):
         mask = self._mask
 
         for idx, pix in enumerate(image.getdata()):
-            buf[off[idx]] |= mask[idx] if pix > 0 else 0
+            if pix > 0:
+                buf[off[idx]] |= mask[idx]
 
         self.data(list(buf))
 

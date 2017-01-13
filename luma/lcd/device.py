@@ -18,7 +18,7 @@
 #
 # As soon as the with-block scope level is complete, the graphics primitives
 # will be flushed to the device.
-#
+#device
 # Creating a new canvas is effectively 'carte blanche': If you want to retain
 # an existing canvas, then make a reference like:
 #
@@ -84,3 +84,24 @@ class pcd8544(device):
         """
         assert(0 <= value <= 255)
         self.command(0x21, 0x14, value | 0x80, 0x20)
+
+
+class backlight(object):
+    def __init__(self, gpio=None, bcm_LIGHT=18):
+        self._bcm_LIGHT = bcm_LIGHT
+        self._gpio = gpio or self.__rpi_gpio__()
+        self._gpio.setmode(self._gpio.BCM)
+        self._gpio.setup(self._bcm_LIGHT, self._gpio.OUT)
+        self.enable(True)
+
+    def enable(self, value):
+        assert(value in [True, False])
+        self._gpio.output(self._bcm_LIGHT,
+                          self._gpio.LOW if value else self.gpio.HIGH)
+
+    def __rpi_gpio__(self):
+        # RPi.GPIO _really_ doesn't like being run on anything other than
+        # a Raspberry Pi... this is imported here so we can swap out the
+        # implementation for a mock
+        import RPi.GPIO
+        return RPi.GPIO

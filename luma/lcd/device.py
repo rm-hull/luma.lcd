@@ -30,7 +30,6 @@
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
-import RPi.GPIO as GPIO
 from luma.core.device import device
 import luma.core.error
 import luma.lcd.const
@@ -51,11 +50,6 @@ class pcd8544(device):
         if width != 84 or height != 48:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
-
-        if backlight:
-            self._backlight = backlight
-            GPIO.setup(backlight, GPIO.OUT)
-            self.backlight(True)
 
         self.contrast(0xB0)
         self.clear()
@@ -83,11 +77,6 @@ class pcd8544(device):
             buf[offset] |= bit if pix > 0 else 0
 
         self.data(list(buf))
-
-    def backlight(self, value):
-        assert(value in [True, False])
-        if self._backlight:
-            GPIO.output(self._backlight, 0 if value else 1)
 
     def contrast(self, value):
         """

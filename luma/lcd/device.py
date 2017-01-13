@@ -51,6 +51,9 @@ class pcd8544(device):
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 
+        self._mask = [1 << (i // width) % 8 for i in range(width * height)]
+        self._offsets = [(width * (i // (width * 8))) + (i % width) for i in range(width * height)]
+
         self.contrast(0xB0)
         self.clear()
         self.show()
@@ -69,12 +72,11 @@ class pcd8544(device):
 
         buf = bytearray(self._w * self._h // 8)
         w = self._w
+        off = self._offsets
+        mask = self._mask
 
         for idx, pix in enumerate(image.getdata()):
-            bit = 1 << (idx // w) % 8
-            bank = idx // (w * 8)
-            offset = (bank * w) + (idx % w)
-            buf[offset] |= bit if pix > 0 else 0
+            buf[off[idx]] |= mask[idx] if pix > 0 else 0
 
         self.data(list(buf))
 

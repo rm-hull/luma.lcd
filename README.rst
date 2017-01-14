@@ -33,6 +33,11 @@ for a few pounds.
 
 .. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/images/pcd8544.png
 
+Documentation
+-------------
+Full documentation with installation instructions and examples can be found on
+https://luma-lcd.readthedocs.io.
+
 License
 -------
 The MIT License (MIT)

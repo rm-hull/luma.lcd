@@ -8,6 +8,10 @@ Luma.LCD: PCD8544 Display Driver
 
 .. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
 
+.. image:: https://readthedocs.org/projects/luma-lcd/badge/?version=latest
+   :target: http://luma-lcd.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 .. image:: https://img.shields.io/pypi/pyversions/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
 
@@ -27,9 +31,7 @@ Pillow-compatible drawing canvas, and other functionality to support:
 These cheap Nokia 5110 modules can be picked up on ebay with a breakout board
 for a few pounds.
 
-.. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/pcd8544.png
-
-.. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/tech-spec/spec.png
+.. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/images/pcd8544.png
 
 License
 -------

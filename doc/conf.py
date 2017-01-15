@@ -3,7 +3,7 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-# ssd1306 documentation build configuration file, created by
+# luma.lcd documentation build configuration file, created by
 # sphinx-quickstart on Wed Oct  5 00:14:54 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -65,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Luma.LCD: Display drivers for PCD8544'
-copyright = u'{0}, Richard Hull'.format(datetime.now().year)
+copyright = u'2013-{0}, Richard Hull'.format(datetime.now().year)
 author = 'Richard Hull'
 
 # The version info for the project you're documenting, acts as replacement for

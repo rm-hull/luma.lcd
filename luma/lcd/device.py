@@ -9,7 +9,7 @@
 #   from luma.lcd.device import pcd8544
 #   from PIL import ImageDraw
 #
-#   serial = spi(device=0, bus=0)
+#   serial = spi(port=0, device=0)
 #   device = pcd8544(serial)
 #
 #   with canvas(device) as draw:

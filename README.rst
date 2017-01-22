@@ -1,3 +1,9 @@
+`luma.core <https://github.com/rm-hull/luma.core>`_ **|** 
+`luma.examples <https://github.com/rm-hull/luma.examples>`_ **|** 
+luma.lcd **|** 
+`luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`_ **|** 
+`luma.oled <https://github.com/rm-hull/luma.oled>`_ 
+
 Luma.LCD: PCD8544 Display Driver
 ================================
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
@@ -5,8 +11,6 @@ Luma.LCD: PCD8544 Display Driver
 
 .. image:: https://coveralls.io/repos/github/rm-hull/luma.lcd/badge.svg?branch=master
    :target: https://coveralls.io/github/rm-hull/luma.lcd?branch=master
-
-.. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
 
 .. image:: https://readthedocs.org/projects/luma-lcd/badge/?version=latest
    :target: http://luma-lcd.readthedocs.io/en/latest/?badge=latest
@@ -17,6 +21,8 @@ Luma.LCD: PCD8544 Display Driver
 
 .. image:: https://img.shields.io/pypi/v/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
+
+.. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
 
 Python library interfacing LCD displays with the PCD8544 driver using SPI on
 the Raspberry Pi and other linux-based single-board computers - it provides a

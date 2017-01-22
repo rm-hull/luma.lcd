@@ -1,8 +1,8 @@
-`luma.core <https://github.com/rm-hull/luma.core>`_ **|** 
-`luma.examples <https://github.com/rm-hull/luma.examples>`_ **|** 
+`luma.core <https://github.com/rm-hull/luma.core>`__ **|** 
+`luma.examples <https://github.com/rm-hull/luma.examples>`__ **|** 
 luma.lcd **|** 
-`luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`_ **|** 
-`luma.oled <https://github.com/rm-hull/luma.oled>`_ 
+`luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`__ **|** 
+`luma.oled <https://github.com/rm-hull/luma.oled>`__ 
 
 Luma.LCD: PCD8544 Display Driver
 ================================

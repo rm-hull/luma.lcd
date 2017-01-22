@@ -22,6 +22,7 @@ setup(
     download_url="https://github.com/rm-hull/luma.lcd/tarball/" + version,
     namespace_packages=["luma"],
     packages=["luma.lcd"],
+    zip_safe=False,
     install_requires=["luma.core"],
     setup_requires=["pytest-runner"],
     tests_require=["mock", "pytest", "pytest-cov", "python-coveralls"],
@@ -36,6 +37,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5"
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6"
     ]
 )

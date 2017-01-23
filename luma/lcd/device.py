@@ -89,6 +89,9 @@ class pcd8544(device):
 
 
 class backlight(object):
+    """
+    Controls a backlight (assumed to be on GPIO 18 (PWMCLK0))
+    """
     def __init__(self, gpio=None, bcm_LIGHT=18):
         self._bcm_LIGHT = bcm_LIGHT
         self._gpio = gpio or self.__rpi_gpio__()
@@ -97,9 +100,13 @@ class backlight(object):
         self.enable(True)
 
     def enable(self, value):
+        """
+        Switches on the backlight when ``True`` supplied, else ``False``
+        switches it off
+        """
         assert(value in [True, False])
         self._gpio.output(self._bcm_LIGHT,
-                          self._gpio.LOW if value else self.gpio.HIGH)
+                          self._gpio.LOW if value else self._gpio.HIGH)
 
     def __rpi_gpio__(self):
         # RPi.GPIO _really_ doesn't like being run on anything other than

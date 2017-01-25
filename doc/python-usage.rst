@@ -12,8 +12,7 @@ First, import and initialise the device:
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
 
-  serial = serial(port=0, device=0)
-
+  serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=24)
   device = pcd8544(serial)
 
 The display device should now be configured for use. 
@@ -59,11 +58,11 @@ portrait aspect, then add a ``rotate=N`` parameter when creating the device:
 
 .. code:: python
 
-  from luma.core.serial import i2c
+  from luma.core.serial import spi
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
-
-  serial = serial(port=0, device=0)
+  
+  serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=23)
   device = pcd8544(serial, rotate=1)
 
   # Box and text rendered in portrait mode

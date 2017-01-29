@@ -4,8 +4,10 @@ luma.lcd **|**
 `luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`__ **|** 
 `luma.oled <https://github.com/rm-hull/luma.oled>`__ 
 
-Luma.LCD: PCD8544 Display Driver
-================================
+Luma.LCD
+========
+**PCD8544 Display Driver**
+
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
 

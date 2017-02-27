@@ -35,7 +35,7 @@ setup(
     zip_safe=False,
     install_requires=["luma.core"],
     setup_requires=pytest_runner,
-    tests_require=["mock", "pytest", "pytest-cov", "python-coveralls"],
+    tests_require=["mock", "pytest", "pytest-cov"],
     extras_require={
         'docs': [
             'sphinx >= 1.5.1'

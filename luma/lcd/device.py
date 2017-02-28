@@ -144,17 +144,12 @@ class st7735(device):
         self.command(0x3A, 0x06)                # interface pixel format
         self.command(0x13)                      # partial off (normal)
         self.command(0xE0,                      # gamma adjustment (+ polarity)
-                     0x0F, 0x1A, 0x0F, 0x18,
-                     0x2F, 0x28, 0x20, 0x22,
-                     0x1F, 0x1B, 0x23, 0x37,
-                     0x00, 0x07, 0x02, 0x10)
+                     0x0F, 0x1A, 0x0F, 0x18, 0x2F, 0x28, 0x20, 0x22,
+                     0x1F, 0x1B, 0x23, 0x37, 0x00, 0x07, 0x02, 0x10)
         self.command(0xE1,                      # gamma adjustment (- polarity)
-                     0x0F, 0x1B, 0x0F, 0x17,
-                     0x33, 0x2C, 0x29, 0x2E,
-                     0x30, 0x30, 0x39, 0x3F,
-                     0x00, 0x07, 0x03, 0x10)
+                     0x0F, 0x1B, 0x0F, 0x17, 0x33, 0x2C, 0x29, 0x2E,
+                     0x30, 0x30, 0x39, 0x3F, 0x00, 0x07, 0x03, 0x10)
 
-        self.contrast(0xFF)
         self.clear()
         self.show()
 
@@ -189,22 +184,11 @@ class st7735(device):
                     buf[i + 2] = b
                 i += 3
 
-#            buf = bytearray(width * height * 2)
-#            for r, g, b in self.framebuffer.getdata():
-#                if not(r == g == b == 0):
-#                    # 65K format 1
-#                    buf[i] = r & 0xF8 | g >> 5
-#                    buf[i + 1] = g << 5 & 0xE0 | b >> 3
-#                i += 2
-
             self.data(list(buf))
 
     def contrast(self, level):
         """
-        Switches the display contrast to the desired level, in the range
-        0-255. Note that setting the level to a low (or zero) value will
-        not necessarily dim the display to nearly off. In other words,
-        this method is **NOT** suitable for fade-in/out animation.
+        NOT SUPPORTED
 
         :param level: Desired contrast level in the range of 0-255.
         :type level: int

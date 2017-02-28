@@ -1,0 +1,16 @@
+欢迎光临闪耀液晶Welcome to shine LCD
+
+1.8寸串口液晶屏接线方法（如不用SD卡，则接以下引脚） 1.8-inch serial LCD wiring methods (for example, not to the SD card, then the following pins)
+
+cs  接到P3^5; cs received P3 ^ 5;
+rs  接到P2^3; rs received P2 ^ 3;
+SDA 接到P2^2; SDA received P2 ^ 2;
+SCK 接到P2^1; SCK received P2 ^ 1;
+reset 接到P3^4; reset received P3 ^ 4;
+
+LED-接地LED-grounding
+LED+接3.3-3.7V LED + then 3.3-3.7V
+
+VCC接5V（如果板下的JP1短接，则接3.3V) VCC connects to 5V (If the board under JP1 shorted, which is connected to 3.3V)
+VSS接地VSS Ground
+

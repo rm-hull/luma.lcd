@@ -5,9 +5,6 @@ import os
 import sys
 from setuptools import setup
 
-needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if needs_pytest else []
-
 
 def read_file(fname):
     with open(os.path.join(os.path.dirname(__file__), fname)) as r:
@@ -18,6 +15,10 @@ README = read_file("README.rst")
 CONTRIB = read_file("CONTRIBUTING.rst")
 CHANGES = read_file("CHANGES.rst")
 version = read_file("VERSION.txt").strip()
+
+needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if needs_pytest else []
+test_deps = ["mock", "pytest", "pytest-cov"]
 
 setup(
     name="luma.lcd",
@@ -35,7 +36,17 @@ setup(
     zip_safe=False,
     install_requires=["luma.core"],
     setup_requires=pytest_runner,
-    tests_require=["mock", "pytest", "pytest-cov", "python-coveralls"],
+    tests_require=test_deps,
+    extras_require={
+        'docs': [
+            'sphinx >= 1.5.1'
+        ],
+        'qa': [
+            'rstcheck',
+            'flake8'
+        ],
+        'test': test_deps
+    },
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 4 - Beta",

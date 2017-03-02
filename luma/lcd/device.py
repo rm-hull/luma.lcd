@@ -46,7 +46,7 @@ class pcd8544(device):
     affect the brightness and other settings.
     """
     def __init__(self, serial_interface=None, width=84, height=48, rotate=0,
-                 backlight=18):
+                 backlight=18, **kwargs):
         super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
         self.capabilities(width, height, rotate)
 

@@ -36,6 +36,9 @@ import luma.core.framebuffer
 import luma.lcd.const
 
 
+__all__ = ["pcd8544"]
+
+
 class pcd8544(device):
     """
     Encapsulates the serial interface to the monochrome PCD8544 LCD display

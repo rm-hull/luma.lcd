@@ -88,7 +88,7 @@ properties reflect the rotated dimensions rather than the physical dimensions.
 Backlight Control
 ^^^^^^^^^^^^^^^^^
 These displays typically require a backlight to illuminate the liquid crystal
-display: the :py:class:`luma.lcd.device.backlight` class allows a BCM pin to
+display: the :py:class:`luma.lcd.aux.backlight` class allows a BCM pin to
 be specified to control the backlight through software.
 
 Examples

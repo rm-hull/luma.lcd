@@ -45,18 +45,21 @@ class pcd8544(device):
     hardware. On creation, an initialization sequence is pumped to the display
     to properly configure it. Further control commands can then be called to
     affect the brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class`luma.core.serial.spi` instance) to delegate sending data and
+        commands through.
+    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
     """
-    def __init__(self, serial_interface=None, width=84, height=48, rotate=0,
-                 backlight=18, **kwargs):
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
-        self.capabilities(width, height, rotate)
+        self.capabilities(84, 48, rotate)
 
-        if width != 84 or height != 48:
-            raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
-
-        self._mask = [1 << (i // width) % 8 for i in range(width * height)]
-        self._offsets = [(width * (i // (width * 8))) + (i % width) for i in range(width * height)]
+        self._mask = [1 << (i // self._w) % 8 for i in range(self._w * self._h)]
+        self._offsets = [(self._w * (i // (self._w * 8))) + (i % self._w) for i in range(self._w * self._h)]
 
         self.contrast(0xB0)
         self.clear()
@@ -102,34 +105,26 @@ class st7735(device):
     :param serial_interface: the serial interface (usually a
         :py:class`luma.core.serial.spi` instance) to delegate sending data and
         commands through.
-    :param width: the number of horizontal pixels (optional, defaults to 160)
-    :type width: int
-    :param height: the number of vertical pixels (optional, defaults to 128)
-    :type height: int
     :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
     :param framebuffer: Framebuffering strategy, currently values of
         "diff_to_previous" or "full_frame" are only supported
-    :param framebuffer: str
+    :type framebuffer: str
     :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
     :type bgr: bool
 
     .. versionadded:: 0.3.0
     """
-    def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
+    def __init__(self, serial_interface=None, rotate=0,
                  framebuffer="diff_to_previous", bgr=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
-        self.capabilities(width, height, rotate, mode="RGB")
+        self.capabilities(160, 128, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
 
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
-
-        if width != 160 or height != 128:
-            raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
 
         self.command(0x01)                      # reset
         self.command(0x11)                      # sleep out & booster on

@@ -8,8 +8,6 @@ try:
 except ImportError:
     from mock import Mock
 
-import pytest
-import luma.core.error
 from luma.lcd.device import st7735
 from luma.core.render import canvas
 import baseline_data
@@ -63,12 +61,6 @@ def test_init_160x128():
         {'command': [44]}, {'data': [0] * (160 * 128 * 3)},
         {'command': [41]}
     ]
-
-
-def test_init_invalid_dimensions():
-    with pytest.raises(luma.core.error.DeviceDisplayModeError) as ex:
-        st7735(serial, width=159, height=312)
-    assert "Unsupported display mode: 159 x 312" in str(ex.value)
 
 
 def test_hide():

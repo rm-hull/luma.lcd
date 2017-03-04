@@ -5,6 +5,7 @@ ChangeLog
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
 | *Upcoming* | * Add ST7735 Color TFT LCD display driver                           |            |
+|            | * Removed width and height parameters from device constructors      |            |
 |            | * **BREAKING CHANGES:** Move backlight class to different package   |            |
 +------------+---------------------------------------------------------------------+------------+
 | **0.2.3**  | * Allow PCD8544 driver constructor to accept any args               | 2017/03/02 |

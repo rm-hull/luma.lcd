@@ -60,8 +60,6 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
 
 PCD8544
 """""""
-.. image:: images/wiring-diagram.png
-   
 ========== ====== ============ ======== ==============
 LCD Pin    Name   Remarks      RPi Pin  RPi Function
 ========== ====== ============ ======== ==============
@@ -77,24 +75,24 @@ LCD Pin    Name   Remarks      RPi Pin  RPi Function
 
 ST7735
 """"""
-========== ======= ================== ======== ==============
-LCD Pin    Name    Remarks            RPi Pin  RPi Function
-========== ======= ================== ======== ==============
-1          GND     Ground             P01-06   GND
-2          VCC     +3.3V Power        P01-01   3V3
-3          NC      Not connected      -        -
-4          NC      Not connected      -        -
-5          NC      Not connected      -        -
-6          RESET   Reset              P01-18  GPIO 24
-7          A0      Data/command       P01-16  GPIO 23
-8          SDA     SPI data           P01-19  GPIO 10 (MOSI)
-9          SCK     SPI clock          P01-23  GPIO 11 (SCLK)
-10         CS      SPI chip select    P01-24  GPIO 8 (CE0)
-11         SD-SCK  SD serial clock    -       -
-12         SD-MISO SD data in         -       -
-13         SD-MOSI SD data out        -       -
-14         SD-CS   SD chip select     -       -
-15         LED+    Backlight control  P01-12  GPIO 18 (PCM_CLK)
-16         LED-    Backlight ground   P01-06  GND
-========== ======= ================== ======== ==============
+========== ======= ================= ======== ==============
+LCD Pin    Name    Remarks           RPi Pin  RPi Function
+========== ======= ================= ======== ==============
+1          GND     Ground            P01-06   GND
+2          VCC     +3.3V Power       P01-01   3V3
+3          NC      Not connected     -        -
+4          NC      Not connected     -        -
+5          NC      Not connected     -        -
+6          RESET   Reset             P01-18   GPIO 24
+7          A0      Data/command      P01-16   GPIO 23
+8          SDA     SPI data          P01-19   GPIO 10 (MOSI)
+9          SCK     SPI clock         P01-23   GPIO 11 (SCLK)
+10         CS      SPI chip select   P01-24   GPIO 8 (CE0)
+11         SD-SCK  SD serial clock   -        -
+12         SD-MISO SD data in        -        -
+13         SD-MOSI SD data out       -        -
+14         SD-CS   SD chip select    -        -
+15         LED+    Backlight control P01-12   GPIO 18 (PCM_CLK)
+16         LED-    Backlight ground  P01-06   GND
+========== ======= ================= ======== ==============
 

@@ -1,7 +1,8 @@
 Python usage
 ------------
 PCD8544 displays can be driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class: usage is very simple if you have 
+:py:class:`luma.lcd.device.pcd8544` class. Likewise, ST7735 displays are driven with the 
+:py:class:`luma.lcd.device.st7735` class. Usage is very simple if you have
 ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
@@ -10,16 +11,19 @@ First, import and initialise the device:
 
   from luma.core.serial import spi
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544
+  from luma.lcd.device import pcd8544, st7735
 
   serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=24)
   device = pcd8544(serial)
 
-The display device should now be configured for use. 
-The class exposes a ``display()`` method
-which takes an image with attributes consistent with the capabilities of the
-device. However, for most cases, for drawing text and graphics primitives, the
-canvas class should be used as follows:
+The display device should now be configured for use.
+
+Both the :py:class:`~luma.lcd.device.pcd8544` and
+:py:class:`~luma.lcd.device.st7735` classes expose a
+:py:meth:`~luma.lcd.device.pcd8544.display` method which takes an image with
+attributes consistent with the capabilities of the device. However, for most
+cases, for drawing text and graphics primitives, the canvas class should be
+used as follows:
 
 .. code:: python
 
@@ -27,8 +31,8 @@ canvas class should be used as follows:
       draw.rectangle(device.bounding_box, outline="white", fill="black")
       draw.text((30, 40), "Hello World", fill="white")
 
-The :class:`luma.core.render.canvas` class automatically creates an
-:mod:`PIL.ImageDraw` object of the correct dimensions and bit depth suitable
+The :py:class:`luma.core.render.canvas` class automatically creates an
+:py:mod:`PIL.ImageDraw` object of the correct dimensions and bit depth suitable
 for the device, so you may then call the usual Pillow methods to draw onto the
 canvas.
 
@@ -38,23 +42,28 @@ garbage collected.
 
 Color Model
 ^^^^^^^^^^^
-Any of the standard :mod:`PIL.ImageColor` color formats may be used, but since
-the PCD8544 LCD is monochrome, only the HTML color names
-``"black"`` and ``"white"`` values should really be used; in fact, by default,
-any value *other* than black is treated as white. The :py:class:`luma.core.canvas` object
-does have a ``dither`` flag which if set to True, will convert color drawings
-to a dithered monochrome effect (see the *3d_box.py* example, below).
+Any of the standard :py:mod:`PIL.ImageColor` color formats may be used, but
+since the PCD8544 LCD is monochrome, only the HTML color names
+:py:const:`"black"` and :py:const:`"white"` values should really be used; in
+fact, by default, any value *other* than black is treated as white. The
+:py:class:`luma.core.render.canvas` object does have a :py:attr:`dither` flag
+which if set to True, will convert color drawings to a dithered monochrome
+effect (see the *3d_box.py* example, below).
 
 .. code:: python
 
   with canvas(device, dither=True) as draw:
       draw.rectangle((10, 10, 30, 30), outline="white", fill="red")
 
+Note that there is no such limitation for the ST7735 device which supports 262K
+colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit RGB.
+
 Landscape / Portrait Orientation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-By default the display will be oriented in landscape mode (84x48 pixels).
-Should you have an application that requires the display to be mounted in a
-portrait aspect, then add a ``rotate=N`` parameter when creating the device:
+By default the PCD8544 and ST7735 displays will both be oriented in landscape
+mode (84x48 and 160x128 pixels respectively). Should you have an application
+that requires the display to be mounted in a portrait aspect, then add a
+:py:attr:`rotate=N` parameter when creating the device:
 
 .. code:: python
 
@@ -73,8 +82,14 @@ portrait aspect, then add a ``rotate=N`` parameter when creating the device:
 *N* should be a value of 0, 1, 2 or 3 only, where 0 is no rotation, 1 is
 rotate 90° clockwise, 2 is 180° rotation and 3 represents 270° rotation.
 
-The ``device.size``, ``device.width`` and ``device.height`` properties reflect
-the rotated dimensions rather than the physical dimensions.
+The :py:attr:`device.size`, :py:attr:`device.width` and :py:attr:`device.height`
+properties reflect the rotated dimensions rather than the physical dimensions.
+
+Backlight Control
+^^^^^^^^^^^^^^^^^
+These displays typically require a backlight to illuminate the liquid crystal
+display: the :py:class:`luma.lcd.device.backlight` class allows a BCM pin to
+be specified to control the backlight through software.
 
 Examples
 ^^^^^^^^
@@ -110,18 +125,19 @@ See the README in that project for further information on how to run the demos.
 
 Emulators
 ^^^^^^^^^
-There are various display emulators available for running code against, for debugging
-and screen capture functionality:
+There are various display emulators available for running code against, for
+debugging and screen capture functionality:
 
-* The :py:class:`luma.core.emulator.capture` device will persist a numbered PNG file to
-  disk every time its ``display`` method is called.
+* The :py:class:`luma.emulator.device.capture` device will persist a numbered
+  PNG file to disk every time its :py:meth:`~luma.emulator.device.capture.display`
+  method is called.
 
-* The :py:class:`luma.core.emulator.gifanim` device will record every image when its ``display``
-  method is called, and on program exit (or Ctrl-C), will assemble the images into an
-  animated GIF.
+* The :py:class:`luma.emulator.device.gifanim` device will record every image
+  when its :py:metho:`~luma.emulator.device.gifanim.display` method is called,
+  and on program exit (or Ctrl-C), will assemble the images into an animated GIF.
 
-* The :py:class:`luma.core.emulator.pygame` device uses the :py:mod:`pygame` library to
-  render the displayed image to a pygame display surface. 
+* The :py:class:`luma.emulator.device.pygame` device uses the :py:mod:`pygame`
+  library to render the displayed image to a pygame display surface.
 
 Invoke the demos with::
 
@@ -134,4 +150,8 @@ or::
 .. note::
    *Pygame* is required to use any of the emulated devices, but it is **NOT**
    installed as a dependency by default, and so must be manually installed
-   before using any of these emulation devices.
+   before using any of these emulation devices (e.g. ``pip install pygame``).
+   See the install instructions in `luma.emulator  <http://github.com/rm-hull/luma.emulator>`_
+   for further details.
+
+

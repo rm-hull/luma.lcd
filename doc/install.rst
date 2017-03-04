@@ -20,20 +20,22 @@ Installation
 
 From PyPI
 ^^^^^^^^^
-.. note:: This is the preferred installation mechanism.
+Install the dependencies for library first with::
 
-Install the latest version of the library directly from PyPI_::
+  $ sudo usermod -a -G spi,gpio pi
+  $ sudo apt-get install python-dev python-pip
+  $ sudo -i pip install --upgrade pip
+  $ sudo apt-get purge python-pip
 
-  $ sudo apt-get install python-dev python-pip libfreetype6-dev libjpeg8-dev
-  $ sudo -H pip install --upgrade pip
+.. warning:: The default pip bundled with apt on Raspbian is really old, and can 
+   cause components to not be installed properly. Please ensure that **pip 9.0.1** 
+   is installed prior to continuing::
+   
+      $ pip --version
+      pip 9.0.1 from /usr/local/lib/python2.7/dist-packages (python 2.7)
+
+Proceed to install latest version of the library directly from
+`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.led_matrix>`_::
+
   $ sudo -H pip install --upgrade luma.lcd
 
-From source
-^^^^^^^^^^^
-For Python 2, from the bash prompt, enter::
-
-  $ sudo apt-get install python-dev python-pip libfreetype6-dev libjpeg8-dev
-  $ sudo python setup.py install
-
-
-.. _PyPI: https://pypi.python.org/pypi?:action=display&name=luma.lcd

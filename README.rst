@@ -7,7 +7,7 @@ luma.lcd **|**
 
 Luma.LCD
 ========
-**PCD8544 Display Driver**
+**PCD8544, ST7735 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -27,9 +27,10 @@ Luma.LCD
 
 .. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
 
-Python library interfacing LCD displays with the PCD8544 driver using SPI on
-the Raspberry Pi and other linux-based single-board computers - it provides a
-Pillow-compatible drawing canvas, and other functionality to support:
+Python library interfacing LCD displays with the PCD8544 or ST7735 driver using
+SPI on the Raspberry Pi and other linux-based single-board computers - it
+provides a Pillow-compatible drawing canvas, and other functionality to
+support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -37,7 +38,7 @@ Pillow-compatible drawing canvas, and other functionality to support:
 * color/greyscale (where supported),
 * dithering to monochrome
 
-These cheap Nokia 5110 modules can be picked up on ebay with a breakout board
+Both types of modules can be picked up on ebay with a breakout board
 for a few pounds.
 
 .. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/images/pcd8544.png

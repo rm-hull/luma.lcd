@@ -36,7 +36,7 @@ import luma.core.framebuffer
 import luma.lcd.const
 
 
-__all__ = ["pcd8544"]
+__all__ = ["pcd8544", "st7735"]
 
 
 class pcd8544(device):

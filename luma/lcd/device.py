@@ -115,6 +115,8 @@ class st7735(device):
     :param framebuffer: str
     :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
     :type bgr: bool
+
+    .. versionadded:: 0.3.0
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", bgr=False, **kwargs):

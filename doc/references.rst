@@ -8,3 +8,13 @@ References
 - http://www.henningkarlsen.com/electronics/t_imageconverter_mono.php
 - https://vimeo.com/41393421
 - http://fritzing.org
+- http://www.sitronix.com.tw/sitronix/product.nsf/Doc/ST7735?OpenDocument
+- http://learn.adafruit.com/1-8-tft-display
+- http://www.raspberrypi.org/phpBB3/viewtopic.php?t=28696&p=262909
+- http://elinux.org/images/1/19/Passing_Time_With_SPI_Framebuffer_Driver.pdf
+- http://www.flickr.com/photos/ngreatorex/7672743302/
+- https://github.com/notro/fbtft
+- https://github.com/rm-hull/st7735fb
+- http://www.areinhardt.de/news/raspberry-pi-tft-display/
+- http://www.whence.com/rpi/
+- http://harizanov.com/product/1-8-tft-display-for-raspberry-pi/

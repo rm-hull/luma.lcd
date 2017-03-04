@@ -18,9 +18,8 @@ Luma.LCD: Display drivers for PCD8544, ST7735
    :maxdepth: 2
 
    intro
-   python-usage
-   hardware
    install
+   python-usage
    api-documentation
    references
 

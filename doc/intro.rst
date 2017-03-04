@@ -1,11 +1,9 @@
 Introduction
 ------------
-
-Interfacing small `LCD displays
-<https://github.com/rm-hull/luma.lcd/wiki/Usage-&-Benchmarking>`_ with the
-PCD8544 and ST7735 driver in Python using SPI on the Raspberry Pi and other
-linux-based single-board computers: the library provides a Pillow-compatible
-drawing canvas, and other functionality to support:
+Interfacing small LCD displays with the PCD8544 and ST7735 driver in Python
+using SPI on the Raspberry Pi and other linux-based single-board computers: the
+library provides a Pillow-compatible drawing canvas, and other functionality to
+support:
 
 * scrolling/panning capability,
 * terminal-style printing,

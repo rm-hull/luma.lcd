@@ -5,10 +5,10 @@
 
 class backlight(object):
     """
-    Controls a backlight (assumed to be on GPIO 18 (PWMCLK0)).
+    Controls a backlight, assumed to be on GPIO 18 (PWM_CLK0) by default.
 
-    :param gpio:
-    :param bcm_LIGHT:
+    :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
+    :param bcm_LIGHT: the GPIO pin to use for the backlight.
     :type bcm_LIGHT: int
     """
     def __init__(self, gpio=None, bcm_LIGHT=18):
@@ -20,8 +20,10 @@ class backlight(object):
 
     def enable(self, value):
         """
-        Switches on the backlight when ``True`` supplied, else ``False``
-        switches it off
+        Switches on the backlight on and off.
+
+        :param value: Switched on when ``True`` supplied, else ``False`` switches it off.
+        :type value: bool
         """
         assert(value in [True, False])
         self._gpio.output(self._bcm_LIGHT,

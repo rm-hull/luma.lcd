@@ -1,8 +1,8 @@
 Python usage
 ------------
-PCD8544 displays can be driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class. Likewise, ST7735 displays are driven with the 
-:py:class:`luma.lcd.device.st7735` class. Usage is very simple if you have
+The PCD8544 is driven with python using the implementation in the
+:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, use
+the :py:class:`luma.lcd.device.st7735` class. Usage is very simple if you have
 ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
@@ -16,7 +16,9 @@ First, import and initialise the device:
   serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=24)
   device = pcd8544(serial)
 
-The display device should now be configured for use.
+The display device should now be configured for use. Note, all the example code
+snippets in this section are interchangeable between PCD8544 and ST7735
+devices.
 
 Both the :py:class:`~luma.lcd.device.pcd8544` and
 :py:class:`~luma.lcd.device.st7735` classes expose a
@@ -29,7 +31,7 @@ used as follows:
 
   with canvas(device) as draw:
       draw.rectangle(device.bounding_box, outline="white", fill="black")
-      draw.text((30, 40), "Hello World", fill="white")
+      draw.text((30, 40), "Hello World", fill="red")
 
 The :py:class:`luma.core.render.canvas` class automatically creates an
 :py:mod:`PIL.ImageDraw` object of the correct dimensions and bit depth suitable
@@ -77,7 +79,7 @@ that requires the display to be mounted in a portrait aspect, then add a
   # Box and text rendered in portrait mode
   with canvas(device) as draw:
       draw.rectangle(device.bounding_box, outline="white", fill="black")
-      draw.text((10, 40), "Hello World", fill="white")
+      draw.text((10, 40), "Hello World", fill="red")
 
 *N* should be a value of 0, 1, 2 or 3 only, where 0 is no rotation, 1 is
 rotate 90° clockwise, 2 is 180° rotation and 3 represents 270° rotation.
@@ -133,7 +135,7 @@ debugging and screen capture functionality:
   method is called.
 
 * The :py:class:`luma.emulator.device.gifanim` device will record every image
-  when its :py:metho:`~luma.emulator.device.gifanim.display` method is called,
+  when its :py:meth:`~luma.emulator.device.gifanim.display` method is called,
   and on program exit (or Ctrl-C), will assemble the images into an animated GIF.
 
 * The :py:class:`luma.emulator.device.pygame` device uses the :py:mod:`pygame`

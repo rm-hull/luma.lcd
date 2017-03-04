@@ -155,7 +155,9 @@ class st7735(device):
 
     def display(self, image):
         """
-        Renders a 24-bit RGB image to the ST7735 LCD display
+        Renders a 24-bit RGB image to the ST7735 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
 
         :param image: the image to render
         :type image: PIL.Image.Image

@@ -8,8 +8,6 @@ try:
 except ImportError:
     from mock import call, Mock
 
-import pytest
-import luma.core.error
 from luma.lcd.device import pcd8544
 from luma.core.render import canvas
 import baseline_data
@@ -33,12 +31,6 @@ def test_init_84x48():
     # Next 1024 are all data: zero's to clear the RAM
     # (1024 = 128 * 64 / 8)
     serial.data.assert_called_once_with([0] * (84 * 48 // 8))
-
-
-def test_init_invalid_dimensions():
-    with pytest.raises(luma.core.error.DeviceDisplayModeError) as ex:
-        pcd8544(serial, width=59, height=22)
-    assert "Unsupported display mode: 59 x 22" in str(ex.value)
 
 
 def test_hide():

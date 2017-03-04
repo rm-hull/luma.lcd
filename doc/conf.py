@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = '1.5.1'
+needs_sphinx = '1.5.3'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -64,7 +64,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Luma.LCD: Display drivers for PCD8544'
+project = 'Luma.LCD: Display drivers for PCD8544, ST7735'
 copyright = u'2013-{0}, Richard Hull'.format(datetime.now().year)
 author = 'Richard Hull'
 
@@ -356,5 +356,6 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/2', None),
     'pillow': ('https://pillow.readthedocs.io/en/latest', None),
-    'luma.core': ('https://luma-core.readthedocs.io/en/latest', None)
+    'luma.core': ('https://luma-core.readthedocs.io/en/latest', None),
+    'luma.emulator': ('https://luma-emulator.readthedocs.io/en/latest', None)
 }

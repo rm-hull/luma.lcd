@@ -32,10 +32,11 @@
 
 from luma.core.device import device
 import luma.core.error
+import luma.core.framebuffer
 import luma.lcd.const
 
 
-__all__ = ["pcd8544"]
+__all__ = ["pcd8544", "st7735"]
 
 
 class pcd8544(device):
@@ -44,18 +45,21 @@ class pcd8544(device):
     hardware. On creation, an initialization sequence is pumped to the display
     to properly configure it. Further control commands can then be called to
     affect the brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class`luma.core.serial.spi` instance) to delegate sending data and
+        commands through.
+    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
     """
-    def __init__(self, serial_interface=None, width=84, height=48, rotate=0,
-                 backlight=18, **kwargs):
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
-        self.capabilities(width, height, rotate)
+        self.capabilities(84, 48, rotate)
 
-        if width != 84 or height != 48:
-            raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
-
-        self._mask = [1 << (i // width) % 8 for i in range(width * height)]
-        self._offsets = [(width * (i // (width * 8))) + (i % width) for i in range(width * height)]
+        self._mask = [1 << (i // self._w) % 8 for i in range(self._w * self._h)]
+        self._offsets = [(self._w * (i // (self._w * 8))) + (i % self._w) for i in range(self._w * self._h)]
 
         self.contrast(0xB0)
         self.clear()
@@ -91,29 +95,115 @@ class pcd8544(device):
         self.command(0x21, 0x14, value | 0x80, 0x20)
 
 
-class backlight(object):
+class st7735(device):
     """
-    Controls a backlight (assumed to be on GPIO 18 (PWMCLK0))
+    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
+    LCD display hardware. On creation, an initialization sequence is pumped to
+    the display to properly configure it. Further control commands can then be
+    called to affect the brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class`luma.core.serial.spi` instance) to delegate sending data and
+        commands through.
+    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently values of
+        "diff_to_previous" or "full_frame" are only supported
+    :type framebuffer: str
+    :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
+    :type bgr: bool
+
+    .. versionadded:: 0.3.0
     """
-    def __init__(self, gpio=None, bcm_LIGHT=18):
-        self._bcm_LIGHT = bcm_LIGHT
-        self._gpio = gpio or self.__rpi_gpio__()
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setup(self._bcm_LIGHT, self._gpio.OUT)
-        self.enable(True)
+    def __init__(self, serial_interface=None, rotate=0,
+                 framebuffer="diff_to_previous", bgr=False, **kwargs):
+        super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
+        self.capabilities(160, 128, rotate, mode="RGB")
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
 
-    def enable(self, value):
-        """
-        Switches on the backlight when ``True`` supplied, else ``False``
-        switches it off
-        """
-        assert(value in [True, False])
-        self._gpio.output(self._bcm_LIGHT,
-                          self._gpio.LOW if value else self._gpio.HIGH)
+        # RGB or BGR order
+        order = 0x08 if bgr else 0x00
 
-    def __rpi_gpio__(self):
-        # RPi.GPIO _really_ doesn't like being run on anything other than
-        # a Raspberry Pi... this is imported here so we can swap out the
-        # implementation for a mock
-        import RPi.GPIO
-        return RPi.GPIO
+        self.command(0x01)                      # reset
+        self.command(0x11)                      # sleep out & booster on
+        self.command(0xB1, 0x01, 0x2C, 0x2D)    # frame rate control: normal mode
+        self.command(0xB2, 0x01, 0x2C, 0x2D)    # frame rate control: idle mode
+        self.command(0xB3, 0x01, 0x2C, 0x2D,    # frame rate control: partial mode dot inversion mode
+                     0x01, 0x2C, 0x2D)          # frame rate control: line inversion mode
+        self.command(0xB4, 0x07)                # display inversion: none
+        self.command(0xC0, 0xA2, 0x02, 0x84)    # power control 1: -4.6V auto mode
+        self.command(0xC1, 0xC5)                # power control 2: VGH
+        self.command(0xC2, 0x0A, 0x00)          # power control 3: OpAmp current small, boost freq
+        self.command(0xC3, 0x8A, 0x2A)          # power control 4: BCLK/2, Opamp current small & Medium low
+        self.command(0xC4, 0x8A, 0xEE)          # power control 5: partial mode/full-color
+        self.command(0xC5, 0x0E)                # VCOM Control 1
+        self.command(0x36, 0x60 | order)        # memory data access control
+        self.command(0x20)                      # display inversion off
+        self.command(0x3A, 0x06)                # interface pixel format
+        self.command(0x13)                      # partial off (normal)
+        self.command(0xE0,                      # gamma adjustment (+ polarity)
+                     0x0F, 0x1A, 0x0F, 0x18, 0x2F, 0x28, 0x20, 0x22,
+                     0x1F, 0x1B, 0x23, 0x37, 0x00, 0x07, 0x02, 0x10)
+        self.command(0xE1,                      # gamma adjustment (- polarity)
+                     0x0F, 0x1B, 0x0F, 0x17, 0x33, 0x2C, 0x29, 0x2E,
+                     0x30, 0x30, 0x39, 0x3F, 0x00, 0x07, 0x03, 0x10)
+
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ST7735 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: the image to render
+        :type image: PIL.Image.Image
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        if self.framebuffer.redraw_required(image):
+            left, top, right, bottom = self.framebuffer.bounding_box
+            width = right - left
+            height = bottom - top
+
+            self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
+            self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
+            self.command(0x2C)                                                                   # Memory write
+
+            i = 0
+            buf = bytearray(width * height * 3)
+            for r, g, b in self.framebuffer.getdata():
+                if not(r == g == b == 0):
+                    # 262K format
+                    buf[i] = r
+                    buf[i + 1] = g
+                    buf[i + 2] = b
+                i += 3
+
+            self.data(list(buf))
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+        pass
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))

@@ -25,10 +25,10 @@ setup(
     version=version,
     author="Richard Hull",
     author_email="richard.hull@destructuring-bind.org",
-    description=("A small library to drive the PCD8544 LCD"),
+    description=("A small library to drive PCD8544 and ST7735 LCDs"),
     long_description="\n\n".join([README, CONTRIB, CHANGES]),
     license="MIT",
-    keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 spi 84x48",
+    keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 st7735 spi 84x48 160x128",
     url="https://github.com/rm-hull/luma.lcd",
     download_url="https://github.com/rm-hull/luma.lcd/tarball/" + version,
     namespace_packages=["luma"],
@@ -39,7 +39,7 @@ setup(
     tests_require=test_deps,
     extras_require={
         'docs': [
-            'sphinx >= 1.5.1'
+            'sphinx >= 1.5.3'
         ],
         'qa': [
             'rstcheck',

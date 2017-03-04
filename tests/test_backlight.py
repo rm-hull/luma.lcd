@@ -8,7 +8,7 @@ try:
 except ImportError:
     from mock import Mock
 
-from luma.lcd.device import backlight
+from luma.lcd.aux import backlight
 
 gpio = Mock(unsafe=True)
 

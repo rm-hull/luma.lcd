@@ -1,11 +1,9 @@
 Introduction
 ------------
-
-Interfacing small `LCD displays
-<https://github.com/rm-hull/luma.lcd/wiki/Usage-&-Benchmarking>`_ with the
-PCD8544 driver in Python 2 or 3 using I2C/SPI on the Raspberry Pi and other
-linux-based single-board computers: the library provides a Pillow-compatible
-drawing canvas, and other functionality to support:
+Interfacing small LCD displays with the PCD8544 and ST7735 driver in Python
+using SPI on the Raspberry Pi and other linux-based single-board computers: the
+library provides a Pillow-compatible drawing canvas, and other functionality to
+support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -23,11 +21,17 @@ backlight:
 They are now commonly recycled, and sold on ebay with a breakout board and SPI
 interface.
 
+The ST7735 display supports a resoltion of 160 x 128 RGB pixels (18-bit / 262K
+colors) with a switchable backlight:
+
+.. image:: images/st7735.jpg
+
 .. seealso::
    Further technical information for the specific device can be found in the
    datasheet below: 
    
    - :download:`PCD8544 <tech-spec/PCD8544.pdf>`
+   - :download:`ST7735 <tech-spec/ST7735.pdf>`
 
 As well as display drivers for the physical device, there are emulators that
 run in real-time (with pygame) and others that can take screenshots, or

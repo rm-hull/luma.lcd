@@ -1,5 +1,5 @@
-Luma.LCD: Display drivers for PCD8544
-=====================================
+Luma.LCD: Display drivers for PCD8544, ST7735
+=============================================
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
 
@@ -18,9 +18,8 @@ Luma.LCD: Display drivers for PCD8544
    :maxdepth: 2
 
    intro
-   python-usage
-   hardware
    install
+   python-usage
    api-documentation
    references
 

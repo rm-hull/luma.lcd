@@ -41,7 +41,9 @@ support:
 Both types of modules can be picked up on ebay with a breakout board
 for a few pounds.
 
-.. image:: https://raw.github.com/rm-hull/pcd8544/master/doc/images/pcd8544.png
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/pcd8544.png
+
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/st7735.png
 
 Documentation
 -------------

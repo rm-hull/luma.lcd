@@ -43,7 +43,7 @@ for a few pounds.
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/pcd8544.png
 
-.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/st7735.png
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/st7735.jpg
 
 Documentation
 -------------

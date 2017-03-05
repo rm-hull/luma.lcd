@@ -4,7 +4,7 @@ ChangeLog
 +------------+---------------------------------------------------------------------+------------+
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
-| *Upcoming* | * Add ST7735 Color TFT LCD display driver                           |            |
+| **0.3.0**  | * Add ST7735 Color TFT LCD display driver                           | 2017/03/05 |
 |            | * Removed width and height parameters from device constructors      |            |
 |            | * **BREAKING CHANGES:** Move backlight class to different package   |            |
 +------------+---------------------------------------------------------------------+------------+

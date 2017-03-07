@@ -8,7 +8,11 @@ try:
 except ImportError:
     from mock import Mock
 
+import pytest
+
+import luma.core.error
 from luma.lcd.aux import backlight
+
 
 gpio = Mock(unsafe=True)
 
@@ -19,6 +23,12 @@ def setup_function(function):
     gpio.OUT = 2
     gpio.HIGH = 3
     gpio.LOW = 4
+
+
+def test_unsupported_platform():
+    with pytest.raises(luma.core.error.UnsupportedPlatform) as ex:
+        backlight(bcm_LIGHT=19)
+    assert str(ex.value) == 'GPIO access not available'
 
 
 def test_init():

@@ -3,12 +3,13 @@
 # See LICENSE.rst for details.
 
 
-import luma.core.error
+from luma.core import lib
 
 
 __all__ = ["backlight"]
 
 
+@lib.rpi_gpio
 class backlight(object):
     """
     Controls a backlight, assumed to be on GPIO 18 (PWM_CLK0) by default.
@@ -35,15 +36,3 @@ class backlight(object):
         assert(value in [True, False])
         self._gpio.output(self._bcm_LIGHT,
                           self._gpio.LOW if value else self._gpio.HIGH)
-
-    def __rpi_gpio__(self):
-        # RPi.GPIO _really_ doesn't like being run on anything other than
-        # a Raspberry Pi... this is imported here so we can swap out the
-        # implementation for a mock
-        try:
-            import RPi.GPIO
-            return RPi.GPIO
-        except RuntimeError as e:
-            if str(e) == 'This module can only be run on a Raspberry Pi!':
-                raise luma.core.error.UnsupportedPlatform(
-                    'GPIO access not available')

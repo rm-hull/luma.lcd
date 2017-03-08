@@ -34,7 +34,7 @@ setup(
     namespace_packages=["luma"],
     packages=["luma.lcd"],
     zip_safe=False,
-    install_requires=["luma.core"],
+    install_requires=["luma.core>=0.5.2"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

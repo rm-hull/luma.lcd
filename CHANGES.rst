@@ -4,6 +4,8 @@ ChangeLog
 +------------+---------------------------------------------------------------------+------------+
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
+| **0.3.1**  | * Raise ``error.UnsupportedPlatform`` if RPi.GPIO is not available  | 2017/03/08 |
++------------+---------------------------------------------------------------------+------------+
 | **0.3.0**  | * Add ST7735 Color TFT LCD display driver                           | 2017/03/05 |
 |            | * Removed width and height parameters from device constructors      |            |
 |            | * **BREAKING CHANGES:** Move backlight class to different package   |            |

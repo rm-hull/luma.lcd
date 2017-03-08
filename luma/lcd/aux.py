@@ -3,7 +3,7 @@
 # See LICENSE.rst for details.
 
 
-from luma.core import lib
+from luma.core import lib, error
 
 
 __all__ = ["backlight"]
@@ -22,8 +22,14 @@ class backlight(object):
     def __init__(self, gpio=None, bcm_LIGHT=18):
         self._bcm_LIGHT = bcm_LIGHT
         self._gpio = gpio or self.__rpi_gpio__()
-        self._gpio.setmode(self._gpio.BCM)
-        self._gpio.setup(self._bcm_LIGHT, self._gpio.OUT)
+
+        try:
+            self._gpio.setmode(self._gpio.BCM)
+            self._gpio.setup(self._bcm_LIGHT, self._gpio.OUT)
+        except RuntimeError as e:
+            if str(e) == 'Module not imported correctly!':
+                raise error.UnsupportedPlatform('GPIO access not available')
+
         self.enable(True)
 
     def enable(self, value):

@@ -25,7 +25,10 @@ def setup_function(function):
 
 def test_unsupported_platform():
     try:
-        backlight(bcm_LIGHT=19)
+        e = RuntimeError('Module not imported correctly!')
+        errorgpio = Mock(unsafe=True)
+        errorgpio.setmode.side_effect = e
+        backlight(bcm_LIGHT=19, gpio=errorgpio)
     except luma.core.error.UnsupportedPlatform as ex:
         assert str(ex) == 'GPIO access not available'
 

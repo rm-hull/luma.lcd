@@ -62,5 +62,4 @@ def test_params_deprecated():
 
     with pytest.deprecated_call() as c:
         backlight(gpio=gpio, bcm_LIGHT=11)
-        print(c, dir(c), c.list)
         assert str(c.list[0].message) == msg

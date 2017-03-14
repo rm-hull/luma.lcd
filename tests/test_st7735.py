@@ -3,6 +3,8 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+import pytest
+
 from luma.lcd.device import st7735
 from luma.core.render import canvas
 
@@ -51,6 +53,13 @@ def test_init_160x128():
         {'command': [44]}, {'data': [0] * (160 * 128 * 3)},
         {'command': [41]}
     ]
+
+
+def test_contrast():
+    device = st7735(serial)
+    serial.reset_mock()
+    with pytest.raises(AssertionError):
+        device.contrast(300)
 
 
 def test_hide():

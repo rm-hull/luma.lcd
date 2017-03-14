@@ -3,13 +3,12 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
+import pytest
 
 import luma.core.error
 from luma.lcd.aux import backlight
+
+from helpers import Mock
 
 
 gpio = Mock(unsafe=True)
@@ -24,10 +23,11 @@ def setup_function(function):
 
 
 def test_unsupported_platform():
+    e = RuntimeError('Module not imported correctly!')
+    errorgpio = Mock(unsafe=True)
+    errorgpio.setmode.side_effect = e
+
     try:
-        e = RuntimeError('Module not imported correctly!')
-        errorgpio = Mock(unsafe=True)
-        errorgpio.setmode.side_effect = e
         backlight(bcm_LIGHT=19, gpio=errorgpio)
     except luma.core.error.UnsupportedPlatform as ex:
         assert str(ex) == 'GPIO access not available'
@@ -52,3 +52,11 @@ def test_enable_off():
     gpio.reset_mock()
     light.enable(False)
     gpio.output.assert_called_once_with(19, gpio.HIGH)
+
+
+def test_params_deprecated():
+    msg = 'bcm_LIGHT argument is deprecated in favor of gpio_LIGHT and will be removed in 1.0.0'
+
+    with pytest.deprecated_call() as c:
+        backlight(gpio=gpio, bcm_LIGHT=11)
+        assert str(c.list[0].message) == msg

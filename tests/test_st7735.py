@@ -7,7 +7,7 @@ from luma.lcd.device import st7735
 from luma.core.render import canvas
 
 import baseline_data
-from helpers import serial
+from helpers import serial, setup_function  # noqa: F401
 
 
 def test_init_160x128():

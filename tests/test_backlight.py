@@ -28,30 +28,33 @@ def test_unsupported_platform():
     errorgpio.setmode.side_effect = e
 
     try:
-        backlight(bcm_LIGHT=19, gpio=errorgpio)
+        backlight(gpio_LIGHT=19, gpio=errorgpio)
     except luma.core.error.UnsupportedPlatform as ex:
         assert str(ex) == 'GPIO access not available'
 
 
 def test_init():
-    backlight(gpio=gpio, bcm_LIGHT=11)
+    gpio_LIGHT = 11
+    backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.setmode.assert_called_once_with(gpio.BCM)
-    gpio.setup.assert_called_once_with(11, gpio.OUT)
-    gpio.output.assert_called_once_with(11, gpio.LOW)
+    gpio.setup.assert_called_once_with(gpio_LIGHT, gpio.OUT)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
 def test_enable_on():
-    light = backlight(gpio=gpio, bcm_LIGHT=14)
+    gpio_LIGHT = 14
+    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
     light.enable(True)
-    gpio.output.assert_called_once_with(14, gpio.LOW)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
 def test_enable_off():
-    light = backlight(gpio=gpio, bcm_LIGHT=19)
+    gpio_LIGHT = 19
+    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
     light.enable(False)
-    gpio.output.assert_called_once_with(19, gpio.HIGH)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
 
 
 def test_params_deprecated():
@@ -59,4 +62,5 @@ def test_params_deprecated():
 
     with pytest.deprecated_call() as c:
         backlight(gpio=gpio, bcm_LIGHT=11)
+        print(c, dir(c), c.list)
         assert str(c.list[0].message) == msg

@@ -3,21 +3,11 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-try:
-    from unittest.mock import call, Mock
-except ImportError:
-    from mock import call, Mock
-
 from luma.lcd.device import pcd8544
 from luma.core.render import canvas
+
 import baseline_data
-
-serial = Mock(unsafe=True)
-
-
-def setup_function(function):
-    serial.reset_mock()
-    serial.command.side_effect = None
+from helpers import call, serial, setup_function  # noqa: F401
 
 
 def test_init_84x48():

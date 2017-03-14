@@ -196,7 +196,6 @@ class st7735(device):
         :type level: int
         """
         assert(0 <= level <= 255)
-        pass
 
     def command(self, cmd, *args):
         """

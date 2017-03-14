@@ -3,21 +3,13 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
+import pytest
 
 from luma.lcd.device import st7735
 from luma.core.render import canvas
+
 import baseline_data
-
-serial = Mock(unsafe=True)
-
-
-def setup_function(function):
-    serial.reset_mock()
-    serial.command.side_effect = None
+from helpers import serial, setup_function  # noqa: F401
 
 
 def test_init_160x128():
@@ -61,6 +53,13 @@ def test_init_160x128():
         {'command': [44]}, {'data': [0] * (160 * 128 * 3)},
         {'command': [41]}
     ]
+
+
+def test_contrast():
+    device = st7735(serial)
+    serial.reset_mock()
+    with pytest.raises(AssertionError):
+        device.contrast(300)
 
 
 def test_hide():

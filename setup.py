@@ -18,7 +18,7 @@ version = read_file("VERSION.txt").strip()
 
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
-test_deps = ["mock", "pytest", "pytest-cov"]
+test_deps = ["mock", "pytest", "pytest-cov", "pytest-warnings"]
 
 setup(
     name="luma.lcd",
@@ -34,7 +34,7 @@ setup(
     namespace_packages=["luma"],
     packages=["luma.lcd"],
     zip_safe=False,
-    install_requires=["luma.core>=0.5.4"],
+    install_requires=["luma.core>=0.6.1"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

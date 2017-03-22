@@ -13,7 +13,7 @@ First, import and initialise the device:
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544, st7735
 
-  serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=24)
+  serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
 
 The display device should now be configured for use. Note, all the example code
@@ -73,7 +73,7 @@ that requires the display to be mounted in a portrait aspect, then add a
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
   
-  serial = spi(port=0, device=0, bcm_DC=23, bcm_RST=23)
+  serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial, rotate=1)
 
   # Box and text rendered in portrait mode

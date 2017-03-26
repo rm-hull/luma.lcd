@@ -116,9 +116,8 @@ Install the dependencies for library first with::
 
   $ sudo usermod -a -G spi,gpio pi
   $ sudo apt-get install python-dev python-pip
-  $ sudo apt-get purge python-pip
   $ sudo -i pip install --upgrade pip
-  
+  $ sudo apt-get purge python-pip
 
 .. warning:: The default pip bundled with apt on Raspbian is really old, and can 
    cause components to not be installed properly. Please ensure that **pip 9.0.1** 

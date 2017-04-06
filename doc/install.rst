@@ -38,8 +38,8 @@ or::
 
 Then add your user to the *spi* and *gpio* groups::
 
-  $ sudo usermod -a G spi pi
-  $ sudo usermod -a G gpio pi
+  $ sudo usermod -a -G spi pi
+  $ sudo usermod -a -G gpio pi
 
 Log out and back in again to ensure that the group permissions are applied
 successfully.
@@ -64,8 +64,8 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
 .. note::
 
   * If you're already using the listed GPIO pins for Data/Command and/or Reset,
-    you can select other pins and pass :py:attr:`bcm_DC` and/or :py:attr:`bcm_RST`
-    argument specifying the new *BCM* pin numbers in your serial interface create
+    you can select other pins and pass :py:attr:`gpio_DC` and/or :py:attr:`gpio_RST`
+    argument specifying the new *GPIO* pin numbers in your serial interface create
     call (this applies to both PCD8544 and ST7735).
 
   * Because CE is connected to CE0, the display is available on SPI port 0. You

@@ -117,11 +117,15 @@ class st7735(device):
 
     .. versionadded:: 0.3.0
     """
-    def __init__(self, serial_interface=None, rotate=0,
+    def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", bgr=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
-        self.capabilities(160, 128, rotate, mode="RGB")
+        self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if width not in [128, 160] or height != 128:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
 
         # RGB or BGR order
         order = 0x08 if bgr else 0x00

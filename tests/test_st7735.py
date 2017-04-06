@@ -9,7 +9,7 @@ from luma.lcd.device import st7735
 from luma.core.render import canvas
 
 import baseline_data
-from helpers import serial, setup_function  # noqa: F401
+from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
 
 
 def test_init_160x128():
@@ -53,6 +53,57 @@ def test_init_160x128():
         {'command': [44]}, {'data': [0] * (160 * 128 * 3)},
         {'command': [41]}
     ]
+
+
+def test_init_128x128():
+    recordings = []
+
+    def data(data):
+        recordings.append({'data': data})
+
+    def command(*cmd):
+        recordings.append({'command': list(cmd)})
+
+    serial.command.side_effect = command
+    serial.data.side_effect = data
+
+    st7735(serial, width=128, height=128)
+
+    assert serial.data.called
+    assert serial.command.called
+
+    assert recordings == [
+        {'command': [1]},
+        {'command': [17]},
+        {'command': [177]}, {'data': [1, 44, 45]},
+        {'command': [178]}, {'data': [1, 44, 45]},
+        {'command': [179]}, {'data': [1, 44, 45, 1, 44, 45]},
+        {'command': [180]}, {'data': [7]},
+        {'command': [192]}, {'data': [162, 2, 132]},
+        {'command': [193]}, {'data': [197]},
+        {'command': [194]}, {'data': [10, 0]},
+        {'command': [195]}, {'data': [138, 42]},
+        {'command': [196]}, {'data': [138, 238]},
+        {'command': [197]}, {'data': [14]},
+        {'command': [54]}, {'data': [96]},
+        {'command': [32]},
+        {'command': [58]}, {'data': [6]},
+        {'command': [19]},
+        {'command': [224]}, {'data': [15, 26, 15, 24, 47, 40, 32, 34, 31, 27, 35, 55, 0, 7, 2, 16]},
+        {'command': [225]}, {'data': [15, 27, 15, 23, 51, 44, 41, 46, 48, 48, 57, 63, 0, 7, 3, 16]},
+        {'command': [42]}, {'data': [0, 0, 0, 127]},
+        {'command': [43]}, {'data': [0, 0, 0, 127]},
+        {'command': [44]}, {'data': [0] * (128 * 128 * 3)},
+        {'command': [41]}
+    ]
+
+def test_init_invalid_dimensions():
+    """
+    ST7735 LCD with an invalid resolution raises a
+    :py:class:`luma.core.error.DeviceDisplayModeError`.
+    """
+    assert_invalid_dimensions(st7735, serial, 128, 77)
+
 
 
 def test_contrast():

@@ -97,13 +97,13 @@ def test_init_128x128():
         {'command': [41]}
     ]
 
+
 def test_init_invalid_dimensions():
     """
     ST7735 LCD with an invalid resolution raises a
     :py:class:`luma.core.error.DeviceDisplayModeError`.
     """
     assert_invalid_dimensions(st7735, serial, 128, 77)
-
 
 
 def test_contrast():

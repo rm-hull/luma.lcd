@@ -30,7 +30,12 @@ class backlight(object):
 
         self._gpio_LIGHT = gpio_LIGHT
         self._gpio = gpio or self.__rpi_gpio__()
-        self._enabled = not active_low
+        if active_low:
+            self._enabled = self._gpio.LOW
+            self._disabled = self._gpio.HIGH
+        else:
+            self._enabled = self._gpio.HIGH
+            self._disabled = self._gpio.LOW
 
         try:
             self._gpio.setmode(self._gpio.BCM)
@@ -50,4 +55,4 @@ class backlight(object):
         """
         assert(value in [True, False])
         self._gpio.output(self._gpio_LIGHT,
-                          self._enabled if value else not self._enabled)
+                          self._enabled if value else self._disabled)

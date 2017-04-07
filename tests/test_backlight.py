@@ -41,7 +41,7 @@ def test_init():
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
-def test_enable_on():
+def test_active_low_enable_on():
     gpio_LIGHT = 14
     light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
@@ -49,12 +49,28 @@ def test_enable_on():
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
-def test_enable_off():
+def test_active_low_enable_off():
     gpio_LIGHT = 19
     light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
     light.enable(False)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+
+
+def test_active_high_enable_on():
+    gpio_LIGHT = 14
+    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
+    gpio.reset_mock()
+    light.enable(True)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+
+
+def test_active_high_enable_off():
+    gpio_LIGHT = 19
+    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
+    gpio.reset_mock()
+    light.enable(False)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
 def test_params_deprecated():

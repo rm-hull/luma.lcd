@@ -114,14 +114,33 @@ class st7735(device):
     :type framebuffer: str
     :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
     :type bgr: bool
+    :param h_offset: horizontal offset (in pixels) of screen to device memory
+        (default: 0)
+    :type h_offset: int
+    :param v_offset: vertical offset (in pixels) of screen to device memory
+        (default: 0)
+    :type h_offset: int
 
     .. versionadded:: 0.3.0
     """
-    def __init__(self, serial_interface=None, rotate=0,
-                 framebuffer="diff_to_previous", bgr=False, **kwargs):
+    def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
+                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 bgr=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
-        self.capabilities(160, 128, rotate, mode="RGB")
+        self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        if width not in [128, 160] or height != 128:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
 
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
@@ -168,7 +187,7 @@ class st7735(device):
         image = self.preprocess(image)
 
         if self.framebuffer.redraw_required(image):
-            left, top, right, bottom = self.framebuffer.bounding_box
+            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
             width = right - left
             height = bottom - top
 

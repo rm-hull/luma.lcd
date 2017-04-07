@@ -30,7 +30,6 @@
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
-from functools import partial
 from luma.core.device import device
 import luma.core.error
 import luma.core.framebuffer

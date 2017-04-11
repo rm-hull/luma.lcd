@@ -16,7 +16,7 @@ serial = Mock(unsafe=True)
 
 def setup_function(function):
     """
-    Called after a test finished.
+    Called before a test runs.
     """
     serial.reset_mock()
     serial.command.side_effect = None

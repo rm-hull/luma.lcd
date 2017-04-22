@@ -4,7 +4,7 @@
 
 # Example usage:
 #
-#   from luma.core.serial import spi
+#   from luma.core.interface.serial import spi
 #   from luma.core.render import canvas
 #   from luma.lcd.device import pcd8544
 #   from PIL import ImageDraw
@@ -32,7 +32,7 @@
 
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
-from luma.core.serial import noop
+from luma.core.interface.serial import noop
 import luma.core.error
 import luma.core.framebuffer
 import luma.lcd.const
@@ -50,7 +50,7 @@ class pcd8544(device):
     affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.serial.spi` instance) to delegate sending data and
+        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
         commands through.
     :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
@@ -106,7 +106,7 @@ class st7735(device):
     called to affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.serial.spi` instance) to delegate sending data and
+        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
         commands through.
     :param width: The number of pixels laid out horizontally
     :type width: int

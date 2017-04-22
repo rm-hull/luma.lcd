@@ -12,7 +12,7 @@ First, import and initialise the device:
 
 .. code:: python
 
-  from luma.core.serial import spi
+  from luma.core.interface.serial import spi
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544, st7735
 
@@ -72,7 +72,7 @@ that requires the display to be mounted in a portrait aspect, then add a
 
 .. code:: python
 
-  from luma.core.serial import spi
+  from luma.core.interface.serial import spi
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
   

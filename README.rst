@@ -8,7 +8,7 @@ luma.lcd **|**
 
 Luma.LCD
 ========
-**PCD8544, ST7735 Display Drivers**
+**PCD8544, ST7735, HT1621 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -28,10 +28,10 @@ Luma.LCD
 
 .. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
 
-Python library interfacing LCD displays with the PCD8544 or ST7735 driver using
-SPI on the Raspberry Pi and other linux-based single-board computers - it
-provides a Pillow-compatible drawing canvas, and other functionality to
-support:
+Python library interfacing LCD displays with the PCD8544, ST7735 and HT1621
+driver using SPI on the Raspberry Pi and other linux-based single-board
+computers - it provides a Pillow-compatible drawing canvas, and other
+functionality to support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -39,12 +39,14 @@ support:
 * color/greyscale (where supported),
 * dithering to monochrome
 
-Both types of modules can be picked up on ebay with a breakout board
-for a few pounds.
+All modules can be picked up on ebay with a breakout board for a few pounds.
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/pcd8544.png
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/st7735.jpg
+
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/ht1621.jpg
+
 
 Documentation
 -------------

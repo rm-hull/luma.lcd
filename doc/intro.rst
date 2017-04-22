@@ -1,6 +1,6 @@
 Introduction
 ------------
-Interfacing small LCD displays with the PCD8544 and ST7735 driver in Python
+Interfacing small LCD displays with the PCD8544, ST7735 and HT1621 driver in Python
 using SPI on the Raspberry Pi and other linux-based single-board computers: the
 library provides a Pillow-compatible drawing canvas, and other functionality to
 support:
@@ -26,12 +26,18 @@ colors) with a switchable backlight:
 
 .. image:: images/st7735.jpg
 
+The HT1621 display (as purchased) supports six 7-segment characters with a 
+switchable backlight:
+
+.. image:: images/ht1621.jpg
+
 .. seealso::
    Further technical information for the specific device can be found in the
    datasheet below: 
    
    - :download:`PCD8544 <tech-spec/PCD8544.pdf>`
    - :download:`ST7735 <tech-spec/ST7735.pdf>`
+   - :download:`HT1621 <tech-spec/HT1621.pdf>`
 
 As well as display drivers for the physical device, there are emulators that
 run in real-time (with pygame) and others that can take screenshots, or

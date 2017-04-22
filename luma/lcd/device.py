@@ -30,13 +30,16 @@
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+from luma.core.lib import rpi_gpio
 from luma.core.device import device
+from luma.core.serial import noop
 import luma.core.error
 import luma.core.framebuffer
 import luma.lcd.const
+from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735"]
+__all__ = ["pcd8544", "st7735", "ht1621"]
 
 
 class pcd8544(device):
@@ -105,6 +108,10 @@ class st7735(device):
     :param serial_interface: the serial interface (usually a
         :py:class`luma.core.serial.spi` instance) to delegate sending data and
         commands through.
+    :param width: The number of pixels laid out horizontally
+    :type width: int
+    :param height: The number of pixels laid out vertically
+    :type width: int
     :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
@@ -225,3 +232,107 @@ class st7735(device):
         self._serial_interface.command(cmd)
         if len(args) > 0:
             self._serial_interface.data(list(args))
+
+
+@rpi_gpio
+class ht1621(device):
+    """
+    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
+    LCD display hardware. On creation, an initialization sequence is pumped to
+    the display to properly configure it. Further control commands can then be
+    called to affect the brightness and other settings.
+
+    :param gpio: the GPIO library to use (usually RPi.GPIO)
+        to delegate sending data and commands through.
+    :param width: The number of 7 segment characters laid out horizontally
+    :type width: int
+    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param WR: The write (SPI clock) pin to connect to, default BCM 11.
+    :type WR: int
+    :param DAT: The data pin to connect to, default BCM 10.
+    :type DAT: int
+    :param CS: The chip select pin to connect to, default BCM 8.
+    :type CS: int
+
+    .. versionadded:: 0.4.0
+    """
+    def __init__(self, gpio=None, width=6, rotate=0, WR=11, DAT=10, CS=8, **kwargs):
+        super(ht1621, self).__init__(luma.lcd.const.ht1621, noop())
+        self.capabilities(width, 8, rotate)
+        self.segment_mapper = dot_muncher
+        self._gpio = gpio or self.__rpi_gpio__()
+
+        self._WR = self._configure(WR)
+        self._DAT = self._configure(DAT)
+        self._CS = self._configure(CS)
+
+        self.command(0x30)   # Internal RC oscillator @ 256KHz
+        self.command(0x52)   # 1/2 Bias and 4 commons
+        self.command(0x02)   # System enable
+
+        self.clear()
+        self.show()
+
+    def _configure(self, pin):
+        if pin is not None:
+            self._gpio.setup(pin, self._gpio.OUT)
+            return pin
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the PCD8544
+        LCD display.
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        buf = []
+
+        for x in range(self._w):
+            byte = 0
+            for y in range(self._h):
+                if image.getpixel((x, y)) > 0:
+                    byte |= 1 << y
+
+            buf.append(byte)
+
+        self.data(buf)
+
+    def command(self, cmd):
+        gpio = self._gpio
+        gpio.output(self._CS, gpio.LOW)
+        self._write_bits(0x80, 4)   # Command mode
+        self._write_bits(cmd, 8)
+        gpio.output(self._CS, gpio.HIGH)
+
+    def data(self, data):
+        gpio = self._gpio
+        gpio.output(self._CS, gpio.LOW)
+        self._write_bits(0xA0, 3)   # Write mode
+        self._write_bits(0x00, 6)   # Address
+        for byte in data:
+            self._write_bits(byte, 8)
+        gpio.output(self._CS, gpio.HIGH)
+
+    def _write_bits(self, value, num_bits):
+        gpio = self._gpio
+        for _ in range(num_bits):
+            gpio.output(self._WR, gpio.LOW)
+            bit = gpio.HIGH if value & 0x80 > 0 else gpio.LOW
+            gpio.output(self._DAT, bit)
+            value <<= 1
+            gpio.output(self._WR, gpio.HIGH)
+
+    def cleanup(self):
+        """
+        Attempt to reset the device & switching it off prior to exiting the
+        python process.
+        """
+        super(ht1621, self).cleanup()
+        self.command(0x00)   # System disable
+        self._gpio.cleanup()

@@ -1,5 +1,5 @@
-Luma.LCD: Display drivers for PCD8544, ST7735
-=============================================
+Luma.LCD: Display drivers for PCD8544, ST7735, HT1621
+=====================================================
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
 

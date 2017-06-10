@@ -34,7 +34,7 @@ switchable backlight:
 The UC1701X display supports a resolution of 128 x 64 monochrome pixels with a
 switchable backlight:
 
-.. image:: images/uc1701x.jpg
+.. image:: images/uc1701x.png
 
 .. seealso::
    Further technical information for the specific device can be found in the

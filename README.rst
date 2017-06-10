@@ -47,6 +47,7 @@ All modules can be picked up on ebay with a breakout board for a few pounds.
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/ht1621.jpg
 
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/uc1701x.png
 
 Documentation
 -------------

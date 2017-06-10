@@ -237,8 +237,8 @@ class st7735(device):
 @rpi_gpio
 class ht1621(device):
     """
-    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
-    LCD display hardware. On creation, an initialization sequence is pumped to
+    Encapsulates the serial interface to the seven segment HT1621 monochrome LCD
+    display hardware. On creation, an initialization sequence is pumped to
     the display to properly configure it. Further control commands can then be
     called to affect the brightness and other settings.
 

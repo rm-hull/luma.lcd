@@ -352,6 +352,8 @@ class uc1701x(device):
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
+
+    .. versionadded:: 0.5.0
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface)

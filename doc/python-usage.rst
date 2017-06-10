@@ -4,9 +4,10 @@ Python usage
 Pixel Drivers
 ^^^^^^^^^^^^^
 The PCD8544 is driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, use
-the :py:class:`luma.lcd.device.st7735` class. Usage is very simple if you have
-ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
+:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735 or
+UC1701X, use the :py:class:`luma.lcd.device.st7735` or
+:py:class:`luma.lcd.device.uc1701x` class respectively. Usage is very simple if
+you have ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
 
@@ -14,7 +15,7 @@ First, import and initialise the device:
 
   from luma.core.interface.serial import spi
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735
+  from luma.lcd.device import pcd8544, st7735, uc1701x
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
@@ -23,8 +24,8 @@ The display device should now be configured for use. Note, all the example code
 snippets in this section are interchangeable between PCD8544 and ST7735
 devices.
 
-Both the :py:class:`~luma.lcd.device.pcd8544` and
-:py:class:`~luma.lcd.device.st7735` classes expose a
+The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735` and
+:py:class:`~luma.lcd.device.uc1701x` classes all expose a
 :py:meth:`~luma.lcd.device.pcd8544.display` method which takes an image with
 attributes consistent with the capabilities of the device. However, for most
 cases, for drawing text and graphics primitives, the canvas class should be
@@ -65,10 +66,10 @@ colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit RGB.
 
 Landscape / Portrait Orientation
 """"""""""""""""""""""""""""""""
-By default the PCD8544 and ST7735 displays will both be oriented in landscape
-mode (84x48 and 160x128 pixels respectively). Should you have an application
-that requires the display to be mounted in a portrait aspect, then add a
-:py:attr:`rotate=N` parameter when creating the device:
+By default the PCD8544, ST7735 and UC1701X displays will all be oriented in
+landscape mode (84x48, 160x128 and 128x64 pixels respectively). Should you have
+an application that requires the display to be mounted in a portrait aspect,
+then add a :py:attr:`rotate=N` parameter when creating the device:
 
 .. code:: python
 

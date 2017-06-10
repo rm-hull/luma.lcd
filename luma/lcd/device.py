@@ -50,8 +50,8 @@ class pcd8544(device):
     affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
-        commands through.
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
     :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
@@ -106,8 +106,8 @@ class st7735(device):
     called to affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
-        commands through.
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
     :param width: The number of pixels laid out horizontally
     :type width: int
     :param height: The number of pixels laid out vertically

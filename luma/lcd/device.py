@@ -30,6 +30,7 @@
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+import time
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
 from luma.core.interface.serial import noop
@@ -441,9 +442,11 @@ class st7920(device):
 
     def command(self, cmd):
         self._serial_interface.data([0xF8, cmd & 0xF0, (cmd & 0x0F) << 4])
+        time.sleep(1.0 / 1000000)
 
     def data(self, data):
         self._serial_interface.data([0xFA, data & 0xF0, (data & 0x0F) << 4])
+        time.sleep(1.0 / 1000000)
 
     def display(self, image):
         assert(image.mode == self.mode)

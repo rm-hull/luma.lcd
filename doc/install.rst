@@ -74,6 +74,7 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
 
 PCD8544
 """""""
+
 ======== ============ ======== ==============
 LCD Pin  Remarks      RPi Pin  RPi Function
 ======== ============ ======== ==============
@@ -89,8 +90,9 @@ GND      Ground       P01-06   GND
 
 ST7735
 """"""
-Depending on the board you bought, there may be different names for the same 
+Depending on the board you bought, there may be different names for the same
 pins, as detailed below.
+
 ============= ================= ======== ==============
 LCD Pin       Remarks           RPi Pin  RPi Function
 ============= ================= ======== ==============
@@ -107,6 +109,7 @@ LED-          Backlight ground  P01-06   GND
 
 HT1621
 """"""
+
 ============= ================= ======== ==============
 LCD Pin       Remarks           RPi Pin  RPi Function
 ============= ================= ======== ==============
@@ -118,6 +121,27 @@ CS            SPI chip select   P01-24   GPIO 8 (CE0)
 LED           Backlight control P01-12   GPIO 18 (PCM_CLK)
 ============= ================= ======== ==============
 
+UC1701X
+"""""""
+The UC1701X doesn't appear to work from 3.3V, but does on
+the 5.0V rail.
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+ROM_IN        Unused
+ROM_OUT       Unused
+ROM_SCK       Unused
+ROM_CS        Unused
+LED A         Backlight control P01-12   GPIO 18 (PCM_CLK)
+VSS           Ground            P01-06   GND
+VDD           +5.0V             P01-02   5V0
+SCK           SPI clock         P01-23   GPIO 11 (SCLK)
+SDA           SPI data          P01-19   GPIO 10 (MOSI)
+RS            Data/command      P01-16   GPIO 23
+RST           Reset             P01-18   GPIO 24
+CS            SPI chip select   P01-24   GPIO 8 (CE0)	Chip Select
+============= ================= ======== ==============
 
 Installing from PyPI
 ^^^^^^^^^^^^^^^^^^^^

@@ -39,7 +39,7 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "ht1621"]
+__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x"]
 
 
 class pcd8544(device):
@@ -50,8 +50,8 @@ class pcd8544(device):
     affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
-        commands through.
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
     :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
@@ -106,8 +106,8 @@ class st7735(device):
     called to affect the brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
-        :py:class`luma.core.interface.serial.spi` instance) to delegate sending data and
-        commands through.
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
     :param width: The number of pixels laid out horizontally
     :type width: int
     :param height: The number of pixels laid out vertically
@@ -237,8 +237,8 @@ class st7735(device):
 @rpi_gpio
 class ht1621(device):
     """
-    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
-    LCD display hardware. On creation, an initialization sequence is pumped to
+    Encapsulates the serial interface to the seven segment HT1621 monochrome LCD
+    display hardware. On creation, an initialization sequence is pumped to
     the display to properly configure it. Further control commands can then be
     called to affect the brightness and other settings.
 
@@ -336,3 +336,86 @@ class ht1621(device):
         super(ht1621, self).cleanup()
         self.command(0x00)   # System disable
         self._gpio.cleanup()
+
+
+class uc1701x(device):
+    """
+    Encapsulates the serial interface to the monochrome UC1701X LCD display
+    hardware. On creation, an initialization sequence is pumped to the display
+    to properly configure it. Further control commands can then be called to
+    affect the brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+
+    .. versionadded:: 0.5.0
+    """
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface)
+        self.capabilities(128, 64, rotate)
+
+        self._pages = self._h // 8
+
+        self.command(0xE2)          # System reset
+        self.command(0x2C)          # Power: Boost ON
+        self.command(0x2E)          # Power: Voltage Regulator ON
+        self.command(0x2F)          # Power: Voltage Follower ON
+        self.command(0xF8, 0x00)    # Booster ratio to 4x
+        self.command(0x23)          # Set resistor ratio = 3
+        self.command(0xA2)          # Bias 1/9
+        self.command(0xC0)          # Set COM direction
+        self.command(0xA1)          # Set SEG direction
+        self.command(0xAC)          # Static indicator
+        self.command(0xA6)          # Disable inverse
+        self.command(0xA5)          # Display all points
+        self.command(0xA4)          # Normal Display
+
+        self.contrast(0xB0)
+
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the UC1701X
+        LCD display.
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        set_page_address = 0xB0
+        image_data = image.getdata()
+        pixels_per_page = self.width * 8
+        buf = bytearray(self.width)
+
+        for y in range(0, int(self._pages * pixels_per_page), pixels_per_page):
+            self.command(set_page_address, 0x04, 0x10)
+            set_page_address += 1
+            offsets = [y + self.width * i for i in range(8)]
+
+            for x in range(self.width):
+                buf[x] = \
+                    (image_data[x + offsets[0]] and 0x01) | \
+                    (image_data[x + offsets[1]] and 0x02) | \
+                    (image_data[x + offsets[2]] and 0x04) | \
+                    (image_data[x + offsets[3]] and 0x08) | \
+                    (image_data[x + offsets[4]] and 0x10) | \
+                    (image_data[x + offsets[5]] and 0x20) | \
+                    (image_data[x + offsets[6]] and 0x40) | \
+                    (image_data[x + offsets[7]] and 0x80)
+
+            self.data(list(buf))
+
+    def contrast(self, value):
+        """
+        Sets the LCD contrast
+        """
+        assert(0 <= value <= 255)
+        self.command(0x81, value >> 2)

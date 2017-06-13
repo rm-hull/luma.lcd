@@ -18,7 +18,11 @@ version = read_file("VERSION.txt").strip()
 
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
-test_deps = ["mock", "pytest", "pytest-cov", "pytest-warnings"]
+test_deps = [
+    "mock",
+    "pytest>=3.1",
+    "pytest-cov"
+]
 
 setup(
     name="luma.lcd",

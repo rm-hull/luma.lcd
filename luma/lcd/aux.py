@@ -4,7 +4,6 @@
 
 
 from luma.core import lib, error
-from luma.core.util import deprecation
 
 
 __all__ = ["backlight"]
@@ -19,14 +18,9 @@ class backlight(object):
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param gpio_LIGHT: the GPIO pin to use for the backlight.
     :type gpio_LIGHT: int
-    :param bcm_LIGHT: Deprecated. Use ``gpio_LIGHT`` instead.
-    :type bcm_LIGHT: int
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
     """
-    def __init__(self, gpio=None, gpio_LIGHT=18, bcm_LIGHT=None, active_low=True):
-        if bcm_LIGHT is not None:
-            deprecation('bcm_LIGHT argument is deprecated in favor of gpio_LIGHT and will be removed in 1.0.0')
-            gpio_LIGHT = bcm_LIGHT
+    def __init__(self, gpio=None, gpio_LIGHT=18, active_low=True):
 
         self._gpio_LIGHT = gpio_LIGHT
         self._gpio = gpio or self.__rpi_gpio__()

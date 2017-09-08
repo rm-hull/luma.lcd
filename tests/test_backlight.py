@@ -3,8 +3,6 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-import pytest
-
 import luma.core.error
 from luma.lcd.aux import backlight
 

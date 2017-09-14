@@ -38,7 +38,7 @@ setup(
     namespace_packages=["luma"],
     packages=["luma.lcd"],
     zip_safe=False,
-    install_requires=["luma.core>=0.9.0"],
+    install_requires=["luma.core>=1.0.1"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={
@@ -53,7 +53,7 @@ setup(
     },
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Developers",
         "Topic :: Education",

@@ -3,11 +3,12 @@
 
 import os
 import sys
+from io import open
 from setuptools import setup
 
 
-def read_file(fname):
-    with open(os.path.join(os.path.dirname(__file__), fname)) as r:
+def read_file(fname, encoding='utf-8'):
+    with open(os.path.join(os.path.dirname(__file__), fname), encoding=encoding) as r:
         return r.read()
 
 
@@ -19,9 +20,9 @@ version = read_file("VERSION.txt").strip()
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 test_deps = [
-    "mock",
-    "pytest>=3.1",
-    "pytest-cov"
+    'mock;python_version<"3.3"',
+    'pytest>=3.1',
+    'pytest-cov'
 ]
 
 setup(

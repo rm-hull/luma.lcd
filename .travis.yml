@@ -19,5 +19,4 @@ matrix:
 
 install: pip install -U pip tox coveralls setuptools
 script: tox -vv
-after_success:
-  - coveralls
+after_success: if [ "$TOXENV" == "py36" ]; then coveralls; fi

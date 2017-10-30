@@ -30,7 +30,7 @@ setup(
     version=version,
     author="Richard Hull",
     author_email="richard.hull@destructuring-bind.org",
-    description=("A small library to drive PCD8544 and ST7735 LCDs"),
+    description=("A library to drive PCD8544 and ST7735 LCDs"),
     long_description="\n\n".join([README, CONTRIB, CHANGES]),
     license="MIT",
     keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 st7735 spi 84x48 160x128",
@@ -39,7 +39,7 @@ setup(
     namespace_packages=["luma"],
     packages=["luma.lcd"],
     zip_safe=False,
-    install_requires=["luma.core>=1.0.1"],
+    install_requires=["luma.core>=1.1.0"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

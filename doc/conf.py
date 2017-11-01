@@ -25,6 +25,8 @@ version = open("../VERSION.txt").read().strip()
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
+from luma.lcd.device import __all__ as supported_devices
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -64,9 +66,10 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Luma.LCD: Display drivers for PCD8544, ST7735'
+project = 'Luma.LCD: Display drivers for {0}'.format(
+    ', '.join(supported_devices).upper())
 copyright = u'2013-{0}, Richard Hull'.format(datetime.now().year)
-author = 'Richard Hull'
+author = 'Richard Hull and contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

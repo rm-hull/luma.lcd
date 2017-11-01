@@ -10,7 +10,7 @@ Tests for the :py:class:`luma.lcd.device.uc1701x` device.
 from luma.lcd.device import uc1701x
 from luma.core.render import canvas
 
-from baseline_data import get_json_data, primitives
+from baseline_data import get_reference_data, primitives
 from helpers import (serial, call, Mock, setup_function,  # noqa: F401
     assert_invalid_dimensions)
 
@@ -78,4 +78,4 @@ def test_display():
     serial.data.assert_called()
     serial.command.assert_called()
 
-    assert recordings == get_json_data('demo_uc1701x')
+    assert recordings == get_reference_data('demo_uc1701x')

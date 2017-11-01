@@ -12,7 +12,7 @@ import pytest
 from luma.lcd.device import st7735
 from luma.core.render import canvas
 
-from baseline_data import get_json_data, primitives
+from baseline_data import get_reference_data, primitives
 from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
 
 
@@ -199,5 +199,5 @@ def test_display():
     assert recordings == [
         {'command': [42]}, {'data': [0, 0, 0, 159]},
         {'command': [43]}, {'data': [0, 0, 0, 127]},
-        {'command': [44]}, {'data': get_json_data('demo_st7735')}
+        {'command': [44]}, {'data': get_reference_data('demo_st7735')}
     ]

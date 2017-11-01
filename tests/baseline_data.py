@@ -8,6 +8,9 @@ import json
 import os.path
 
 
+__all__ = ['primitives', 'get_reference_data']
+
+
 def primitives(device, draw):
     padding = 2
     shape_width = 20
@@ -28,7 +31,7 @@ def primitives(device, draw):
     draw.text((x, top + 20), 'World!', fill="purple")
 
 
-def get_json_data(fname):
+def get_reference_data(fname):
     dirname = os.path.abspath(os.path.dirname(__file__))
     fpath = os.path.join(dirname, 'reference', 'data', fname + '.json')
     with io.open(fpath) as f:

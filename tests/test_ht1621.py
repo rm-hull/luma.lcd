@@ -3,8 +3,13 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Tests for the :py:class:`luma.lcd.device.ht1621` device.
+"""
+
 from luma.lcd.device import ht1621
 from luma.core.virtual import sevensegment
+
 from helpers import call, Mock  # noqa: F401
 
 gpio = Mock(unsafe=True)

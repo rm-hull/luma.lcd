@@ -3,10 +3,14 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Tests for the :py:class:`luma.lcd.device.pcd8544` device.
+"""
+
 from luma.lcd.device import pcd8544
 from luma.core.render import canvas
 
-import baseline_data
+from baseline_data import get_json_data, primitives
 from helpers import call, serial, setup_function  # noqa: F401
 
 
@@ -43,10 +47,10 @@ def test_display():
 
     # Use the same drawing primitives as the demo
     with canvas(device) as draw:
-        baseline_data.primitives(device, draw)
+        primitives(device, draw)
 
     # Initial command to reset the display
     serial.command.assert_called_once_with(32, 128, 64)
 
     # Next 1024 bytes are data representing the drawn image
-    serial.data.assert_called_once_with(baseline_data.demo_pcd8544)
+    serial.data.assert_called_once_with(get_json_data('demo_pcd8544'))

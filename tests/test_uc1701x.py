@@ -3,10 +3,14 @@
 # Copyright (c) 2017 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Tests for the :py:class:`luma.lcd.device.uc1701x` device.
+"""
+
 from luma.lcd.device import uc1701x
 from luma.core.render import canvas
 
-import baseline_data
+from baseline_data import get_json_data, primitives
 from helpers import (serial, call, Mock, setup_function,  # noqa: F401
     assert_invalid_dimensions)
 
@@ -69,9 +73,9 @@ def test_display():
 
     # Use the same drawing primitives as the demo
     with canvas(device) as draw:
-        baseline_data.primitives(device, draw)
+        primitives(device, draw)
 
     serial.data.assert_called()
     serial.command.assert_called()
 
-    assert recordings == baseline_data.demo_uc1701x
+    assert recordings == get_json_data('demo_uc1701x')

@@ -1,5 +1,5 @@
 python:
    version: 2.7
-   pip_install: false
+   pip_install: true
    extra_requirements:
       - docs

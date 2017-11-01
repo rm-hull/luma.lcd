@@ -3,6 +3,9 @@
 # Copyright (c) 2014-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Tests for the :py:mod:`luma.lcd.segment_mapper` module.
+"""
 
 from luma.core.util import mutable_string
 from luma.lcd.segment_mapper import dot_muncher

@@ -3,12 +3,16 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Tests for the :py:class:`luma.lcd.device.st7735` device.
+"""
+
 import pytest
 
 from luma.lcd.device import st7735
 from luma.core.render import canvas
 
-import baseline_data
+from baseline_data import get_reference_data, primitives
 from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
 
 
@@ -187,7 +191,7 @@ def test_display():
 
     # Use the same drawing primitives as the demo
     with canvas(device) as draw:
-        baseline_data.primitives(device, draw)
+        primitives(device, draw)
 
     assert serial.data.called
     assert serial.command.called
@@ -195,5 +199,5 @@ def test_display():
     assert recordings == [
         {'command': [42]}, {'data': [0, 0, 0, 159]},
         {'command': [43]}, {'data': [0, 0, 0, 127]},
-        {'command': [44]}, {'data': baseline_data.demo_st7735}
+        {'command': [44]}, {'data': get_reference_data('demo_st7735')}
     ]

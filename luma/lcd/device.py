@@ -2,6 +2,10 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Collection of serial interfaces to LCD devices.
+"""
+
 # Example usage:
 #
 #   from luma.core.interface.serial import spi
@@ -44,15 +48,16 @@ __all__ = ["pcd8544", "st7735", "ht1621", "uc1701x"]
 
 class pcd8544(device):
     """
-    Encapsulates the serial interface to the monochrome PCD8544 LCD display
-    hardware. On creation, an initialization sequence is pumped to the display
+    Serial interface to a monochrome PCD8544 LCD display.
+
+    On creation, an initialization sequence is pumped to the display
     to properly configure it. Further control commands can then be called to
     affect the brightness and other settings.
 
-    :param serial_interface: the serial interface (usually a
+    :param serial_interface: The serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
@@ -100,32 +105,33 @@ class pcd8544(device):
 
 class st7735(device):
     """
-    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
-    LCD display hardware. On creation, an initialization sequence is pumped to
-    the display to properly configure it. Further control commands can then be
-    called to affect the brightness and other settings.
+    Serial interface to a 262K color (6-6-6 RGB) ST7735 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param width: The number of pixels laid out horizontally
+    :param width: The number of pixels laid out horizontally.
     :type width: int
-    :param height: The number of pixels laid out vertically
+    :param height: The number of pixels laid out vertically.
     :type width: int
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
     :param framebuffer: Framebuffering strategy, currently values of
-        "diff_to_previous" or "full_frame" are only supported
+        ``diff_to_previous`` or ``full_frame`` are only supported.
     :type framebuffer: str
-    :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
-    :param h_offset: horizontal offset (in pixels) of screen to device memory
-        (default: 0)
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
     :type h_offset: int
-    :param v_offset: vertical offset (in pixels) of screen to device memory
-        (default: 0)
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
     :type h_offset: int
 
     .. versionadded:: 0.3.0
@@ -185,7 +191,7 @@ class st7735(device):
         values are passed directly to the devices internal storage, but only
         the 6 most-significant bits are used by the display.
 
-        :param image: the image to render
+        :param image: The image to render.
         :type image: PIL.Image.Image
         """
         assert(image.mode == self.mode)
@@ -237,16 +243,17 @@ class st7735(device):
 @rpi_gpio
 class ht1621(device):
     """
-    Encapsulates the serial interface to the seven segment HT1621 monochrome LCD
-    display hardware. On creation, an initialization sequence is pumped to
-    the display to properly configure it. Further control commands can then be
-    called to affect the brightness and other settings.
+    Serial interface to a seven segment HT1621 monochrome LCD display.
 
-    :param gpio: the GPIO library to use (usually RPi.GPIO)
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param gpio: The GPIO library to use (usually RPi.GPIO)
         to delegate sending data and commands through.
-    :param width: The number of 7 segment characters laid out horizontally
+    :param width: The number of 7 segment characters laid out horizontally.
     :type width: int
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
@@ -340,15 +347,16 @@ class ht1621(device):
 
 class uc1701x(device):
     """
-    Encapsulates the serial interface to the monochrome UC1701X LCD display
-    hardware. On creation, an initialization sequence is pumped to the display
-    to properly configure it. Further control commands can then be called to
-    affect the brightness and other settings.
+    Serial interface to a monochrome UC1701X LCD display.
 
-    :param serial_interface: the serial interface (usually a
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int

@@ -15,16 +15,17 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import os, sys
+import os
+import sys
 from datetime import datetime
-
-version = open("../VERSION.txt").read().strip()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
+
 sys.path.insert(0, os.path.abspath('..'))
 
+from luma.lcd import __version__ as version
 from luma.lcd.device import __all__ as supported_devices
 
 # -- General configuration ------------------------------------------------
@@ -68,8 +69,9 @@ master_doc = 'index'
 # General information about the project.
 project = 'Luma.LCD: Display drivers for {0}'.format(
     ', '.join(supported_devices).upper())
-copyright = u'2013-{0}, Richard Hull'.format(datetime.now().year)
 author = 'Richard Hull and contributors'
+copyright = u'2013-{0}, {1}'.format(datetime.now().year, author)
+
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -357,7 +359,7 @@ texinfo_documents = [
 
 # Configuration for intersphinx.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/2', None),
+    'python': ('https://docs.python.org/3', None),
     'pillow': ('https://pillow.readthedocs.io/en/latest', None),
     'luma.core': ('https://luma-core.readthedocs.io/en/latest', None),
     'luma.emulator': ('https://luma-emulator.readthedocs.io/en/latest', None)

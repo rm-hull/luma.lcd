@@ -5,3 +5,5 @@
 """
 LCD display drivers.
 """
+
+__version__ = '1.0.2'

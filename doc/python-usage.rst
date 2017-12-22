@@ -93,7 +93,7 @@ properties reflect the rotated dimensions rather than the physical dimensions.
 
 Seven-Segment Drivers
 ^^^^^^^^^^^^^^^^^^^^^
-The HT1621 is driven with the :py:class:`luma,lcd.device.ht1621` class, but is 
+The HT1621 is driven with the :py:class:`luma.lcd.device.ht1621` class, but is
 not accessed directly: it should be wrapped with the :py:class:`luma.core.virtual.sevensegment`
 wrapper, as follows:
 
@@ -106,7 +106,7 @@ wrapper, as follows:
    seg = sevensegment(device)
    
    
-The **seg** instance now has a :py:attr:`~luma.led_matrix.virtual.sevensegment.text` 
+The **seg** instance now has a :py:attr:`~luma.led_matrix.virtual.sevensegment.text`
 property which may be assigned, and when it does will update all digits
 according to the limited alphabet the 7-segment displays support. For example,
 assuming there are 2 cascaded modules, we have 16 character available, and so

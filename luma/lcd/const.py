@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-17 Richard Hull and contributors
+# Copyright (c) 2013-18 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 
@@ -21,3 +21,7 @@ class ht1621(object):
 class uc1701x(object):
     DISPLAYON = 0xAF
     DISPLAYOFF = 0xAE
+
+
+class ls013b4dn04(object):
+    pass

@@ -15,9 +15,13 @@ matrix:
         - python: 3.7-dev
           env: TOXENV=py37
         - python: 2.7
-          env: TOXENV=qa
+          env: TOXENV=qa,doc
 
-install: pip install -U pip tox coveralls
+addons:
+    apt:
+        packages:
+            - graphviz
+
+install: pip install --ignore-installed --upgrade setuptools pip tox coveralls
 script: tox -vv
-after_success:
-  - coveralls
+after_success: if [ "$TOXENV" == "py36" ]; then coveralls; fi

@@ -1,17 +1,21 @@
 Python usage
 ------------
+
+Pixel Drivers
+^^^^^^^^^^^^^
 The PCD8544 is driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, use
-the :py:class:`luma.lcd.device.st7735` class. Usage is very simple if you have
-ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
+:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735 or
+UC1701X, use the :py:class:`luma.lcd.device.st7735` or
+:py:class:`luma.lcd.device.uc1701x` class respectively. Usage is very simple if
+you have ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
 
 .. code:: python
 
-  from luma.core.serial import spi
+  from luma.core.interface.serial import spi
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735
+  from luma.lcd.device import pcd8544, st7735, uc1701x
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
@@ -20,8 +24,8 @@ The display device should now be configured for use. Note, all the example code
 snippets in this section are interchangeable between PCD8544 and ST7735
 devices.
 
-Both the :py:class:`~luma.lcd.device.pcd8544` and
-:py:class:`~luma.lcd.device.st7735` classes expose a
+The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735` and
+:py:class:`~luma.lcd.device.uc1701x` classes all expose a
 :py:meth:`~luma.lcd.device.pcd8544.display` method which takes an image with
 attributes consistent with the capabilities of the device. However, for most
 cases, for drawing text and graphics primitives, the canvas class should be
@@ -43,7 +47,7 @@ flushed to the device's display memory and the :mod:`PIL.ImageDraw` object is
 garbage collected.
 
 Color Model
-^^^^^^^^^^^
+"""""""""""
 Any of the standard :py:mod:`PIL.ImageColor` color formats may be used, but
 since the PCD8544 LCD is monochrome, only the HTML color names
 :py:const:`"black"` and :py:const:`"white"` values should really be used; in
@@ -61,15 +65,15 @@ Note that there is no such limitation for the ST7735 device which supports 262K
 colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit RGB.
 
 Landscape / Portrait Orientation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-By default the PCD8544 and ST7735 displays will both be oriented in landscape
-mode (84x48 and 160x128 pixels respectively). Should you have an application
-that requires the display to be mounted in a portrait aspect, then add a
-:py:attr:`rotate=N` parameter when creating the device:
+""""""""""""""""""""""""""""""""
+By default the PCD8544, ST7735 and UC1701X displays will all be oriented in
+landscape mode (84x48, 160x128 and 128x64 pixels respectively). Should you have
+an application that requires the display to be mounted in a portrait aspect,
+then add a :py:attr:`rotate=N` parameter when creating the device:
 
 .. code:: python
 
-  from luma.core.serial import spi
+  from luma.core.interface.serial import spi
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
   
@@ -87,6 +91,48 @@ rotate 90° clockwise, 2 is 180° rotation and 3 represents 270° rotation.
 The :py:attr:`device.size`, :py:attr:`device.width` and :py:attr:`device.height`
 properties reflect the rotated dimensions rather than the physical dimensions.
 
+Seven-Segment Drivers
+^^^^^^^^^^^^^^^^^^^^^
+The HT1621 is driven with the :py:class:`luma.lcd.device.ht1621` class, but is
+not accessed directly: it should be wrapped with the :py:class:`luma.core.virtual.sevensegment`
+wrapper, as follows:
+
+.. code:: python
+
+   from luma.core.virtual import sevensegment
+   from luma.lcd.device import ht1621
+
+   device = ht1621()
+   seg = sevensegment(device)
+   
+   
+The **seg** instance now has a :py:attr:`~luma.led_matrix.virtual.sevensegment.text`
+property which may be assigned, and when it does will update all digits
+according to the limited alphabet the 7-segment displays support. For example,
+assuming there are 2 cascaded modules, we have 16 character available, and so
+can write:
+
+.. code:: python
+
+   seg.text = "HELLO"
+
+Rather than updating the whole display buffer, it is possible to update
+'slices', as per the below example:
+
+.. code:: python
+
+   seg.text[0:5] = "BYE"
+
+This replaces ``HELLO`` in the previous example, replacing it with ``BYE``.
+The usual python idioms for slicing (inserting / replacing / deleteing) can be
+used here, but note if inserted text exceeds the underlying buffer size, a
+:py:exc:`ValueError` is raised.
+
+Floating point numbers (or text with '.') are handled slightly differently - the
+decimal-place is fused in place on the character immediately preceding it. This
+means that it is technically possible to get more characters displayed than the
+buffer allows, but only because dots are folded into their host character.
+
 Backlight Control
 ^^^^^^^^^^^^^^^^^
 These displays typically require a backlight to illuminate the liquid crystal
@@ -95,65 +141,5 @@ be specified to control the backlight through software.
 
 Examples
 ^^^^^^^^
-After installing the library, download the `luma.examples
-<https://github.com/rm-hull/luma.examples>`_ directory and try running the
-following examples:
-
-=============== ========================================================
-Example         Description
-=============== ========================================================
-3d_box.py       Rotating 3D box wireframe & color dithering
-bounce.py       Display a bouncing ball animation and frames per second
-carousel.py     Showcase viewport and hotspot functionality
-clock.py        An analog clockface with date & time
-colors.py       Color rendering demo
-crawl.py        A vertical scrolling demo, which should be familiar
-demo.py         Use misc draw commands to create a simple image
-game_of_life.py Conway's game of life
-grayscale.py    Greyscale rendering demo
-invaders.py     Space Invaders demo
-maze.py         Maze generator
-perfloop.py     Simple benchmarking utility to measure performance
-pi_logo.py      Display the Raspberry Pi logo (loads image as .png)
-savepoint.py    Example of savepoint/restore functionality
-starfield.py    3D starfield simulation
-sys_info.py     Display basic system information
-terminal.py     Simple println capabilities
-tv_snow.py      Example image-blitting
-welcome.py      Unicode font rendering & scrolling
-=============== ========================================================
-
-See the README in that project for further information on how to run the demos.
-
-Emulators
-^^^^^^^^^
-There are various display emulators available for running code against, for
-debugging and screen capture functionality:
-
-* The :py:class:`luma.emulator.device.capture` device will persist a numbered
-  PNG file to disk every time its :py:meth:`~luma.emulator.device.capture.display`
-  method is called.
-
-* The :py:class:`luma.emulator.device.gifanim` device will record every image
-  when its :py:meth:`~luma.emulator.device.gifanim.display` method is called,
-  and on program exit (or Ctrl-C), will assemble the images into an animated GIF.
-
-* The :py:class:`luma.emulator.device.pygame` device uses the :py:mod:`pygame`
-  library to render the displayed image to a pygame display surface.
-
-Invoke the demos with::
-
-  $ python examples/clock.py -d capture
-
-or::
-
-  $ python examples/clock.py -d pygame
-  
-.. note::
-   *Pygame* is required to use any of the emulated devices, but it is **NOT**
-   installed as a dependency by default, and so must be manually installed
-   before using any of these emulation devices (e.g. ``pip install pygame``).
-   See the install instructions in `luma.emulator  <http://github.com/rm-hull/luma.emulator>`_
-   for further details.
-
-
+After installing the library, head over to the `luma.examples <https://github.com/rm-hull/luma.examples>`_ 
+repository. Details of how to run the examples is shown in the example repo's README.

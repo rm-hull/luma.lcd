@@ -11,3 +11,13 @@ class pcd8544(object):
 class st7735(object):
     DISPLAYON = 0x29
     DISPLAYOFF = 0x28
+
+
+class ht1621(object):
+    DISPLAYON = 0x06
+    DISPLAYOFF = 0x04
+
+
+class uc1701x(object):
+    DISPLAYON = 0xAF
+    DISPLAYOFF = 0xAE

@@ -1,7 +1,7 @@
 Installation
 ------------
 
-.. note:: The library has been tested against Python 2.7, 3.4 and 3.5.
+.. note:: The library has been tested against Python 2.7, 3.4, 3.5 and 3.6.
 
    For **Python3** installation, substitute the following in the
    instructions below.
@@ -13,7 +13,8 @@ Installation
 
    It was *originally* tested with Raspbian on a rev.2 model B, with a vanilla
    kernel version 4.1.16+, and has subsequently been tested on Raspberry Pi
-   model A, model B2 and 3B (Debian Jessie) and OrangePi Zero (Armbian Jessie).
+   (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W and
+   OrangePi Zero (Armbian Jessie).
 
 Pre-requisites
 ^^^^^^^^^^^^^^
@@ -145,22 +146,20 @@ CS            SPI chip select   P01-24   GPIO 8 (CE0)	Chip Select
 
 Installing from PyPI
 ^^^^^^^^^^^^^^^^^^^^
-Install the dependencies for library first with::
+First, install the dependencies for the library with::
 
   $ sudo usermod -a -G spi,gpio pi
   $ sudo apt-get install python-dev python-pip
-  $ sudo -i pip install --upgrade pip setuptools
-  $ sudo apt-get purge python-pip
 
-.. warning:: The default pip bundled with apt on Raspbian is really old, and can 
+And finally, install the latest version of the library directly from
+`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
+with::
+
+  $ sudo -H pip install --upgrade luma.lcd
+
+.. warning:: The default pip bundled with apt on Raspbian Jessie is really old, and can 
    cause components to not be installed properly. Please ensure that **pip 9.0.1** 
    is installed prior to continuing::
    
       $ pip --version
       pip 9.0.1 from /usr/local/lib/python2.7/dist-packages (python 2.7)
-
-Proceed to install latest version of the library directly from
-`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`_::
-
-  $ sudo -H pip install --upgrade luma.lcd
-

@@ -26,7 +26,7 @@ Luma.LCD
 .. image:: https://img.shields.io/pypi/v/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
 
-.. image:: https://img.shields.io/maintenance/yes/2017.svg?maxAge=2592000
+.. image:: https://img.shields.io/maintenance/yes/2018.svg?maxAge=2592000
 
 Python library interfacing LCD displays with the PCD8544, ST7735, HT1621 and
 UC1701X driver using SPI on the Raspberry Pi and other linux-based single-board

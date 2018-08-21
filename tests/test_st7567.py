@@ -20,8 +20,8 @@ def test_init_128x64():
     st7567(serial)
     serial.command.assert_has_calls([
         call(0xA3),
-        call(0xA0),
-        call(0xC8),
+        call(0xA1),
+        call(0xC0),
         call(0xA6),
         call(0x40),
         call(0x2F),

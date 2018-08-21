@@ -1,9 +1,9 @@
 Introduction
 ------------
-Interfacing small LCD displays with the PCD8544, ST7735, HT1621 and UC1701X
-driver in Python using SPI on the Raspberry Pi and other linux-based
-single-board computers: the library provides a Pillow-compatible drawing
-canvas, and other functionality to support:
+Interfacing small LCD displays with the PCD8544, ST7735, HT1621, UC1701X and
+LS013B4DN04 driver in Python using SPI on the Raspberry Pi and other
+linux-based single-board computers: the library provides a Pillow-compatible
+drawing canvas, and other functionality to support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -36,6 +36,10 @@ switchable backlight:
 
 .. image:: images/uc1701x.png
 
+The LS013B4DN04 display supports a resolution of 96 x 96 monochrome pixels:
+
+.. image:: images/ls013b4dn04.jpg
+
 .. seealso::
    Further technical information for the specific device can be found in the
    datasheet below: 
@@ -44,6 +48,7 @@ switchable backlight:
    - :download:`ST7735 <tech-spec/ST7735.pdf>`
    - :download:`HT1621 <tech-spec/HT1621.pdf>`
    - :download:`UC1701X <tech-spec/UC1701X.pdf>`
+   - :download:`LS013B4DN04 <tech-spec/LS013B4DN04.pdf>`
 
 As well as display drivers for the physical device, there are emulators that
 run in real-time (with pygame) and others that can take screenshots, or

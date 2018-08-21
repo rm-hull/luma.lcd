@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-17 Richard Hull and contributors
+# Copyright (c) 2013-18 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -43,7 +43,7 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x"]
+__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "ls013b4dn04"]
 
 
 class pcd8544(device):
@@ -427,3 +427,89 @@ class uc1701x(device):
         """
         assert(0 <= value <= 255)
         self.command(0x81, value >> 2)
+
+
+class ls013b4dn04(device):
+    """
+    Serial interface to a monochrome LS013B4DN04 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+
+    .. versionadded:: 1.1.0
+    """
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(ls013b4dn04, self).__init__(luma.lcd.const.ls013b4dn04, serial_interface)
+        self.capabilities(96, 96, rotate)
+        self._mask = [1 << (i % 8) for i in reversed(range(self._w))]
+        self._offsets = [(i // 8) for i in range(self._w)]
+        self._vcom = 0x40
+
+        self.clear()
+        self.show()
+
+    def toggleVCOM(self):
+        self._vcom = 0x40 if self._vcom == 0 else 0x00
+
+    def reverseByte(self, n):
+        return int('{:08b}'.format(n)[::-1], 2)
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the LS013B4DN04
+        LCD display.
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+        image_data = list(image.getdata())
+        off = self._offsets
+        mask = self._mask
+
+        self.toggleVCOM()
+        buf = [0x80 | self._vcom]
+
+        for line in range(self._h):
+            addr = self.reverseByte(line + 1)
+            row = bytearray(self._w // 8)
+
+            frm = line * self._w
+            to = frm + self._w
+            for idx, pix in enumerate(image_data[frm:to]):
+                if pix > 0:
+                    row[off[idx]] |= mask[idx]
+
+            buf.append(addr)
+            buf += list(row)
+            buf.append(0x00)
+
+        buf.append(0x00)
+        print(buf)
+        self.data(buf)
+
+    def clear(self):
+        self.toggleVCOM()
+        self.command(0x20 | self._vcom, 0x00)
+
+    def show(self):
+        pass
+
+    def hide(self):
+        pass
+
+    def contrast(self, value):
+        """
+        Sets the LCD contrast
+        """
+        assert(0 <= value <= 255)
+        pass

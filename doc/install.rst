@@ -141,7 +141,25 @@ SCK           SPI clock         P01-23   GPIO 11 (SCLK)
 SDA           SPI data          P01-19   GPIO 10 (MOSI)
 RS            Data/command      P01-16   GPIO 23
 RST           Reset             P01-18   GPIO 24
-CS            SPI chip select   P01-24   GPIO 8 (CE0)	Chip Select
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
+============= ================= ======== ==============
+
+LS013B4DN04
+"""""""""""
+Also known as Adafruit_1393
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+VIN           +3.3V             P01-01   3V3
+3V3           +3.3V             P01-01   3V3
+GND           Ground            P01-06   GND
+SCLK          SPI clock         P0-23    GPIO 11 (SCLK)
+MOSI          SPI data          P01-19   GPIO 10 (MOSI)
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
+EXTMD         External mode     P01-14   GND
+DISP          Display on/off    P01-16   GPIO 23
+EXTIN         PWM clock         P01-12   GPIO 18 (PWM0)
 ============= ================= ======== ==============
 
 Installing from PyPI

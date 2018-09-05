@@ -4,10 +4,11 @@ Python usage
 Pixel Drivers
 ^^^^^^^^^^^^^
 The PCD8544 is driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735 or
-UC1701X, use the :py:class:`luma.lcd.device.st7735` or
-:py:class:`luma.lcd.device.uc1701x` class respectively. Usage is very simple if
-you have ever used `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
+:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, ST7567
+or UC1701X, use the :py:class:`luma.lcd.device.st7735`, 
+:py:class:`luma.lcd.device.st7567` or :py:class:`luma.lcd.device.uc1701x`
+class respectively. Usage is very simple if you have ever used
+`Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
 

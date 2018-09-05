@@ -67,7 +67,7 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
   * If you're already using the listed GPIO pins for Data/Command and/or Reset,
     you can select other pins and pass :py:attr:`gpio_DC` and/or :py:attr:`gpio_RST`
     argument specifying the new *GPIO* pin numbers in your serial interface create
-    call (this applies to both PCD8544 and ST7735).
+    call (this applies to PCD8544, ST7567 and ST7735).
 
   * Because CE is connected to CE0, the display is available on SPI port 0. You
     can connect it to CE1 to have it available on port 1. If so, pass
@@ -106,6 +106,27 @@ SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
 CS            SPI chip select   P01-24   GPIO 8 (CE0)
 LED+ or BL    Backlight control P01-12   GPIO 18 (PCM_CLK)
 LED-          Backlight ground  P01-06   GND
+============= ================= ======== ==============
+
+ST7567
+======
+
+This driver is designed for the ST7567 in 4-line SPI mode and does not include
+parallel bus support.
+
+Pin names may differ across different breakouts, but will generally be something
+like the below.
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+GND           Ground            P01-06   GND
+3v3           +3.3V Power       P01-01   3V3
+RESET or RST  Reset             P01-18   GPIO 24
+SA0 or D/C    Data/command      P01-16   GPIO 23
+SDA or DATA   SPI data          P01-19   GPIO 10 (MOSI)
+SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
 ============= ================= ======== ==============
 
 HT1621

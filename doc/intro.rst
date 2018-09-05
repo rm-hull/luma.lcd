@@ -36,6 +36,10 @@ switchable backlight:
 
 .. image:: images/uc1701x.png
 
+The ST7567 display supports a resolution of 128 x 64 monochrome pixels:
+
+.. image:: images/st7567.jpg
+
 .. seealso::
    Further technical information for the specific device can be found in the
    datasheet below: 

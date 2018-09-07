@@ -19,3 +19,4 @@ Contributors
 * WsMithril (@WsMithril)
 * Peter Martin (@pe7er)
 * Saumyakanta Sahoo (@somu1795)
+* Philip Howard (@Gadgetoid)

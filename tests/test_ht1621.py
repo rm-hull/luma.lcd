@@ -12,11 +12,11 @@ from luma.core.virtual import sevensegment
 
 
 class MockHT1621:
-    """Mock the HT1621 internal state machine.
+    """
+    Mock the HT1621 internal state machine.
 
     Decodes the 3-pin serial data back into
     the expected data packets.
-
     """
 
     HIGH = 1
@@ -31,19 +31,27 @@ class MockHT1621:
         self.reset_mock()
 
     def command(self, data):
-        """Build a command representation."""
+        """
+        Build a command representation.
+        """
         return ('cmd', data)
 
     def data(self, data):
-        """Built a data representation."""
+        """
+        Built a data representation.
+        """
         return ('data', data)
 
     def setup(self, pin, state):
-        """Mock GPIO.setup."""
+        """
+        Mock GPIO.setup.
+        """
         self._pin_states[pin] = state
 
     def output(self, pin, state):
-        """Mock GPIO.output."""
+        """
+        Mock GPIO.output.
+        """
         if pin == self._pin_wr:
             if self._state_wr == 0 and state == 1:  # Rising edge
                 self._data <<= 1
@@ -86,7 +94,9 @@ class MockHT1621:
                 self._state = 'none'
 
     def reset_mock(self):
-        """Reset state machine."""
+        """
+        Reset state machine.
+        """
         self._state_wr = 0     # Read/Write State
         self._state_dat = 0    # Data state
         self._state_cs = 0     # Chip-select state
@@ -97,15 +107,21 @@ class MockHT1621:
         self._state = 'none'   # Current state
 
     def cleanup(self):
-        """Mock GPIO.cleanup."""
+        """
+        Mock GPIO.cleanup.
+        """
         self.reset_mock()
 
     def get_data(self):
-        """Return stored values."""
+        """
+        Return stored values.
+        """
         return self._values
 
     def get_pin_states(self):
-        """Return stored pin output states."""
+        """
+        Return stored pin output states.
+        """
         return self._pin_states
 
 

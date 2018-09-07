@@ -109,8 +109,7 @@ LED-          Backlight ground  P01-06   GND
 ============= ================= ======== ==============
 
 ST7567
-======
-
+""""""
 This driver is designed for the ST7567 in 4-line SPI mode and does not include
 parallel bus support.
 

@@ -25,12 +25,12 @@ The display device should now be configured for use. Note, all the example code
 snippets in this section are interchangeable between PCD8544 and ST7735
 devices.
 
-The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735` and
-:py:class:`~luma.lcd.device.uc1701x` classes all expose a
-:py:meth:`~luma.lcd.device.pcd8544.display` method which takes an image with
-attributes consistent with the capabilities of the device. However, for most
-cases, for drawing text and graphics primitives, the canvas class should be
-used as follows:
+The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
+:py:class:`~luma.lcd.device.st7567` and :py:class:`~luma.lcd.device.uc1701x`
+classes all expose a :py:meth:`~luma.lcd.device.pcd8544.display` method which
+takes an image with attributes consistent with the capabilities of the device.
+However, for most cases, for drawing text and graphics primitives, the canvas
+class should be used as follows:
 
 .. code:: python
 

@@ -120,7 +120,7 @@ class st7567(device):
             represents 270° rotation.
         :type rotate: int
 
-        .. versionadded:: X.X.X
+        .. versionadded:: 1.1.0
         """
         super(st7567, self).__init__(luma.lcd.const.st7567, serial_interface)
         self.capabilities(128, 64, rotate)

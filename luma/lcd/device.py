@@ -212,7 +212,7 @@ class st7735(device):
     :type h_offset: int
     :param v_offset: Vertical offset (in pixels) of screen to device memory
         (default: 0).
-    :type h_offset: int
+    :type v_offset: int
 
     .. versionadded:: 0.3.0
     """

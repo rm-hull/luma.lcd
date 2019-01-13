@@ -8,7 +8,7 @@ luma.lcd **|**
 
 luma.lcd
 ========
-**HD44780, PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
+**HD44780, PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
 .. image:: https://github.com/rm-hull/luma.lcd/workflows/luma.lcd/badge.svg?branch=master
    :target: https://github.com/rm-hull/luma.lcd/actions?workflow=luma.lcd

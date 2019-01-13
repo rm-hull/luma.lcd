@@ -180,7 +180,7 @@ Device Pin Name   Remarks      RPi Pin  RPi Function
   * If you're already using the listed GPIO pins for Data/Command and/or Reset,
     you can select other pins and pass :py:attr:`gpio_DC` and/or :py:attr:`gpio_RST`
     argument specifying the new *GPIO* pin numbers in your serial interface create
-    call (this applies to PCD8544, ST7567 and ST7735).
+    call (this applies to PCD8544, ST7567, ST7735 and ST7789).
 
   * Because CE is connected to CE0, the display is available on SPI port 0. You
     can connect it to CE1 to have it available on port 1. If so, pass

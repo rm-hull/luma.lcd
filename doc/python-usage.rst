@@ -14,14 +14,14 @@ In this example, we are using an SPI interface with a pcd8544 display.
 
   from luma.core.interface.serial import i2c, spi, parallel, pcf8574
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735, st7567, uc1701x, ili9341, ili9486, hd44780
+  from luma.lcd.device import pcd8544, st7735, st7789, st7567, uc1701x, ili9341, ili9486, hd44780
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
 
 The display device should now be properly configured.
 
-The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
+The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`, :py:class:`~luma.lcd.device.st7789`,
 :py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`~luma.lcd.device.ili9341`,
 :py:class:`~luma.lcd.device.ili9486` and :py:class:`~luma.lcd.device.hd44780`
 classes all expose a :py:meth:`~luma.lcd.device.pcd8544.display` method which
@@ -69,13 +69,13 @@ effect (see the *3d_box.py* example, below).
   with canvas(device, dither=True) as draw:
       draw.rectangle((10, 10, 30, 30), outline="white", fill="red")
 
-The ST7735 and ILI9341 devices can display 262K colour RGB images.  When supplying
+The ST7735, ST7789 and ILI9341 devices can display 262K colour RGB images.  When supplying
 24-bit RGB images, they are automatically downscaled to 18-bit RGB to fit
 these device's 262K color-space.
 
 Landscape / Portrait Orientation
 --------------------------------
-By default the PCD8544, ST7735, UC1701X and ILI9341 displays will all be oriented
+By default the PCD8544, ST7735, ST7789, UC1701X and ILI9341 displays will all be oriented
 in landscape mode (84x48, 160x128, 128x64 and 320x240 pixels respectively). Should
 you have an application that requires the display to be mounted in a portrait
 aspect, then add a :py:attr:`rotate=N` parameter when creating the device:

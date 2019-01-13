@@ -47,7 +47,7 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
 
 
 class GPIOBacklight:

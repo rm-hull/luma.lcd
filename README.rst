@@ -8,7 +8,7 @@ luma.lcd **|**
 
 Luma.LCD
 ========
-**PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
+**PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -28,9 +28,9 @@ Luma.LCD
 
 .. image:: https://img.shields.io/maintenance/yes/2020.svg?maxAge=2592000
 
-Python library interfacing LCD displays with the PCD8544, ST7735, ST7567, HT1621, 
-UC1701X and ILI9341 driver using SPI on the Raspberry Pi and other linux-based
-single-board computers - it provides a `Pillow <https://pillow.readthedocs.io/>`_-compatible
+Python library interfacing LCD displays with the PCD8544, ST7735, ST7789, ST7567,
+HT1621, UC1701X and ILI9341 driver using SPI on the Raspberry Pi and other
+linux-based single-board computers - it provides a `Pillow <https://pillow.readthedocs.io/>`_-compatible
 drawing canvas, and other functionality to support:
 
 * scrolling/panning capability,

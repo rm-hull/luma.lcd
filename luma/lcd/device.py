@@ -233,7 +233,6 @@ class st7735(device):
 
         # Supported modes
         supported = (width, height) in [(160, 80), (160, 128), (128, 128)]
-        
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))

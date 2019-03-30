@@ -231,7 +231,9 @@ class st7735(device):
         else:
             self.apply_offsets = lambda bbox: bbox
 
-        if width not in [128, 160] or height != 128:
+        # Supported modes
+        supported = (width, height) in [(160, 80), (160, 128), (128, 128)]
+        if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 

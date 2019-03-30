@@ -4,7 +4,8 @@ ChangeLog
 +------------+---------------------------------------------------------------------+------------+
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
-| *upcoming* | * Add support for 160x80 display size for ST7735                    | *TBD*      |
+| **1.1.1**  | * Add support for 160x80 display size for ST7735                    | 2019/03/30 |
+|            | * Minor documentation updates                                       |            |
 +------------+---------------------------------------------------------------------+------------+
 | **1.1.0**  | * Add ST7567 Monochrome LCD display driver (courtesy of @Gadgetoid) | 2018/09/07 |
 |            | * Change HT1621 tests                                               |            |

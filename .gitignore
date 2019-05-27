@@ -57,6 +57,7 @@ doc/_build/
 # PyBuilder
 target/
 .ropeproject
+.vscode
 *~
 
 # OSX

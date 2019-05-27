@@ -46,7 +46,43 @@ from luma.lcd.segment_mapper import dot_muncher
 __all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567"]
 
 
-class pcd8544(device):
+@rpi_gpio
+class backlit_device(device):
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, **kwargs):
+        super(backlit_device, self).__init__(const, serial_interface)
+
+        self._gpio_LIGHT = gpio_LIGHT
+        self._gpio = gpio or self.__rpi_gpio__()
+        if active_low:
+            self._enabled = self._gpio.LOW
+            self._disabled = self._gpio.HIGH
+        else:
+            self._enabled = self._gpio.HIGH
+            self._disabled = self._gpio.LOW
+
+        try:
+            # FIXME: Should probably not set mode here
+            self._gpio.setmode(self._gpio.BCM)
+            self._gpio.setup(self._gpio_LIGHT, self._gpio.OUT)
+        except RuntimeError as e:
+            if str(e) == 'Module not imported correctly!':
+                raise luma.core.error.UnsupportedPlatform('GPIO access not available')
+
+        self.backlight(True)
+
+    def backlight(self, value):
+        """
+        Switches on the backlight on and off.
+
+        :param value: Switched on when ``True`` supplied, else ``False`` switches it off.
+        :type value: bool
+        """
+        assert(value in [True, False])
+        self._gpio.output(self._gpio_LIGHT,
+                          self._enabled if value else self._disabled)
+
+
+class pcd8544(backlit_device):
     """
     Serial interface to a monochrome PCD8544 LCD display.
 
@@ -63,7 +99,7 @@ class pcd8544(device):
     :type rotate: int
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
-        super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
+        super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface, **kwargs)
         self.capabilities(84, 48, rotate)
 
         self._mask = [1 << (i // self._w) % 8 for i in range(self._w * self._h)]

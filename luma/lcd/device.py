@@ -81,6 +81,14 @@ class backlit_device(device):
         self._gpio.output(self._gpio_LIGHT,
                           self._enabled if value else self._disabled)
 
+    def cleanup(self):
+        """
+        Attempt to reset the device & switching it off prior to exiting the
+        python process.
+        """
+        super(backlit_device, self).cleanup()
+        self.backlight(False)
+
 
 class pcd8544(backlit_device):
     """

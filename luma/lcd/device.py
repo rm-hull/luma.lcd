@@ -78,6 +78,7 @@ class backlit_device(device):
             if str(e) == 'Module not imported correctly!':
                 raise luma.core.error.UnsupportedPlatform('GPIO access not available')
 
+        self.persist = True
         self.backlight(True)
 
     def backlight(self, value):
@@ -97,7 +98,8 @@ class backlit_device(device):
         python process.
         """
         super(backlit_device, self).cleanup()
-        self.backlight(False)
+        if self.persist:
+            self.backlight(False)
 
 
 class pcd8544(backlit_device):

@@ -39,6 +39,14 @@ def test_init():
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
+def test_cleanup():
+    gpio_LIGHT = 11
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    gpio.reset_mock()
+    device.cleanup()
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+    
+
 def test_active_low_enable_on():
     gpio_LIGHT = 14
     device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)

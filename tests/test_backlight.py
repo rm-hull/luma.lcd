@@ -45,7 +45,7 @@ def test_cleanup():
     gpio.reset_mock()
     device.cleanup()
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
-    
+
 
 def test_active_low_enable_on():
     gpio_LIGHT = 14

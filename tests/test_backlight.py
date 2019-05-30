@@ -23,7 +23,7 @@ def setup_function(function):
 def test_unsupported_platform():
     e = RuntimeError('Module not imported correctly!')
     errorgpio = Mock(unsafe=True)
-    errorgpio.setmode.side_effect = e
+    errorgpio.setup.side_effect = e
 
     try:
         backlit_device(serial_interface=noop(), gpio_LIGHT=19, gpio=errorgpio)
@@ -34,7 +34,6 @@ def test_unsupported_platform():
 def test_init():
     gpio_LIGHT = 11
     backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
-    gpio.setmode.assert_called_once_with(gpio.BCM)
     gpio.setup.assert_called_once_with(gpio_LIGHT, gpio.OUT)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 

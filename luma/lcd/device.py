@@ -73,8 +73,6 @@ class backlit_device(device):
             self._disabled = self._gpio.LOW
 
         try:
-            # FIXME: Should probably not set mode here
-            self._gpio.setmode(self._gpio.BCM)
             self._gpio.setup(self._gpio_LIGHT, self._gpio.OUT)
         except RuntimeError as e:
             if str(e) == 'Module not imported correctly!':

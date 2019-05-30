@@ -141,7 +141,9 @@ def test_init_6x8():
     assert gpio.get_pin_states() == {
         11: gpio.OUT,
         10: gpio.OUT,
-        8: gpio.OUT}
+        8: gpio.OUT,
+        18: gpio.OUT
+    }
 
     assert gpio.get_data() == [
         gpio.command(0x30),  # Internal RC oscillator @ 256KHz
@@ -153,7 +155,8 @@ def test_init_6x8():
         gpio.data(0),        #
         gpio.data(0),        #
         gpio.data(0),        #
-        gpio.command(0x06)]  # Display On
+        gpio.command(0x06)   # Display On
+    ]
 
 
 def test_cleanup():

@@ -13,7 +13,7 @@ from luma.lcd.device import st7735
 from luma.core.render import canvas
 
 from baseline_data import get_reference_data, primitives
-from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
+from helpers import Mock, serial, setup_function, assert_invalid_dimensions  # noqa: F401
 
 
 def test_init_160x128():
@@ -28,7 +28,7 @@ def test_init_160x128():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial)
+    st7735(serial, gpio=Mock())
 
     assert serial.data.called
     assert serial.command.called
@@ -71,7 +71,7 @@ def test_init_128x128():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, width=128, height=128)
+    st7735(serial, gpio=Mock(), width=128, height=128)
 
     assert serial.data.called
     assert serial.command.called
@@ -114,7 +114,7 @@ def test_init_160x80():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, width=160, height=80)
+    st7735(serial, gpio=Mock(), width=160, height=80)
 
     assert serial.data.called
     assert serial.command.called
@@ -165,7 +165,7 @@ def test_offsets():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, width=128, height=128, h_offset=2, v_offset=1)
+    st7735(serial, gpio=Mock(), width=128, height=128, h_offset=2, v_offset=1)
 
     assert serial.data.called
     assert serial.command.called
@@ -197,28 +197,28 @@ def test_offsets():
 
 
 def test_contrast():
-    device = st7735(serial)
+    device = st7735(serial, gpio=Mock())
     serial.reset_mock()
     with pytest.raises(AssertionError):
         device.contrast(300)
 
 
 def test_hide():
-    device = st7735(serial)
+    device = st7735(serial, gpio=Mock())
     serial.reset_mock()
     device.hide()
     serial.command.assert_called_once_with(40)
 
 
 def test_show():
-    device = st7735(serial)
+    device = st7735(serial, gpio=Mock())
     serial.reset_mock()
     device.show()
     serial.command.assert_called_once_with(41)
 
 
 def test_display():
-    device = st7735(serial)
+    device = st7735(serial, gpio=Mock())
     serial.reset_mock()
 
     recordings = []

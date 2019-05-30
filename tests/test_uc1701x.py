@@ -11,7 +11,7 @@ from luma.lcd.device import uc1701x
 from luma.core.render import canvas
 
 from baseline_data import get_reference_data, primitives
-from helpers import (serial, call, Mock, setup_function,  # noqa: F401
+from helpers import (Mock, serial, call, setup_function,  # noqa: F401
     assert_invalid_dimensions)
 
 
@@ -19,7 +19,7 @@ def test_init_128x64():
     """
     UC1701X LCD with a 128 x 64 resolution works correctly.
     """
-    uc1701x(serial)
+    uc1701x(serial, gpio=Mock())
     serial.command.assert_has_calls([
         # Initial burst are initialization commands
         call(226),
@@ -57,7 +57,7 @@ def test_display():
     """
     UC1701X LCD screen can draw and display an image.
     """
-    device = uc1701x(serial)
+    device = uc1701x(serial, gpio=Mock())
     serial.reset_mock()
 
     recordings = []

@@ -13,11 +13,9 @@ from luma.core.render import canvas
 from baseline_data import get_reference_data, primitives
 from helpers import Mock, call, serial, setup_function  # noqa: F401
 
-gpio = Mock(unsafe=True)
-
 
 def test_init_84x48():
-    pcd8544(serial, gpio=gpio)
+    pcd8544(serial, gpio=Mock())
     serial.command.assert_has_calls([
         call(33, 20, 176, 32),
         call(32, 128, 64),
@@ -30,21 +28,21 @@ def test_init_84x48():
 
 
 def test_hide():
-    device = pcd8544(serial, gpio=gpio)
+    device = pcd8544(serial, gpio=Mock())
     serial.reset_mock()
     device.hide()
     serial.command.assert_called_once_with(8)
 
 
 def test_show():
-    device = pcd8544(serial, gpio=gpio)
+    device = pcd8544(serial, gpio=Mock())
     serial.reset_mock()
     device.show()
     serial.command.assert_called_once_with(12)
 
 
 def test_display():
-    device = pcd8544(serial, gpio=gpio)
+    device = pcd8544(serial, gpio=Mock())
     serial.reset_mock()
 
     # Use the same drawing primitives as the demo

@@ -159,26 +159,26 @@ class pcd8544(backlit_device):
         self.command(0x21, 0x14, value | 0x80, 0x20)
 
 
-class st7567(device):
+class st7567(backlit_device):
+    """
+    Serial interface to a monochrome ST7567 128x64 pixel LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+
+    .. versionadded:: 1.1.0
+    """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
-        """
-        Serial interface to a monochrome ST7567 128x64 pixel LCD display.
-
-        On creation, an initialization sequence is pumped to the display to properly
-        configure it. Further control commands can then be called to affect the
-        brightness and other settings.
-
-        :param serial_interface: The serial interface (usually a
-            :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
-            data and commands through.
-        :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
-            no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
-            represents 270° rotation.
-        :type rotate: int
-
-        .. versionadded:: 1.1.0
-        """
-        super(st7567, self).__init__(luma.lcd.const.st7567, serial_interface)
+        super(st7567, self).__init__(luma.lcd.const.st7567, serial_interface, **kwargs)
         self.capabilities(128, 64, rotate)
 
         self._pages = self._h // 8
@@ -239,7 +239,7 @@ class st7567(device):
         self.command(0x81, value)
 
 
-class st7735(device):
+class st7735(backlit_device):
     """
     Serial interface to a 262K color (6-6-6 RGB) ST7735 LCD display.
 
@@ -275,7 +275,7 @@ class st7735(device):
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
                  bgr=False, **kwargs):
-        super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
+        super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
 
@@ -379,7 +379,7 @@ class st7735(device):
 
 
 @rpi_gpio
-class ht1621(device):
+class ht1621(backlit_device):
     """
     Serial interface to a seven segment HT1621 monochrome LCD display.
 
@@ -405,7 +405,7 @@ class ht1621(device):
     .. versionadded:: 0.4.0
     """
     def __init__(self, gpio=None, width=6, rotate=0, WR=11, DAT=10, CS=8, **kwargs):
-        super(ht1621, self).__init__(luma.lcd.const.ht1621, noop())
+        super(ht1621, self).__init__(luma.lcd.const.ht1621, noop(), gpio=gpio, **kwargs)
         self.capabilities(width, 8, rotate)
         self.segment_mapper = dot_muncher
         self._gpio = gpio or self.__rpi_gpio__()
@@ -483,7 +483,7 @@ class ht1621(device):
         self._gpio.cleanup()
 
 
-class uc1701x(device):
+class uc1701x(backlit_device):
     """
     Serial interface to a monochrome UC1701X LCD display.
 
@@ -502,7 +502,7 @@ class uc1701x(device):
     .. versionadded:: 0.5.0
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
-        super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface)
+        super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface, **kwargs)
         self.capabilities(128, 64, rotate)
 
         self._pages = self._h // 8

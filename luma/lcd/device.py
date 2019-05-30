@@ -57,6 +57,8 @@ class backlit_device(device):
     :param active_low: Set to true if active low (default), false otherwise.
     :type active_low: bool
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
+
+    .. versionadded:: 2.0.0
     """
     def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)

@@ -137,8 +137,10 @@ buffer allows, but only because dots are folded into their host character.
 Backlight Control
 ^^^^^^^^^^^^^^^^^
 These displays typically require a backlight to illuminate the liquid crystal
-display: the :py:class:`luma.lcd.aux.backlight` class allows a BCM pin to
-be specified to control the backlight through software.
+display: by default GPIO 18 (PWM_CLK0) is used as the backlight control pin.
+This can  be changed by specifying ``gpio_LIGHT=n`` when initializing the
+device. The backlight can be programmatically switched on and off by calling
+``device.backlight(True)`` or ``device.backlight(True)`` respectively.
 
 Examples
 ^^^^^^^^

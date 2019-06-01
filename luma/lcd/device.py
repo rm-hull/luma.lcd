@@ -49,7 +49,7 @@ __all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567"]
 @rpi_gpio
 class backlit_device(device):
     """
-    Controls a backlight (active low), assumed to be on GPIO 18 (PWM_CLK0) by default.
+    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
 
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param gpio_LIGHT: the GPIO pin to use for the backlight.

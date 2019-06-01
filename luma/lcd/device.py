@@ -405,6 +405,8 @@ class ht1621(backlit_device):
     .. versionadded:: 0.4.0
     """
     def __init__(self, gpio=None, width=6, rotate=0, WR=11, DAT=10, CS=8, **kwargs):
+        if 'serial_interface' in kwargs:
+            del kwargs['serial_interface']
         super(ht1621, self).__init__(luma.lcd.const.ht1621, noop(), gpio=gpio, **kwargs)
         self.capabilities(width, 8, rotate)
         self.segment_mapper = dot_muncher

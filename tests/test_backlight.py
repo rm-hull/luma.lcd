@@ -4,8 +4,8 @@
 # See LICENSE.rst for details.
 
 import luma.core.error
-from luma.lcd.aux import backlight
-
+from luma.lcd.device import backlit_device
+from luma.core.interface.serial import noop
 from helpers import Mock
 
 
@@ -23,49 +23,56 @@ def setup_function(function):
 def test_unsupported_platform():
     e = RuntimeError('Module not imported correctly!')
     errorgpio = Mock(unsafe=True)
-    errorgpio.setmode.side_effect = e
+    errorgpio.setup.side_effect = e
 
     try:
-        backlight(gpio_LIGHT=19, gpio=errorgpio)
+        backlit_device(serial_interface=noop(), gpio_LIGHT=19, gpio=errorgpio)
     except luma.core.error.UnsupportedPlatform as ex:
         assert str(ex) == 'GPIO access not available'
 
 
 def test_init():
     gpio_LIGHT = 11
-    backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
-    gpio.setmode.assert_called_once_with(gpio.BCM)
+    backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.setup.assert_called_once_with(gpio_LIGHT, gpio.OUT)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
+def test_cleanup():
+    gpio_LIGHT = 11
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    gpio.reset_mock()
+    device.cleanup()
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+
+
 def test_active_low_enable_on():
     gpio_LIGHT = 14
-    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
-    light.enable(True)
+    device.backlight(True)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
 def test_active_low_enable_off():
     gpio_LIGHT = 19
-    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
-    light.enable(False)
+    device.backlight(False)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
 
 
 def test_active_high_enable_on():
     gpio_LIGHT = 14
-    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
     gpio.reset_mock()
-    light.enable(True)
+    device.backlight(True)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
 
 
 def test_active_high_enable_off():
     gpio_LIGHT = 19
-    light = backlight(gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=False)
     gpio.reset_mock()
-    light.enable(False)
+    device.backlight(False)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)

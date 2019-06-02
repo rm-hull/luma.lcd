@@ -28,5 +28,5 @@ def assert_invalid_dimensions(deviceType, serial_interface, width, height):
     :py:class:`luma.core.error.DeviceDisplayModeError`.
     """
     with pytest.raises(luma.core.error.DeviceDisplayModeError) as ex:
-        deviceType(serial_interface, width=width, height=height)
+        deviceType(serial_interface, gpio=Mock(), width=width, height=height)
     assert "Unsupported display mode: {} x {}".format(width, height) in str(ex.value)

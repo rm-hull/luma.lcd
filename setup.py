@@ -34,7 +34,7 @@ needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 test_deps = [
     'mock;python_version<"3.3"',
-    'pytest>=3.1',
+    'pytest==4.5',
     'pytest-cov'
 ]
 
@@ -52,7 +52,7 @@ setup(
     namespace_packages=["luma"],
     packages=["luma.lcd"],
     zip_safe=False,
-    install_requires=["luma.core>=1.8.0"],
+    install_requires=["luma.core>=1.11"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

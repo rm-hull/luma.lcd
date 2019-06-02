@@ -54,11 +54,17 @@ Documentation
 Full documentation with installation instructions and examples can be found on
 https://luma-lcd.readthedocs.io.
 
+Breaking changes
+----------------
+Version 2.0.0 was released on 2 June 2019: this came with the removal of the
+``luma.lcd.aux.backlight`` class. The equivalent functionality has now
+been subsumed into the device classes that have a backlight capability.
+
 License
 -------
 The MIT License (MIT)
 
-Copyright (c) 2013-17 Richard Hull & Contributors
+Copyright (c) 2013-2019 Richard Hull & Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

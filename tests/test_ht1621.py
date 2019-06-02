@@ -9,6 +9,7 @@ Tests for the :py:class:`luma.lcd.device.ht1621` device.
 
 from luma.lcd.device import ht1621
 from luma.core.virtual import sevensegment
+from helpers import Mock  # noqa: F401
 
 
 class MockHT1621:
@@ -136,7 +137,7 @@ def setup_function(function):
 
 
 def test_init_6x8():
-    ht1621(gpio)
+    ht1621(gpio, serial_interface=Mock())
 
     assert gpio.get_pin_states() == {
         11: gpio.OUT,

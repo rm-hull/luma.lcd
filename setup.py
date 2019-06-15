@@ -5,7 +5,7 @@ import re
 import os
 import sys
 from io import open
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def read_file(fname, encoding='utf-8'):
@@ -34,7 +34,7 @@ needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 test_deps = [
     'mock;python_version<"3.3"',
-    'pytest==4.5',
+    'pytest<=4.5',
     'pytest-cov'
 ]
 
@@ -45,14 +45,16 @@ setup(
     author_email="richard.hull@destructuring-bind.org",
     description=("A library to drive PCD8544, HT1621, ST7735, ST7567 and UC1701X-based LCDs"),
     long_description="\n\n".join([README, CONTRIB, CHANGES]),
+    long_description_content_type="text/x-rst",
+    python_requires='>=2.7',
     license="MIT",
     keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 st7735 uc1701x ht1621 spi 84x48 160x128",
     url="https://github.com/rm-hull/luma.lcd",
     download_url="https://github.com/rm-hull/luma.lcd/tarball/" + version,
     namespace_packages=["luma"],
-    packages=["luma.lcd"],
+    packages=find_packages(),
     zip_safe=False,
-    install_requires=["luma.core>=1.11"],
+    install_requires=["luma.core>=1.12.0"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

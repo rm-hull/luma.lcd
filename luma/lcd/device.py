@@ -43,7 +43,7 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567"]
 
 
 @rpi_gpio

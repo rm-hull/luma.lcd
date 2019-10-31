@@ -17,6 +17,9 @@ class st7735(object):
     DISPLAYON = 0x29
     DISPLAYOFF = 0x28
 
+class ili9341(object):
+    DISPLAYON = 0x29
+    DISPLAYOFF = 0x28
 
 class ht1621(object):
     DISPLAYON = 0x06

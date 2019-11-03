@@ -380,9 +380,7 @@ class st7735(backlit_device):
 
 class ili9341(backlit_device):
     """
-    Serial interface to a 65k color (5-6-5 RGB) ILI9341 LCD display.
-    It can theoretically support 262k color (6-6-6 RGB) but this is a direct port
-    from the Adafruit library that only implements the 65k color mode.
+    Serial interface to a 262k color (6-6-6 RGB) ILI9341 LCD display.
 
     On creation, an initialization sequence is pumped to the display to properly
     configure it. Further control commands can then be called to affect the
@@ -453,7 +451,7 @@ class ili9341(backlit_device):
         self.command(0xc5, 0x3e, 0x28)                   # VCM Control 1
         self.command(0xc7, 0x86)                         # VCM Control 2
         self.command(0x36, 0x48)                         # Memory Access Control
-        self.command(0x3a, 0x55)                         # Pixel Format 5-6-5
+        self.command(0x3a, 0x54)                         # Pixel Format 6-6-6
         self.command(0xb1, 0x00, 0x18)                   # FRMCTR1
         self.command(0xb6, 0x08, 0x82, 0x27)             # Display Function Control
         self.command(0xf2, 0x00)                         # 3Gamma Function Disable

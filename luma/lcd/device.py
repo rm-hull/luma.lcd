@@ -409,7 +409,7 @@ class ili9341(backlit_device):
         (default: 0).
     :type v_offset: int
 
-    .. versionadded:: TODO
+    .. versionadded:: 2.1.0
     """
     def __init__(self, serial_interface=None, width=240, height=320, rotate=1,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
@@ -438,7 +438,6 @@ class ili9341(backlit_device):
         # Note: copied from the Adafruit implementation at 
         # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
         
-        # self.command(0x01) # software reset, not in the original implementation
         self.command(0xef, 0x03, 0x80, 0x02)             # ?
         self.command(0xcf, 0x00, 0xc1, 0x30)             # Power control B
         self.command(0xed, 0x64, 0x03, 0x12, 0x81)       # Power on sequence control

@@ -411,7 +411,7 @@ class ili9341(backlit_device):
 
     .. versionadded:: TODO
     """
-    def __init__(self, serial_interface=None, width=240, height=320, rotate=0,
+    def __init__(self, serial_interface=None, width=240, height=320, rotate=1,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
                  bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
@@ -440,7 +440,7 @@ class ili9341(backlit_device):
         
         # self.command(0x01) # software reset, not in the original implementation
         self.command(0xef, 0x03, 0x80, 0x02)             # ?
-        self.command(0xcf, 0x00, 0xc1, 0x30).            # Power control B
+        self.command(0xcf, 0x00, 0xc1, 0x30)             # Power control B
         self.command(0xed, 0x64, 0x03, 0x12, 0x81)       # Power on sequence control
         self.command(0xe8, 0x85, 0x00, 0x78)             # Driver timing control A
         self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02) # Power control A
@@ -451,7 +451,7 @@ class ili9341(backlit_device):
         self.command(0xc5, 0x3e, 0x28)                   # VCM Control 1
         self.command(0xc7, 0x86)                         # VCM Control 2
         self.command(0x36, 0x48)                         # Memory Access Control
-        self.command(0x3a, 0x54)                         # Pixel Format 6-6-6
+        self.command(0x3a, 0x46)                         # Pixel Format 6-6-6
         self.command(0xb1, 0x00, 0x18)                   # FRMCTR1
         self.command(0xb6, 0x08, 0x82, 0x27)             # Display Function Control
         self.command(0xf2, 0x00)                         # 3Gamma Function Disable
@@ -485,21 +485,13 @@ class ili9341(backlit_device):
             width = right - left
             height = bottom - top
 
-            self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
-            self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
+            #self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
+            #self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
+            self.command(0x2A, 0x00, 0x00, 0xff, 0xff)     # Set column addr
+            self.command(0x2B, 0x00, 0x00, 0xff, 0xff)     # Set row addr
             self.command(0x2C)                                                                   # Memory write
 
-            i = 0
-            buf = bytearray(width * height * 3)
-            for r, g, b in self.framebuffer.getdata():
-                if not(r == g == b == 0):
-                    # 262K format
-                    buf[i] = r
-                    buf[i + 1] = g
-                    buf[i + 2] = b
-                i += 3
-
-            self.data(list(buf))
+            self.data(self.framebuffer.image.tobytes())
 
     def contrast(self, level):
         """

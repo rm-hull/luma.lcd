@@ -56,7 +56,7 @@ def test_init_320x240():
         {'command': [0x11]},
         {'command': [0x2a]}, {'data': [0x00, 0x00, 0x01, 0x3f]},
         {'command': [0x2b]}, {'data': [0x00, 0x00, 0x00, 0xef]},
-        {'command': [0x2c]},  
+        {'command': [0x2c]},
         {'data': bytearray([0x00] * (320 * 240 * 3))},
         {'command': [0x29]},
     ]
@@ -102,7 +102,7 @@ def test_init_240x240():
         {'command': [0x11]},
         {'command': [0x2A]}, {'data': [0x00, 0x00, 0x00, 0xef]},
         {'command': [0x2B]}, {'data': [0x00, 0x00, 0x00, 0xef]},
-        {'command': [0x2C]},  
+        {'command': [0x2C]},
         {'data': bytearray([0x00] * (240 * 240 * 3))},
         {'command': [0x29]},
     ]
@@ -148,7 +148,7 @@ def test_init_320x180():
         {'command': [0x11]},
         {'command': [0x2A]}, {'data': [0x00, 0x00, 0x01, 0x3f]},
         {'command': [0x2B]}, {'data': [0x00, 0x00, 0x00, 0xb3]},
-        {'command': [0x2C]},  
+        {'command': [0x2C]},
         {'data': bytearray([0x00] * (320 * 180 * 3))},
         {'command': [0x29]},
     ]
@@ -202,7 +202,7 @@ def test_offsets():
         {'command': [0x11]},
         {'command': [0x2A]}, {'data': [0x00, 0x02, 0x00, 0xef + 0x02]},
         {'command': [0x2B]}, {'data': [0x00, 0x01, 0x00, 0xef + 0x01]},
-        {'command': [0x2C]},  
+        {'command': [0x2C]},
         {'data': bytearray([0x00] * (240 * 240 * 3))},
         {'command': [0x29]},
     ]

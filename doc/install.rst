@@ -109,7 +109,7 @@ LED-          Backlight ground  P01-06   GND
 ============= ================= ======== ==============
 
 ILI9341
-""""""
+"""""""
 No support for the touch-screen, leave the MISO and Touch pins disconnected.
 Depending on the board you bought, there may be different names for the same
 pins, as detailed below.
@@ -124,7 +124,7 @@ RESET or RST  Reset             P01-18   GPIO 24
 DC            Data/command      P01-16   GPIO 23
 SDI(MOSI)     SPI data          P01-19   GPIO 10 (MOSI)
 SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
-LED           Backlight control P01-12   GPIO 18 (PCM_CLK)
+LED           Backlight control P01-12   GPIO 18
 ============= ================= ======== ==============
 
 ST7567

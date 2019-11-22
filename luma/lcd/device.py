@@ -411,7 +411,7 @@ class ili9341(backlit_device):
 
     .. versionadded:: 2.1.0
     """
-    def __init__(self, serial_interface=None, width=240, height=320, rotate=1,
+    def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
                  bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
@@ -427,13 +427,13 @@ class ili9341(backlit_device):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(240, 320), (240, 240), (180, 320)] # full, 1x1, 16x9
+        supported = (width, height) in [(320, 240), (240, 240), (320, 180)] # full, 1x1, 16x9
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 
         # RGB or BGR order
-        order = 0x08 if bgr else 0x00
+        order = 0x00 if bgr else 0x08
 
         # Note: copied from the Adafruit implementation at 
         # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
@@ -449,7 +449,7 @@ class ili9341(backlit_device):
         self.command(0xc1, 0x10)                         # Power Control 2, SAP[2:0], BT[3:0]
         self.command(0xc5, 0x3e, 0x28)                   # VCM Control 1
         self.command(0xc7, 0x86)                         # VCM Control 2
-        self.command(0x36, 0x48)                         # Memory Access Control
+        self.command(0x36, 0x20 | order)                 # Memory Access Control
         self.command(0x3a, 0x46)                         # Pixel Format 6-6-6
         self.command(0xb1, 0x00, 0x18)                   # FRMCTR1
         self.command(0xb6, 0x08, 0x82, 0x27)             # Display Function Control
@@ -484,13 +484,11 @@ class ili9341(backlit_device):
             width = right - left
             height = bottom - top
 
-            #self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
-            #self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
-            self.command(0x2A, 0x00, 0x00, 0xff, 0xff)     # Set column addr
-            self.command(0x2B, 0x00, 0x00, 0xff, 0xff)     # Set row addr
+            self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
+            self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
             self.command(0x2C)                                                                   # Memory write
 
-            self.data(self.framebuffer.image.tobytes())
+            self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
 
     def contrast(self, level):
         """

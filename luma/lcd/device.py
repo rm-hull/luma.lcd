@@ -484,9 +484,9 @@ class ili9341(backlit_device):
             width = right - left
             height = bottom - top
 
-            self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
-            self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
-            self.command(0x2C)                                                                   # Memory write
+            self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2c)                                                                   # Memory write
 
             self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
 

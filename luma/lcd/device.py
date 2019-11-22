@@ -427,7 +427,7 @@ class ili9341(backlit_device):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(320, 240), (240, 240), (320, 180)] # full, 1x1, 16x9
+        supported = (width, height) in [(320, 240), (240, 240), (320, 180)]  # full, 1x1, 16x9
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
@@ -435,34 +435,34 @@ class ili9341(backlit_device):
         # RGB or BGR order
         order = 0x00 if bgr else 0x08
 
-        # Note: copied from the Adafruit implementation at 
+        # Note: based on the Adafruit implementation at
         # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
-        
-        self.command(0xef, 0x03, 0x80, 0x02)             # ?
-        self.command(0xcf, 0x00, 0xc1, 0x30)             # Power control B
-        self.command(0xed, 0x64, 0x03, 0x12, 0x81)       # Power on sequence control
-        self.command(0xe8, 0x85, 0x00, 0x78)             # Driver timing control A
-        self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02) # Power control A
-        self.command(0xf7, 0x20)                         # Pump ratio control
-        self.command(0xea, 0x00, 0x00)                   # Driver timing control B
-        self.command(0xc0, 0x23)                         # Power Control 1, VRH[5:0]
-        self.command(0xc1, 0x10)                         # Power Control 2, SAP[2:0], BT[3:0]
-        self.command(0xc5, 0x3e, 0x28)                   # VCM Control 1
-        self.command(0xc7, 0x86)                         # VCM Control 2
-        self.command(0x36, 0x20 | order)                 # Memory Access Control
-        self.command(0x3a, 0x46)                         # Pixel Format 6-6-6
-        self.command(0xb1, 0x00, 0x18)                   # FRMCTR1
-        self.command(0xb6, 0x08, 0x82, 0x27)             # Display Function Control
-        self.command(0xf2, 0x00)                         # 3Gamma Function Disable
-        self.command(0x26, 0x01)                         # Gamma Curve Selected
-        self.command(0xe0,                               # Set Gamma (+ polarity)
+
+        self.command(0xef, 0x03, 0x80, 0x02)              # ?
+        self.command(0xcf, 0x00, 0xc1, 0x30)              # Power control B
+        self.command(0xed, 0x64, 0x03, 0x12, 0x81)        # Power on sequence control
+        self.command(0xe8, 0x85, 0x00, 0x78)              # Driver timing control A
+        self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02)  # Power control A
+        self.command(0xf7, 0x20)                          # Pump ratio control
+        self.command(0xea, 0x00, 0x00)                    # Driver timing control B
+        self.command(0xc0, 0x23)                          # Power Control 1, VRH[5:0]
+        self.command(0xc1, 0x10)                          # Power Control 2, SAP[2:0], BT[3:0]
+        self.command(0xc5, 0x3e, 0x28)                    # VCM Control 1
+        self.command(0xc7, 0x86)                          # VCM Control 2
+        self.command(0x36, 0x20 | order)                  # Memory Access Control
+        self.command(0x3a, 0x46)                          # Pixel Format 6-6-6
+        self.command(0xb1, 0x00, 0x18)                    # FRMCTR1
+        self.command(0xb6, 0x08, 0x82, 0x27)              # Display Function Control
+        self.command(0xf2, 0x00)                          # 3Gamma Function Disable
+        self.command(0x26, 0x01)                          # Gamma Curve Selected
+        self.command(0xe0,                                # Set Gamma (+ polarity)
                      0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
                      0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00)
-        self.command(0xe1,                               # Set Gamma (- polarity)
+        self.command(0xe1,                                # Set Gamma (- polarity)
                      0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
                      0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f)
-        self.command(0x11)                               # Sleep out
-        self.clear()                               
+        self.command(0x11)                                # Sleep out
+        self.clear()
         self.show()
 
     def display(self, image):
@@ -481,8 +481,6 @@ class ili9341(backlit_device):
 
         if self.framebuffer.redraw_required(image):
             left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
-            width = right - left
-            height = bottom - top
 
             self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
             self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr

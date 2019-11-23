@@ -43,7 +43,7 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567"]
+__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341"]
 
 
 @rpi_gpio
@@ -357,6 +357,136 @@ class st7735(backlit_device):
                 i += 3
 
             self.data(list(buf))
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))
+
+
+class ili9341(backlit_device):
+    """
+    Serial interface to a 262k color (6-6-6 RGB) ILI9341 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param width: The number of pixels laid out horizontally.
+    :type width: int
+    :param height: The number of pixels laid out vertically.
+    :type width: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently values of
+        ``diff_to_previous`` or ``full_frame`` are only supported.
+    :type framebuffer: str
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
+    :type bgr: bool
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
+    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
+
+    .. versionadded:: 2.1.0
+    """
+    def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
+                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 bgr=False, **kwargs):
+        super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
+        self.capabilities(width, height, rotate, mode="RGB")
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        # Supported modes
+        supported = (width, height) in [(320, 240), (240, 240), (320, 180)]  # full, 1x1, 16x9
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        # RGB or BGR order
+        order = 0x00 if bgr else 0x08
+
+        # Note: based on the Adafruit implementation at
+        # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
+
+        self.command(0xef, 0x03, 0x80, 0x02)              # ?
+        self.command(0xcf, 0x00, 0xc1, 0x30)              # Power control B
+        self.command(0xed, 0x64, 0x03, 0x12, 0x81)        # Power on sequence control
+        self.command(0xe8, 0x85, 0x00, 0x78)              # Driver timing control A
+        self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02)  # Power control A
+        self.command(0xf7, 0x20)                          # Pump ratio control
+        self.command(0xea, 0x00, 0x00)                    # Driver timing control B
+        self.command(0xc0, 0x23)                          # Power Control 1, VRH[5:0]
+        self.command(0xc1, 0x10)                          # Power Control 2, SAP[2:0], BT[3:0]
+        self.command(0xc5, 0x3e, 0x28)                    # VCM Control 1
+        self.command(0xc7, 0x86)                          # VCM Control 2
+        self.command(0x36, 0x20 | order)                  # Memory Access Control
+        self.command(0x3a, 0x46)                          # Pixel Format 6-6-6
+        self.command(0xb1, 0x00, 0x18)                    # FRMCTR1
+        self.command(0xb6, 0x08, 0x82, 0x27)              # Display Function Control
+        self.command(0xf2, 0x00)                          # 3Gamma Function Disable
+        self.command(0x26, 0x01)                          # Gamma Curve Selected
+        self.command(0xe0,                                # Set Gamma (+ polarity)
+                     0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
+                     0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00)
+        self.command(0xe1,                                # Set Gamma (- polarity)
+                     0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
+                     0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f)
+        self.command(0x11)                                # Sleep out
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ILI9341 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: The image to render.
+        :type image: PIL.Image.Image
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        if self.framebuffer.redraw_required(image):
+            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
+
+            self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2c)                                                                   # Memory write
+
+            self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
 
     def contrast(self, level):
         """

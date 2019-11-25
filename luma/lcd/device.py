@@ -409,7 +409,7 @@ class ili9341(backlit_device):
         (default: 0).
     :type v_offset: int
 
-    .. versionadded:: 2.1.0
+    .. versionadded:: 2.2.0
     """
     def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,

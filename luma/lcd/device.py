@@ -2,6 +2,10 @@
 # Copyright (c) 2013-17 Richard Hull and contributors
 # See LICENSE.rst for details.
 
+"""
+Collection of serial interfaces to LCD devices.
+"""
+
 # Example usage:
 #
 #   from luma.core.interface.serial import spi
@@ -40,26 +44,83 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "st7920", "ht1621", "uc1701x"]
+__all__ = ["pcd8544", "st7735", "st7920", "ht1621", "uc1701x", "st7567", "ili9341"]
 
 
-class pcd8544(device):
+@rpi_gpio
+class backlit_device(device):
     """
-    Encapsulates the serial interface to the monochrome PCD8544 LCD display
-    hardware. On creation, an initialization sequence is pumped to the display
+    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+
+    :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
+    :param gpio_LIGHT: the GPIO pin to use for the backlight.
+    :type gpio_LIGHT: int
+    :param active_low: Set to true if active low (default), false otherwise.
+    :type active_low: bool
+    :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
+
+    .. versionadded:: 2.0.0
+    """
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, **kwargs):
+        super(backlit_device, self).__init__(const, serial_interface)
+
+        self._gpio_LIGHT = gpio_LIGHT
+        self._gpio = gpio or self.__rpi_gpio__()
+        if active_low:
+            self._enabled = self._gpio.LOW
+            self._disabled = self._gpio.HIGH
+        else:
+            self._enabled = self._gpio.HIGH
+            self._disabled = self._gpio.LOW
+
+        try:
+            self._gpio.setup(self._gpio_LIGHT, self._gpio.OUT)
+        except RuntimeError as e:
+            if str(e) == 'Module not imported correctly!':
+                raise luma.core.error.UnsupportedPlatform('GPIO access not available')
+
+        self.persist = True
+        self.backlight(True)
+
+    def backlight(self, value):
+        """
+        Switches on the backlight on and off.
+
+        :param value: Switched on when ``True`` supplied, else ``False`` switches it off.
+        :type value: bool
+        """
+        assert(value in [True, False])
+        self._gpio.output(self._gpio_LIGHT,
+                          self._enabled if value else self._disabled)
+
+    def cleanup(self):
+        """
+        Attempt to reset the device & switching it off prior to exiting the
+        python process.
+        """
+        super(backlit_device, self).cleanup()
+        if self.persist:
+            self.backlight(False)
+
+
+class pcd8544(backlit_device):
+    """
+    Serial interface to a monochrome PCD8544 LCD display.
+
+    On creation, an initialization sequence is pumped to the display
     to properly configure it. Further control commands can then be called to
     affect the brightness and other settings.
 
-    :param serial_interface: the serial interface (usually a
+    :param serial_interface: The serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
-        super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface)
+        super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface, **kwargs)
         self.capabilities(84, 48, rotate)
 
         self._mask = [1 << (i // self._w) % 8 for i in range(self._w * self._h)]
@@ -99,42 +160,123 @@ class pcd8544(device):
         self.command(0x21, 0x14, value | 0x80, 0x20)
 
 
-class st7735(device):
+class st7567(backlit_device):
     """
-    Encapsulates the serial interface to the 262K color (6-6-6 RGB) ST7735
-    LCD display hardware. On creation, an initialization sequence is pumped to
-    the display to properly configure it. Further control commands can then be
-    called to affect the brightness and other settings.
+    Serial interface to a monochrome ST7567 128x64 pixel LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+
+    .. versionadded:: 1.1.0
+    """
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(st7567, self).__init__(luma.lcd.const.st7567, serial_interface, **kwargs)
+        self.capabilities(128, 64, rotate)
+
+        self._pages = self._h // 8
+
+        self.command(0xA3)  # Bias 1/7
+        self.command(0xA1)
+        self.command(0xC0)  # Normal Orientation
+        self.command(0xA6)  # Normal Display (0xA7 = inverse)
+        self.command(0x40)
+        self.command(0x2F)
+        self.command(0x22)
+        self.command(0xAF)
+
+        self.contrast(57)
+
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the ST7567
+        LCD display
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        set_page_address = 0xB0
+
+        image_data = image.getdata()
+        pixels_per_page = self.width * 8
+        buf = bytearray(self.width)
+
+        for y in range(0, int(self._pages * pixels_per_page), pixels_per_page):
+            self.command(set_page_address, 0x04, 0x10)
+            set_page_address += 1
+            offsets = [y + self.width * i for i in range(8)]
+
+            for x in range(self.width):
+                buf[x] = \
+                    (image_data[x + offsets[0]] and 0x01) | \
+                    (image_data[x + offsets[1]] and 0x02) | \
+                    (image_data[x + offsets[2]] and 0x04) | \
+                    (image_data[x + offsets[3]] and 0x08) | \
+                    (image_data[x + offsets[4]] and 0x10) | \
+                    (image_data[x + offsets[5]] and 0x20) | \
+                    (image_data[x + offsets[6]] and 0x40) | \
+                    (image_data[x + offsets[7]] and 0x80)
+
+            self.data(list(buf))
+
+    def contrast(self, value):
+        """
+        Sets the LCD contrast
+        """
+        assert(0 <= value <= 255)
+        self.command(0x81, value)
+
+
+class st7735(backlit_device):
+    """
+    Serial interface to a 262K color (6-6-6 RGB) ST7735 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
 
     :param serial_interface: the serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param width: The number of pixels laid out horizontally
+    :param width: The number of pixels laid out horizontally.
     :type width: int
-    :param height: The number of pixels laid out vertically
+    :param height: The number of pixels laid out vertically.
     :type width: int
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
     :param framebuffer: Framebuffering strategy, currently values of
-        "diff_to_previous" or "full_frame" are only supported
+        ``diff_to_previous`` or ``full_frame`` are only supported.
     :type framebuffer: str
-    :param bgr: set to `True` if device pixels are BGR order (rather than RGB)
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
-    :param h_offset: horizontal offset (in pixels) of screen to device memory
-        (default: 0)
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
     :type h_offset: int
-    :param v_offset: vertical offset (in pixels) of screen to device memory
-        (default: 0)
-    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
 
     .. versionadded:: 0.3.0
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
                  bgr=False, **kwargs):
-        super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface)
+        super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
 
@@ -146,7 +288,9 @@ class st7735(device):
         else:
             self.apply_offsets = lambda bbox: bbox
 
-        if width not in [128, 160] or height != 128:
+        # Supported modes
+        supported = (width, height) in [(160, 80), (160, 128), (128, 128)]
+        if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))
 
@@ -186,7 +330,7 @@ class st7735(device):
         values are passed directly to the devices internal storage, but only
         the 6 most-significant bits are used by the display.
 
-        :param image: the image to render
+        :param image: The image to render.
         :type image: PIL.Image.Image
         """
         assert(image.mode == self.mode)
@@ -235,19 +379,150 @@ class st7735(device):
             self._serial_interface.data(list(args))
 
 
-@rpi_gpio
-class ht1621(device):
+class ili9341(backlit_device):
     """
-    Encapsulates the serial interface to the seven segment HT1621 monochrome LCD
-    display hardware. On creation, an initialization sequence is pumped to
-    the display to properly configure it. Further control commands can then be
-    called to affect the brightness and other settings.
+    Serial interface to a 262k color (6-6-6 RGB) ILI9341 LCD display.
 
-    :param gpio: the GPIO library to use (usually RPi.GPIO)
-        to delegate sending data and commands through.
-    :param width: The number of 7 segment characters laid out horizontally
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param width: The number of pixels laid out horizontally.
     :type width: int
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param height: The number of pixels laid out vertically.
+    :type width: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently values of
+        ``diff_to_previous`` or ``full_frame`` are only supported.
+    :type framebuffer: str
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
+    :type bgr: bool
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
+    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
+
+    .. versionadded:: 2.2.0
+    """
+    def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
+                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 bgr=False, **kwargs):
+        super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
+        self.capabilities(width, height, rotate, mode="RGB")
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        # Supported modes
+        supported = (width, height) in [(320, 240), (240, 240), (320, 180)]  # full, 1x1, 16x9
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        # RGB or BGR order
+        order = 0x00 if bgr else 0x08
+
+        # Note: based on the Adafruit implementation at
+        # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
+
+        self.command(0xef, 0x03, 0x80, 0x02)              # ?
+        self.command(0xcf, 0x00, 0xc1, 0x30)              # Power control B
+        self.command(0xed, 0x64, 0x03, 0x12, 0x81)        # Power on sequence control
+        self.command(0xe8, 0x85, 0x00, 0x78)              # Driver timing control A
+        self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02)  # Power control A
+        self.command(0xf7, 0x20)                          # Pump ratio control
+        self.command(0xea, 0x00, 0x00)                    # Driver timing control B
+        self.command(0xc0, 0x23)                          # Power Control 1, VRH[5:0]
+        self.command(0xc1, 0x10)                          # Power Control 2, SAP[2:0], BT[3:0]
+        self.command(0xc5, 0x3e, 0x28)                    # VCM Control 1
+        self.command(0xc7, 0x86)                          # VCM Control 2
+        self.command(0x36, 0x20 | order)                  # Memory Access Control
+        self.command(0x3a, 0x46)                          # Pixel Format 6-6-6
+        self.command(0xb1, 0x00, 0x18)                    # FRMCTR1
+        self.command(0xb6, 0x08, 0x82, 0x27)              # Display Function Control
+        self.command(0xf2, 0x00)                          # 3Gamma Function Disable
+        self.command(0x26, 0x01)                          # Gamma Curve Selected
+        self.command(0xe0,                                # Set Gamma (+ polarity)
+                     0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
+                     0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00)
+        self.command(0xe1,                                # Set Gamma (- polarity)
+                     0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
+                     0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f)
+        self.command(0x11)                                # Sleep out
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ILI9341 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: The image to render.
+        :type image: PIL.Image.Image
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        if self.framebuffer.redraw_required(image):
+            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
+
+            self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2c)                                                                   # Memory write
+
+            self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))
+
+
+@rpi_gpio
+class ht1621(backlit_device):
+    """
+    Serial interface to a seven segment HT1621 monochrome LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param gpio: The GPIO library to use (usually RPi.GPIO)
+        to delegate sending data and commands through.
+    :param width: The number of 7 segment characters laid out horizontally.
+    :type width: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
@@ -261,7 +536,9 @@ class ht1621(device):
     .. versionadded:: 0.4.0
     """
     def __init__(self, gpio=None, width=6, rotate=0, WR=11, DAT=10, CS=8, **kwargs):
-        super(ht1621, self).__init__(luma.lcd.const.ht1621, noop())
+        if 'serial_interface' in kwargs:
+            del kwargs['serial_interface']
+        super(ht1621, self).__init__(luma.lcd.const.ht1621, noop(), gpio=gpio, **kwargs)
         self.capabilities(width, 8, rotate)
         self.segment_mapper = dot_muncher
         self._gpio = gpio or self.__rpi_gpio__()
@@ -339,17 +616,18 @@ class ht1621(device):
         self._gpio.cleanup()
 
 
-class uc1701x(device):
+class uc1701x(backlit_device):
     """
-    Encapsulates the serial interface to the monochrome UC1701X LCD display
-    hardware. On creation, an initialization sequence is pumped to the display
-    to properly configure it. Further control commands can then be called to
-    affect the brightness and other settings.
+    Serial interface to a monochrome UC1701X LCD display.
 
-    :param serial_interface: the serial interface (usually a
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
         :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
         data and commands through.
-    :param rotate: an integer value of 0 (default), 1, 2 or 3 only, where 0 is
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
@@ -357,7 +635,7 @@ class uc1701x(device):
     .. versionadded:: 0.5.0
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
-        super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface)
+        super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface, **kwargs)
         self.capabilities(128, 64, rotate)
 
         self._pages = self._h // 8

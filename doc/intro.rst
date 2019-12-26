@@ -36,6 +36,10 @@ switchable backlight:
 
 .. image:: images/uc1701x.png
 
+The ST7567 display supports a resolution of 128 x 64 monochrome pixels:
+
+.. image:: images/st7567.jpg
+
 .. seealso::
    Further technical information for the specific device can be found in the
    datasheet below: 
@@ -44,6 +48,7 @@ switchable backlight:
    - :download:`ST7735 <tech-spec/ST7735.pdf>`
    - :download:`HT1621 <tech-spec/HT1621.pdf>`
    - :download:`UC1701X <tech-spec/UC1701X.pdf>`
+   - :download:`ILI9341 <tech-spec/ILI9341.pdf>`
 
 As well as display drivers for the physical device, there are emulators that
 run in real-time (with pygame) and others that can take screenshots, or

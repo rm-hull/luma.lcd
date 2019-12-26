@@ -23,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -56,7 +57,13 @@ doc/_build/
 # PyBuilder
 target/
 .ropeproject
+.vscode
 *~
 
 # OSX
 .DS_Store
+
+# IDE
+.project
+.pydevproject
+.settings/

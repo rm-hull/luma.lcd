@@ -1,7 +1,7 @@
 Installation
 ------------
 
-.. note:: The library has been tested against Python 2.7, 3.4 and 3.5.
+.. note:: The library has been tested against Python 2.7, 3.4, 3.5 and 3.6.
 
    For **Python3** installation, substitute the following in the
    instructions below.
@@ -13,7 +13,8 @@ Installation
 
    It was *originally* tested with Raspbian on a rev.2 model B, with a vanilla
    kernel version 4.1.16+, and has subsequently been tested on Raspberry Pi
-   model A, model B2 and 3B (Debian Jessie) and OrangePi Zero (Armbian Jessie).
+   (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W and
+   OrangePi Zero (Armbian Jessie).
 
 Pre-requisites
 ^^^^^^^^^^^^^^
@@ -66,7 +67,7 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
   * If you're already using the listed GPIO pins for Data/Command and/or Reset,
     you can select other pins and pass :py:attr:`gpio_DC` and/or :py:attr:`gpio_RST`
     argument specifying the new *GPIO* pin numbers in your serial interface create
-    call (this applies to both PCD8544 and ST7735).
+    call (this applies to PCD8544, ST7567 and ST7735).
 
   * Because CE is connected to CE0, the display is available on SPI port 0. You
     can connect it to CE1 to have it available on port 1. If so, pass
@@ -107,6 +108,45 @@ LED+ or BL    Backlight control P01-12   GPIO 18 (PCM_CLK)
 LED-          Backlight ground  P01-06   GND
 ============= ================= ======== ==============
 
+ILI9341
+"""""""
+No support for the touch-screen, leave the MISO and Touch pins disconnected.
+Depending on the board you bought, there may be different names for the same
+pins, as detailed below.
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+VCC           +3.3V Power       P01-01   3V3
+GND           Ground            P01-06   GND
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
+RESET or RST  Reset             P01-18   GPIO 24
+DC            Data/command      P01-16   GPIO 23
+SDI(MOSI)     SPI data          P01-19   GPIO 10 (MOSI)
+SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
+LED           Backlight control P01-12   GPIO 18
+============= ================= ======== ==============
+
+ST7567
+""""""
+This driver is designed for the ST7567 in 4-line SPI mode and does not include
+parallel bus support.
+
+Pin names may differ across different breakouts, but will generally be something
+like the below.
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+GND           Ground            P01-06   GND
+3v3           +3.3V Power       P01-01   3V3
+RESET or RST  Reset             P01-18   GPIO 24
+SA0 or D/C    Data/command      P01-16   GPIO 23
+SDA or DATA   SPI data          P01-19   GPIO 10 (MOSI)
+SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
+============= ================= ======== ==============
+
 HT1621
 """"""
 
@@ -145,22 +185,20 @@ CS            SPI chip select   P01-24   GPIO 8 (CE0)	Chip Select
 
 Installing from PyPI
 ^^^^^^^^^^^^^^^^^^^^
-Install the dependencies for library first with::
+First, install the dependencies for the library with::
 
   $ sudo usermod -a -G spi,gpio pi
   $ sudo apt-get install python-dev python-pip
-  $ sudo -i pip install --upgrade pip setuptools
-  $ sudo apt-get purge python-pip
 
-.. warning:: The default pip bundled with apt on Raspbian is really old, and can 
+And finally, install the latest version of the library directly from
+`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
+with::
+
+  $ sudo -H pip install --upgrade luma.lcd
+
+.. warning:: The default pip bundled with apt on Raspbian Jessie is really old, and can 
    cause components to not be installed properly. Please ensure that **pip 9.0.1** 
    is installed prior to continuing::
    
       $ pip --version
       pip 9.0.1 from /usr/local/lib/python2.7/dist-packages (python 2.7)
-
-Proceed to install latest version of the library directly from
-`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`_::
-
-  $ sudo -H pip install --upgrade luma.lcd
-

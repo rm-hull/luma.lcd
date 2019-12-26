@@ -3,12 +3,22 @@
 # See LICENSE.rst for details.
 
 
+class st7567(object):
+    DISPLAYON = 0xAF
+    DISPLAYOFF = 0xAE
+
+
 class pcd8544(object):
     DISPLAYON = 0x0C
     DISPLAYOFF = 0x08
 
 
 class st7735(object):
+    DISPLAYON = 0x29
+    DISPLAYOFF = 0x28
+
+
+class ili9341(object):
     DISPLAYON = 0x29
     DISPLAYOFF = 0x28
 

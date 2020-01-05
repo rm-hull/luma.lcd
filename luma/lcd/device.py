@@ -86,6 +86,44 @@ class GPIOBacklight:
         self._gpio.output(self._pin, self._enabled if is_enabled else self._disabled)
 
 
+class PWMBacklight:
+    """
+    Helper class for controlling the LCD backlight using a PWM channel pin.
+
+    :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
+    :param pin: the GPIO pin to use for the backlight.
+    :type pin: int
+    :param frequency: The frequency to use for the PWM channel.
+    :type frequency: float
+    :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
+
+    .. versionadded:: 2.3.0
+    """
+    def __init__(self, gpio, pin=18, frequency=362):
+        self._gpio = gpio
+
+        try:
+            self._pwm = self._gpio.PWM(pin, frequency)
+            self._pwm.start(0.0)
+        except RuntimeError as e:
+            if str(e) == 'Module not imported correctly!':
+                raise luma.core.error.UnsupportedPlatform('GPIO access not available')
+
+    def __call__(self, value):
+        """
+        Set the LCD Backlight
+
+        :param value: Sets the value of the backlight.  Can provide a bool
+        (True/False) to turn on/off or a float to set the backlight intensity in
+        percentage (0 <= value <= 100.0).
+        :type value: bool or float
+        """
+        if value in (True, False):
+            value = 100.0 if value else 0.0
+        assert 0.0 <= value <= 100.0
+        self._pwm.ChangeDutyCycle(value)
+
+
 @rpi_gpio
 class backlit_device(device):
     """
@@ -96,15 +134,20 @@ class backlit_device(device):
     :type gpio_LIGHT: int
     :param active_low: Set to true if active low (default), false otherwise.
     :type active_low: bool
+    :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
+    :type pwm_frequency: float
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.0.0
     """
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, **kwargs):
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
         gpio = gpio or self.__rpi_gpio__()
-        self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
+        if pwm_frequency:
+            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
+        else:
+            self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
 
         self.persist = True
         self.backlight(True)

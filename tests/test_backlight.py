@@ -7,6 +7,7 @@ import luma.core.error
 from luma.lcd.device import backlit_device
 from luma.core.interface.serial import noop
 from helpers import Mock
+import pytest
 
 
 gpio = Mock(unsafe=True)
@@ -29,6 +30,8 @@ def test_unsupported_platform():
         backlit_device(serial_interface=noop(), gpio_LIGHT=19, gpio=errorgpio)
     except luma.core.error.UnsupportedPlatform as ex:
         assert str(ex) == 'GPIO access not available'
+    else:
+        pytest.fail("Didn't raise exception")
 
 
 def test_init():
@@ -76,3 +79,49 @@ def test_active_high_enable_off():
     gpio.reset_mock()
     device.backlight(False)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
+
+
+def test_pwm_turn_off():
+    gpio_LIGHT = 18
+    pwm_mock = Mock()
+    gpio.PWM.return_value = pwm_mock
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, pwm_frequency=100)
+    gpio.PWM.assert_called_once_with(gpio_LIGHT, 100)
+    gpio.reset_mock()
+    device.backlight(False)
+    pwm_mock.ChangeDutyCycle.assert_called_once_with(0.0)
+
+
+def test_pwm_turn_on():
+    gpio_LIGHT = 18
+    pwm_mock = Mock()
+    gpio.PWM.return_value = pwm_mock
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, pwm_frequency=100)
+    gpio.PWM.assert_called_once_with(gpio_LIGHT, 100)
+    gpio.reset_mock()
+    device.backlight(True)
+    pwm_mock.ChangeDutyCycle.assert_called_once_with(100.0)
+
+
+def test_pwm_turn_50_percent():
+    gpio_LIGHT = 18
+    pwm_mock = Mock()
+    gpio.PWM.return_value = pwm_mock
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, pwm_frequency=100)
+    gpio.PWM.assert_called_once_with(gpio_LIGHT, 100)
+    gpio.reset_mock()
+    device.backlight(50.0)
+    pwm_mock.ChangeDutyCycle.assert_called_once_with(50.0)
+
+
+def test_pwm_unsupported_platform():
+    gpio_LIGHT = 18
+    e = RuntimeError('Module not imported correctly!')
+    gpio.PWM.side_effect = e
+
+    try:
+        backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, pwm_frequency=100)
+    except luma.core.error.UnsupportedPlatform as ex:
+        assert str(ex) == 'GPIO access not available'
+    else:
+        pytest.fail("Didn't raise exception")

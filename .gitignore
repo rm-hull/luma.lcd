@@ -67,3 +67,8 @@ target/
 .project
 .pydevproject
 .settings/
+
+# virtualenv
+.venv
+venv/
+ENV/

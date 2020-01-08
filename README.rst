@@ -8,7 +8,7 @@ luma.lcd **|**
 
 Luma.LCD
 ========
-**PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X Display Drivers**
+**PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -26,12 +26,12 @@ Luma.LCD
 .. image:: https://img.shields.io/pypi/v/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
 
-.. image:: https://img.shields.io/maintenance/yes/2019.svg?maxAge=2592000
+.. image:: https://img.shields.io/maintenance/yes/2020.svg?maxAge=2592000
 
 Python library interfacing LCD displays with the PCD8544, ST7735, ST7789, 
-ST7567, HT1621 and UC1701X driver using SPI on the Raspberry Pi and other
-linux-based single-board computers - it provides a Pillow-compatible drawing
-canvas, and other functionality to support:
+ST7567, HT1621, UC1701X  and ILI9341 driver using SPI on the Raspberry Pi and 
+other linux-based single-board computers - it provides a Pillow-compatible 
+drawing canvas, and other functionality to support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -48,6 +48,8 @@ All modules can be picked up on ebay with a breakout board for a few pounds.
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/ht1621.jpg
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/uc1701x.png
+
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/ili9341.jpg
 
 Documentation
 -------------

@@ -46,28 +46,25 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341"]
 
 
-@rpi_gpio
-class backlit_device(device):
+class GPIOBacklight:
     """
-    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+    Helper class for controlling the LCD backlight using a digital GPIO output pin.
 
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
-    :param gpio_LIGHT: the GPIO pin to use for the backlight.
-    :type gpio_LIGHT: int
-    :param active_low: Set to true if active low (default), false otherwise.
+    :param pin: the GPIO pin to use for the backlight.
+    :type pin: int
+    :param active_low: Set to True if active low (default), False otherwise.
     :type active_low: bool
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
-    .. versionadded:: 2.0.0
+    .. versionadded:: 2.3.0
     """
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, **kwargs):
-        super(backlit_device, self).__init__(const, serial_interface)
-
-        self._gpio_LIGHT = gpio_LIGHT
-        self._gpio = gpio or self.__rpi_gpio__()
+    def __init__(self, gpio, pin=18, active_low=True):
+        self._gpio = gpio
+        self._pin = pin
         if active_low:
             self._enabled = self._gpio.LOW
             self._disabled = self._gpio.HIGH
@@ -76,24 +73,87 @@ class backlit_device(device):
             self._disabled = self._gpio.LOW
 
         try:
-            self._gpio.setup(self._gpio_LIGHT, self._gpio.OUT)
+            self._gpio.setup(self._pin, self._gpio.OUT)
         except RuntimeError as e:
             if str(e) == 'Module not imported correctly!':
                 raise luma.core.error.UnsupportedPlatform('GPIO access not available')
 
+    def __call__(self, is_enabled):
+        """
+        Toggle the LCD Backlight
+
+        :param is_enabled: Turn on or off the backlight.
+        :type is_enabled: bool
+        """
+        assert is_enabled in (True, False)
+        self._gpio.output(self._pin, self._enabled if is_enabled else self._disabled)
+
+
+class PWMBacklight:
+    """
+    Helper class for controlling the LCD backlight using a PWM channel pin.
+
+    :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
+    :param pin: the GPIO pin to use for the backlight.
+    :type pin: int
+    :param frequency: The frequency to use for the PWM channel.
+    :type frequency: float
+    :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
+
+    .. versionadded:: 2.3.0
+    """
+    def __init__(self, gpio, pin=18, frequency=362):
+        self._gpio = gpio
+
+        try:
+            self._pwm = self._gpio.PWM(pin, frequency)
+            self._pwm.start(0.0)
+        except RuntimeError as e:
+            if str(e) == 'Module not imported correctly!':
+                raise luma.core.error.UnsupportedPlatform('GPIO access not available')
+
+    def __call__(self, value):
+        """
+        Set the LCD Backlight
+
+        :param value: Sets the value of the backlight.  Can provide a bool
+        (True/False) to turn on/off or a float to set the backlight intensity in
+        percentage (0 <= value <= 100.0).
+        :type value: bool or float
+        """
+        if value in (True, False):
+            value = 100.0 if value else 0.0
+        assert 0.0 <= value <= 100.0
+        self._pwm.ChangeDutyCycle(value)
+
+
+@rpi_gpio
+class backlit_device(device):
+    """
+    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+
+    :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
+    :param gpio_LIGHT: The GPIO pin to use for the backlight.
+    :type gpio_LIGHT: int
+    :param active_low: Set to true if active low (default), false otherwise.
+    :type active_low: bool
+    :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
+    :type pwm_frequency: float
+    :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
+
+    .. versionadded:: 2.0.0
+    """
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, **kwargs):
+        super(backlit_device, self).__init__(const, serial_interface)
+
+        gpio = gpio or self.__rpi_gpio__()
+        if pwm_frequency:
+            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
+        else:
+            self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
+
         self.persist = True
         self.backlight(True)
-
-    def backlight(self, value):
-        """
-        Switches on the backlight on and off.
-
-        :param value: Switched on when ``True`` supplied, else ``False`` switches it off.
-        :type value: bool
-        """
-        assert(value in [True, False])
-        self._gpio.output(self._gpio_LIGHT,
-                          self._enabled if value else self._disabled)
 
     def cleanup(self):
         """
@@ -472,6 +532,136 @@ class st7735(backlit_device):
                 i += 3
 
             self.data(list(buf))
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))
+
+
+class ili9341(backlit_device):
+    """
+    Serial interface to a 262k color (6-6-6 RGB) ILI9341 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param width: The number of pixels laid out horizontally.
+    :type width: int
+    :param height: The number of pixels laid out vertically.
+    :type width: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently values of
+        ``diff_to_previous`` or ``full_frame`` are only supported.
+    :type framebuffer: str
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
+    :type bgr: bool
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
+    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
+
+    .. versionadded:: 2.2.0
+    """
+    def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
+                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 bgr=False, **kwargs):
+        super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
+        self.capabilities(width, height, rotate, mode="RGB")
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        # Supported modes
+        supported = (width, height) in [(320, 240), (240, 240), (320, 180)]  # full, 1x1, 16x9
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        # RGB or BGR order
+        order = 0x00 if bgr else 0x08
+
+        # Note: based on the Adafruit implementation at
+        # `https://github.com/adafruit/Adafruit_CircuitPython_RGB_Display` (MIT licensed)
+
+        self.command(0xef, 0x03, 0x80, 0x02)              # ?
+        self.command(0xcf, 0x00, 0xc1, 0x30)              # Power control B
+        self.command(0xed, 0x64, 0x03, 0x12, 0x81)        # Power on sequence control
+        self.command(0xe8, 0x85, 0x00, 0x78)              # Driver timing control A
+        self.command(0xcb, 0x39, 0x2c, 0x00, 0x34, 0x02)  # Power control A
+        self.command(0xf7, 0x20)                          # Pump ratio control
+        self.command(0xea, 0x00, 0x00)                    # Driver timing control B
+        self.command(0xc0, 0x23)                          # Power Control 1, VRH[5:0]
+        self.command(0xc1, 0x10)                          # Power Control 2, SAP[2:0], BT[3:0]
+        self.command(0xc5, 0x3e, 0x28)                    # VCM Control 1
+        self.command(0xc7, 0x86)                          # VCM Control 2
+        self.command(0x36, 0x20 | order)                  # Memory Access Control
+        self.command(0x3a, 0x46)                          # Pixel Format 6-6-6
+        self.command(0xb1, 0x00, 0x18)                    # FRMCTR1
+        self.command(0xb6, 0x08, 0x82, 0x27)              # Display Function Control
+        self.command(0xf2, 0x00)                          # 3Gamma Function Disable
+        self.command(0x26, 0x01)                          # Gamma Curve Selected
+        self.command(0xe0,                                # Set Gamma (+ polarity)
+                     0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
+                     0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00)
+        self.command(0xe1,                                # Set Gamma (- polarity)
+                     0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
+                     0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f)
+        self.command(0x11)                                # Sleep out
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ILI9341 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: The image to render.
+        :type image: PIL.Image.Image
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        if self.framebuffer.redraw_required(image):
+            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
+
+            self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2c)                                                                   # Memory write
+
+            self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
 
     def contrast(self, level):
         """

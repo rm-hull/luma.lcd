@@ -7,7 +7,8 @@ The PCD8544 is driven with python using the implementation in the
 :py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, 
 ST7789, ST7567 or UC1701X, use the :py:class:`luma.lcd.device.st7735`, 
 :py:class:`luma.lcd.device.st7567` or :py:class:`luma.lcd.device.uc1701x`
-class respectively. Usage is very simple if you have ever used
+class respectively. For the ILI9341, use :py:class:`luma.lcd.device.ili9341`.
+Usage is very simple if you have ever used
 `Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 First, import and initialise the device:
@@ -16,7 +17,7 @@ First, import and initialise the device:
 
   from luma.core.interface.serial import spi
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735, st7789, uc1701x
+  from luma.lcd.device import pcd8544, st7735, st7789, uc1701x, ili9341
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
@@ -25,8 +26,9 @@ The display device should now be configured for use. Note, all the example code
 snippets in this section are interchangeable between LCD devices.
 
 The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
-:py:class:`~luma.lcd.device.st7789`, :py:class:`~luma.lcd.device.st7567` and 
-:py:class:`~luma.lcd.device.uc1701x` classes all expose a 
+:py:class:`~luma.lcd.device.st7789`, :py:class:`~luma.lcd.device.st7567`, 
+:py:class:`~luma.lcd.device.uc1701x` and :py:class:`luma.lcd.device.ili9341` 
+classes all expose a 
 :py:meth:`~luma.lcd.device.pcd8544.display` method which takes an image with
 attributes consistent with the capabilities of the device. However, for most
 cases, for drawing text and graphics primitives, the canvas class should be
@@ -62,14 +64,14 @@ effect (see the *3d_box.py* example, below).
   with canvas(device, dither=True) as draw:
       draw.rectangle((10, 10, 30, 30), outline="white", fill="red")
 
-Note that there is no such limitation for the ST7735 or ST7789 devices which both 
-support 262K colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit
+Note that there is no such limitation for the ST7735, ST7789 or ILI9341 devices which
+all support 262K colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit
 RGB.
 
 Landscape / Portrait Orientation
 """"""""""""""""""""""""""""""""
-By default the PCD8544, ST7735, ST7789 and UC1701X displays will all be oriented
-in landscape mode (84x48, 160x128, 240x240 and 128x64 pixels by default, respectively). 
+By default the PCD8544, ST7735, ST7789, UC1701X and ILI9341 displays will all be oriented
+in landscape mode (84x48, 160x128, 240x240, 128x64 and 320x240 pixels by default, respectively). 
 Should you have an application that requires the display to be mounted in a portrait
 aspect, then add a :py:attr:`rotate=N` parameter when creating the device:
 

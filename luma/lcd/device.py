@@ -34,6 +34,9 @@ Collection of serial interfaces to LCD devices.
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+import struct
+import numpy as np
+from bitstring import BitArray
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
 from luma.core.interface.serial import noop
@@ -217,6 +220,118 @@ class pcd8544(backlit_device):
         """
         assert(0 <= value <= 255)
         self.command(0x21, 0x14, value | 0x80, 0x20)
+
+
+
+class st7789(backlit_device):
+    """
+    Serial interface to a colour ST7789 128x128 pixel LCD display.
+    """
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(st7789, self).__init__(luma.lcd.const.st7789, serial_interface, **kwargs)
+        self.capabilities(240, 240, rotate)
+
+        self.command(0x36)
+        self.data([0x70])
+
+        self.command(0x3A) 
+        self.data([0x05])
+
+        self.command(0xB2)
+        self.data([0x0C, 0x0C, 0x00, 0x33, 0x33])
+
+        self.command(0xB7)
+        self.data([0x35]) 
+
+        self.command(0xBB)
+        self.data([0x19])
+
+        self.command(0xC0)
+        self.data([0x2C])
+
+        self.command(0xC2)
+        self.data([0x01])
+
+        self.command(0xC3)
+        self.data([0x12])   
+
+        self.command(0xC4)
+        self.data([0x20])
+
+        self.command(0xC6)
+        self.data([0x0F]) 
+
+        self.command(0xD0)
+        self.data([0xA4, 0xA1])
+
+        self.command(0xE0)
+        self.data([0xD0])
+        self.data([0x04])
+        self.data([0x0D])
+        self.data([0x11])
+        self.data([0x13])
+        self.data([0x2B])
+        self.data([0x3F])
+        self.data([0x54])
+        self.data([0x4C])
+        self.data([0x18])
+        self.data([0x0D])
+        self.data([0x0B])
+        self.data([0x1F])
+        self.data([0x23])
+
+        self.command(0xE1)
+        self.data([0xD0])
+        self.data([0x04])
+        self.data([0x0C])
+        self.data([0x11])
+        self.data([0x13])
+        self.data([0x2C])
+        self.data([0x3F])
+        self.data([0x44])
+        self.data([0x51])
+        self.data([0x2F])
+        self.data([0x1F])
+        self.data([0x1F])
+        self.data([0x20])
+        self.data([0x23])
+        
+        self.command(0x21)
+
+        self.command(0x11)
+
+        self.command(0x29)
+
+        self.clear()
+        self.show()
+
+    def set_window(self, x1, y1, x2, y2):
+        self.command(0x2A)
+        self.data(struct.pack(">HH", x1, x2 - 1))
+        
+        self.command(0x2B)
+        self.data(struct.pack(">HH", y1, y2 - 1))
+
+        self.command(0x2C)
+
+    def display(self, image):
+        w, h = 240, 240
+        self.set_window(0, 0, w, h)
+
+        #packed_image = BitArray().join(BitArray(uint=x & 0x00111111, length=6) for x in image.tobytes()).tobytes()
+
+        #self.data(image.tobytes())
+
+        img = np.asarray(image.convert('RGB'))
+        pix = np.zeros((w, h, 2), dtype=np.uint8)
+        pix[...,[0]] = np.add(np.bitwise_and(img[...,[0]], 0xF8), np.right_shift(img[...,[1]], 5))
+        pix[...,[1]] = np.add(np.bitwise_and(np.left_shift(img[...,[1]], 3), 0xE0), np.right_shift(img[...,[2]], 3))
+        pix = pix.flatten().tolist()
+
+        self.data(pix)
+        
+    def contrast(self, value):
+        pass
 
 
 class st7567(backlit_device):

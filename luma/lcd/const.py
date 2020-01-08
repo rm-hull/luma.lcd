@@ -31,3 +31,8 @@ class ht1621(object):
 class uc1701x(object):
     DISPLAYON = 0xAF
     DISPLAYOFF = 0xAE
+
+
+class st7789(object):
+    DISPLAYON = 0x29
+    DISPLAYOFF = 0x28

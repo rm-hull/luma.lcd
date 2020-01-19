@@ -142,7 +142,7 @@ These displays typically require a backlight to illuminate the liquid crystal
 display: by default GPIO 18 (PWM_CLK0) is used as the backlight control pin.
 This can  be changed by specifying ``gpio_LIGHT=n`` when initializing the
 device. The backlight can be programmatically switched on and off by calling
-``device.backlight(True)`` or ``device.backlight(True)`` respectively.
+``device.backlight(True)`` or ``device.backlight(False)`` respectively.
 
 Examples
 ^^^^^^^^

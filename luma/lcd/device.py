@@ -34,6 +34,7 @@ Collection of serial interfaces to LCD devices.
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+import time
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
 from luma.core.interface.serial import noop
@@ -323,6 +324,10 @@ class st7735(backlit_device):
     :type framebuffer: str
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
+    :param inverse: Set to ``True`` if device pixels are inversed.
+    :type inverse: bool
+    :param timed_reset: Set to ``True`` if device keeps white after init.
+    :type timed_reset: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -334,7 +339,7 @@ class st7735(backlit_device):
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
-                 bgr=False, **kwargs):
+                 bgr=False, inverse=False, timed_reset=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
@@ -356,7 +361,19 @@ class st7735(backlit_device):
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
 
-        self.command(0x01)                      # reset
+        # Black and white
+        inv = 0x21 if inverse else 0x20
+        
+        if timed_reset:
+            spi = self._serial_interface
+            spi._gpio.output(spi._RST, spi._gpio.LOW)
+            time.sleep(0.1)
+            spi._gpio.output(spi._RST, spi._gpio.HIGH)
+            time.sleep(0.1)
+            self.command(0x01)                      # reset
+            time.sleep(0.1)
+        else:
+            self.command(0x01)                      # reset
         self.command(0x11)                      # sleep out & booster on
         self.command(0xB1, 0x01, 0x2C, 0x2D)    # frame rate control: normal mode
         self.command(0xB2, 0x01, 0x2C, 0x2D)    # frame rate control: idle mode
@@ -370,7 +387,7 @@ class st7735(backlit_device):
         self.command(0xC4, 0x8A, 0xEE)          # power control 5: partial mode/full-color
         self.command(0xC5, 0x0E)                # VCOM Control 1
         self.command(0x36, 0x60 | order)        # memory data access control
-        self.command(0x20)                      # display inversion off
+        self.command(inv)                       # display inversion on(0x21)/off(0x20)
         self.command(0x3A, 0x06)                # interface pixel format
         self.command(0x13)                      # partial off (normal)
         self.command(0xE0,                      # gamma adjustment (+ polarity)

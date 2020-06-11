@@ -36,7 +36,6 @@ Collection of serial interfaces to LCD devices.
 
 import struct
 import numpy as np
-from bitstring import BitArray
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
 from luma.core.interface.serial import noop
@@ -317,10 +316,6 @@ class st7789(backlit_device):
     def display(self, image):
         w, h = 240, 240
         self.set_window(0, 0, w, h)
-
-        #packed_image = BitArray().join(BitArray(uint=x & 0x00111111, length=6) for x in image.tobytes()).tobytes()
-
-        #self.data(image.tobytes())
 
         img = np.asarray(image.convert('RGB'))
         pix = np.zeros((w, h, 2), dtype=np.uint8)

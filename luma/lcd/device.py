@@ -229,7 +229,7 @@ class st7789(backlit_device):
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(st7789, self).__init__(luma.lcd.const.st7789, serial_interface, **kwargs)
-        self.capabilities(240, 240, rotate)
+        self.capabilities(240, 240, rotate, mode="RGB")
 
         self.command(0x36)
         self.data([0x70])

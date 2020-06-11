@@ -2,12 +2,8 @@
 # Copyright (c) 2017 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-try:
-    from unittest.mock import call, Mock
-except ImportError:
-    from mock import call, Mock  # noqa: F401
-
 import pytest
+from unittest.mock import Mock
 
 import luma.core.error
 

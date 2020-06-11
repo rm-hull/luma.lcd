@@ -13,7 +13,8 @@ from luma.lcd.device import ili9341
 from luma.core.render import canvas
 
 from baseline_data import get_reference_data, primitives
-from helpers import Mock, serial, setup_function, assert_invalid_dimensions  # noqa: F401
+from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
+from unittest.mock import Mock
 
 
 def test_init_320x240():

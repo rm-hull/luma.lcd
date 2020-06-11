@@ -317,6 +317,8 @@ class st7789(backlit_device):
         w, h = 240, 240
         self.set_window(0, 0, w, h)
 
+        image = self.preprocess(image)
+
         img = np.asarray(image.convert('RGB'))
         pix = np.zeros((w, h, 2), dtype=np.uint8)
         pix[...,[0]] = np.add(np.bitwise_and(img[...,[0]], 0xF8), np.right_shift(img[...,[1]], 5))

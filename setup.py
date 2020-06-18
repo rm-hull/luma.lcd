@@ -34,7 +34,6 @@ project_url = 'https://github.com/rm-hull/luma.lcd'
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 test_deps = [
-    'mock;python_version<"3.3"',
     'pytest<=4.5',
     'pytest-cov'
 ]
@@ -47,7 +46,7 @@ setup(
     description=("A library to drive PCD8544, HT1621, ST7735, ST7789, ST7567, UC1701X and ILI9341-based LCDs"),
     long_description="\n\n".join([README, CONTRIB, CHANGES]),
     long_description_content_type="text/x-rst",
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
+    python_requires='>=3.5, <4',
     license="MIT",
     keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 st7735 st7789 uc1701x ht1621 ili9341 spi 84x48 160x128",
     url=project_url,
@@ -80,8 +79,6 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Education",
         "Topic :: System :: Hardware",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",

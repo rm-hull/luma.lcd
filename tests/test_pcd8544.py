@@ -11,7 +11,8 @@ from luma.lcd.device import pcd8544
 from luma.core.render import canvas
 
 from baseline_data import get_reference_data, primitives
-from helpers import Mock, call, serial, setup_function  # noqa: F401
+from helpers import serial, setup_function  # noqa: F401
+from unittest.mock import Mock, call
 
 
 def test_init_84x48():

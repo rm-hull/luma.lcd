@@ -59,7 +59,7 @@ setup(
     namespace_packages=["luma"],
     packages=find_packages(),
     zip_safe=False,
-    install_requires=["luma.core>=1.12.0"],
+    install_requires=["luma.core>=1.14.0"],
     setup_requires=pytest_runner,
     tests_require=test_deps,
     extras_require={

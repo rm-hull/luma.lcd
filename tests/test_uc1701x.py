@@ -11,8 +11,8 @@ from luma.lcd.device import uc1701x
 from luma.core.render import canvas
 
 from baseline_data import get_reference_data, primitives
-from helpers import (Mock, serial, call, setup_function,  # noqa: F401
-    assert_invalid_dimensions)
+from helpers import serial
+from unittest.mock import Mock, call
 
 
 def test_init_128x64():

@@ -34,6 +34,7 @@ Collection of serial interfaces to LCD devices.
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+import time
 from luma.core.lib import rpi_gpio
 from luma.core.device import device
 from luma.core.interface.serial import noop
@@ -43,7 +44,7 @@ import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
 
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341"]
+__all__ = ["pcd8544", "st7735", "st7920", "ht1621", "uc1701x", "st7567", "ili9341"]
 
 
 class GPIOBacklight:
@@ -757,3 +758,74 @@ class uc1701x(backlit_device):
         """
         assert(0 <= value <= 255)
         self.command(0x81, value >> 2)
+
+
+class st7920(device):
+    def __init__(self, serial_interface=None, width=128, height=64, rotate=0,
+                 framebuffer="diff_to_previous", **kwargs):
+        super(st7920, self).__init__(luma.core.const.common, serial_interface)
+        self.capabilities(width, height, rotate, mode="1")
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        if width != 128 or height != 64:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        self.command(0x20)
+        self.command(0x24)
+        self.command(0x26)
+
+        self.clear()
+        self.show()
+
+    def command(self, cmd):
+        self._serial_interface.data([0xF8, cmd & 0xF0, (cmd & 0x0F) << 4])
+        time.sleep(1.0 / 1000000)
+
+    def data(self, data):
+        self._serial_interface.data([0xFA, data & 0xF0, (data & 0x0F) << 4])
+        time.sleep(1.0 / 1000000)
+
+    def display(self, image):
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+        pix = list(image.getdata())
+
+        w = self._w // 16
+        for idx, data in enumerate([pix[i:i + 16] for i in range(0, len(pix), 16)]):
+
+            x = idx % w
+            y = idx // w
+
+            if y < 32:
+                self.command(0x80 | y)
+                self.command(0x80 | x)
+            else:
+                self.command(0x80 | (y & 0x1F))
+                self.command(0x88 | x)
+
+            value = 0
+            for bit in data:
+                value = (value << 1) | (1 if bit > 0 else 0)
+
+            print("idx = {3}, x = {0}, y = {1}, value = {4:04X}, data = {2}".format(x, y, data, idx, value))
+
+            self.data(value >> 8)
+            self.data(value & 0xFF)
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+
+    def show(self):
+        pass
+
+    def hide(self):
+        pass

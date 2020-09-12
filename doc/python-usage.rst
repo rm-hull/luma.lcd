@@ -1,37 +1,34 @@
 Python usage
 ------------
+LCD displays can be driven with python using the various implementations in the :py:mod:`luma.lcd.device` package.  There are several device classes available and usage is very simple if you have ever use `Pillow <https://pillow.readthedocs.io/en/latest/>`_ of PIL.
 
-Pixel Drivers
-^^^^^^^^^^^^^
-The PCD8544 is driven with python using the implementation in the
-:py:class:`luma.lcd.device.pcd8544` class. Likewise, to drive the ST7735, ST7567
-or UC1701X, use the :py:class:`luma.lcd.device.st7735`, 
-:py:class:`luma.lcd.device.st7567` or :py:class:`luma.lcd.device.uc1701x`
-class respectively. For the ILI9341, use :py:class:`luma.lcd.device.ili9341`.
-Usage is very simple if you have ever used
-`Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
+To begin you must import the device class you will be using and the interface class that you will use to communicate with your device:
 
-First, import and initialise the device:
+In this example, we are using an SPI interface with a pcd8544 display.
 
 .. code:: python
 
-  from luma.core.interface.serial import spi
+  from luma.core.interface.serial import i2c, spi, parallel, pcf8574
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735, uc1701x, ili9341
+  from luma.lcd.device import pcd8544, st7735, st7567, uc1701x, ili9341, hd44780
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
 
-The display device should now be configured for use. Note, all the example code
-snippets in this section are interchangeable between PCD8544 and ST7735
-devices.
+The display device should now be configured for use.
+
+If you were using an hd44780 display using a parallel interface, after the import statements your initialisation would looks like this.
+
+.. code:: python
+
+  serial = parallel(RS=7, E=8, PINS=[25,24,23,18])
+  device = hd44780(serial)
 
 The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
-:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x` 
-and :py:class:`luma.lcd.device.ili9341` classes all expose a 
+:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`luma.lcd.device.ili9341` and :py:class:`luma.lcd.device.hd44780`classes all expose a
 :py:meth:`~luma.lcd.device.pcd8544.display` method which
 takes an image with attributes consistent with the capabilities of the device.
-However, for most cases, for drawing text and graphics primitives, the canvas
+However, for most cases [1]_, for drawing text and graphics primitives, the canvas
 class should be used as follows:
 
 .. code:: python
@@ -48,6 +45,9 @@ canvas.
 As soon as the with scope is ended, the resultant image is automatically
 flushed to the device's display memory and the :mod:`PIL.ImageDraw` object is
 garbage collected.
+
+.. [1] The use of display for the HD44780 is more limited with the `text` property being the preferred interface for displaying characters.
+
 
 Color Model
 """""""""""
@@ -79,7 +79,7 @@ then add a :py:attr:`rotate=N` parameter when creating the device:
   from luma.core.interface.serial import spi
   from luma.core.render import canvas
   from luma.lcd.device import pcd8544
-  
+
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial, rotate=1)
 
@@ -94,6 +94,8 @@ rotate 90° clockwise, 2 is 180° rotation and 3 represents 270° rotation.
 The :py:attr:`device.size`, :py:attr:`device.width` and :py:attr:`device.height`
 properties reflect the rotated dimensions rather than the physical dimensions.
 
+The HD44780 does not support display rotation.
+
 Seven-Segment Drivers
 ^^^^^^^^^^^^^^^^^^^^^
 The HT1621 is driven with the :py:class:`luma.lcd.device.ht1621` class, but is
@@ -107,8 +109,8 @@ wrapper, as follows:
 
    device = ht1621()
    seg = sevensegment(device)
-   
-   
+
+
 The **seg** instance now has a :py:attr:`~luma.led_matrix.virtual.sevensegment.text`
 property which may be assigned, and when it does will update all digits
 according to the limited alphabet the 7-segment displays support. For example,
@@ -139,12 +141,18 @@ buffer allows, but only because dots are folded into their host character.
 Backlight Control
 ^^^^^^^^^^^^^^^^^
 These displays typically require a backlight to illuminate the liquid crystal
-display: by default GPIO 18 (PWM_CLK0) is used as the backlight control pin.
-This can  be changed by specifying ``gpio_LIGHT=n`` when initializing the
-device. The backlight can be programmatically switched on and off by calling
+display.  If the display's backlight is connected to one of the single-board computer's gpio pins, you can activate the backlight by specifying ``gpio_LIGHT=n`` where n = the pin number when initializing the
+device (default GPIO 18 (PWM_CLK0)).
+
+If the display uses an I2C backpack with a pin from the backpack connected to the display's backlight pin, you can activate the backlight by specifying ``backpack_pin=n`` where n = the pin number on the backpack.
+
+The backlight can be programmatically switched on and off by calling
 ``device.backlight(True)`` or ``device.backlight(False)`` respectively.
+
+.. note:
+  If you are using an I2C backpack based device, the backlight will not change until the next time you send a command or data to the device.
 
 Examples
 ^^^^^^^^
-After installing the library, head over to the `luma.examples <https://github.com/rm-hull/luma.examples>`_ 
+After installing the library, head over to the `luma.examples <https://github.com/rm-hull/luma.examples>`_
 repository. Details of how to run the examples is shown in the example repo's README.

@@ -33,13 +33,14 @@ CGRAMADDR = 0x40
 LINES = [00, 0x40, 0x14, 0x54]
 
 serial = Mock(unsafe=True, _bitmode=4)
+gpio = Mock()
 
 
 def test_init_4bitmode():
     """
     Test initialization of display using 4 bit mode
     """
-    hd44780(serial)
+    hd44780(serial, gpio=gpio)
 
     to_8 = \
         [call(0x3), call(0x3), call(0x3, 0x3)] * 3
@@ -74,7 +75,7 @@ def test_init_8bitmode():
     Test initialization of display using 4 bit mode
     """
     serial._bitmode = 8
-    hd44780(serial)
+    hd44780(serial, gpio=gpio)
 
     to_8 = \
         [call(0x30)] * 3
@@ -106,7 +107,7 @@ def test_display():
     Test the display of a line of text containing and a rectangle to verify
     auto-create feature
     """
-    device = hd44780(serial, bitmode=8)
+    device = hd44780(serial, bitmode=8, gpio=gpio)
     serial.reset_mock()
 
     # Use canvas to create a screen worth of data
@@ -137,7 +138,7 @@ def test_custom_full():
     Test of behavior when auto-create feature runs out of custom character
     space
     """
-    device = hd44780(serial, bitmode=8)
+    device = hd44780(serial, bitmode=8, gpio=gpio)
 
     # Consume 8 special character positions
     img = Image.new('1', (80, 16), 0)
@@ -157,10 +158,10 @@ def test_custom_full():
 
 def test_get_font():
     """
-    Verify get font capability by requesting two fonts and printing a single
+    Test get font capability by requesting two fonts and printing a single
     character from each that will be different between the two fonts
     """
-    device = hd44780(serial, bitmode=8)
+    device = hd44780(serial, bitmode=8, gpio=gpio)
 
     img = Image.new('1', (10, 8), 0)
     a00 = device.get_font(0)
@@ -176,12 +177,45 @@ def test_get_font():
         b'\x02\x00\x01\x00H\x00\xab\x80\x90@\x93\xc0l@\x03\xc0'
 
 
+def test_i2c_backlight():
+    """
+    Test of i2c_backlight
+    """
+
+    def _mask(pin):
+        """
+        Return a mask that contains a 1 in the pin position
+        """
+        return 1 << pin
+
+    serial = Mock(unsafe=True, _bitmode=4, _backlight_enabled=0, _mask=_mask)
+    hd44780(serial, bitmode=8, backpack_pin=3, gpio=gpio)
+
+    assert serial._backlight_enabled == 8
+
+
+def test_i2c_does_not_support_backlight():
+    """
+    Test exception is thrown if supplied serial_interface does not support a backlight
+    """
+    import luma.core
+    serial = Mock(spec_set=luma.core.interface.serial.i2c)
+    flag = False
+    try:
+        hd44780(serial, gpio=gpio, backpack_pin=3)
+    except luma.core.error.UnsupportedPlatform as ex:
+        assert str(ex) == "This I2C interface does not support a backlight"
+        flag = True
+
+    assert flag, "Expected exception but none occured"
+
+
 def test_unsupported_display_mode():
     """
-    Verify exception is thrown if an unsupported display mode is requested
+    Test exception is thrown if an unsupported display mode is requested
     """
     import luma.core
     try:
-        hd44780(serial, width=12, height=3)
+        hd44780(serial, width=12, height=3, gpio=gpio)
     except luma.core.error.DeviceDisplayModeError as ex:
         assert str(ex) == "Unsupported display mode: 12 x 3"

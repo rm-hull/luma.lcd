@@ -1,8 +1,8 @@
 Introduction
 ------------
-Interfacing small LCD displays with the PCD8544, ST7735, HT1621 and UC1701X
-driver in Python using SPI on the Raspberry Pi and other linux-based
-single-board computers: the library provides a Pillow-compatible drawing
+Interfacing small LCD displays with the PCD8544, ST7735, HT1621, UC1701X, and
+hd44780 controller in Python on the Raspberry Pi and other linux-based
+single-board computers (SBC): the library provides a Pillow-compatible drawing
 canvas, and other functionality to support:
 
 * scrolling/panning capability,
@@ -10,6 +10,12 @@ canvas, and other functionality to support:
 * state management,
 * color/greyscale (where supported),
 * dithering to monochrome
+
+**New**  The HD44780 (and similar) devices are some of the most popular small LCD displays
+available for SBCs.  These are character-based displays but the Luma.LCD driver
+supports a limited ability to display graphical content on them.  See the :doc:`HD44780` for details.
+
+.. image:: images/hd44780_20x4.jpg
 
 The PCD8544 display pictured below was used originally as the display for
 `Nokia 5110 <https://en.wikipedia.org/wiki/Nokia_5110>`_ mobile phones,
@@ -42,13 +48,14 @@ The ST7567 display supports a resolution of 128 x 64 monochrome pixels:
 
 .. seealso::
    Further technical information for the specific device can be found in the
-   datasheet below: 
-   
+   datasheet below:
+
    - :download:`PCD8544 <tech-spec/PCD8544.pdf>`
    - :download:`ST7735 <tech-spec/ST7735.pdf>`
    - :download:`HT1621 <tech-spec/HT1621.pdf>`
    - :download:`UC1701X <tech-spec/UC1701X.pdf>`
    - :download:`ILI9341 <tech-spec/ILI9341.pdf>`
+   - :download:`HD44780 <tech-spec/HD44780.pdf>`
 
 As well as display drivers for the physical device, there are emulators that
 run in real-time (with pygame) and others that can take screenshots, or

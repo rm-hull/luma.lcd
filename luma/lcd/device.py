@@ -89,6 +89,50 @@ class GPIOBacklight:
         self._gpio.output(self._pin, self._enabled if is_enabled else self._disabled)
 
 
+class I2CBackpackBacklight:
+    """
+    Helper class for controlling the LCD backlight when the device is using
+    an I2C backpack such as the PCF8574
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.pcf8574` instance) that the device
+        uses to communicate.
+    :param pin: the backpack pin number used to control the backlight on the
+        device.
+    :type pin: int
+    :raises luma.core.error.UnsupportedPlatform: This I2C interfaces does not
+        support a backlight.
+
+    .. note: If the I2C interface is already configured to use a backlight, the
+        pin setting here will be ignored.
+
+    .. versionadded:: 2.5.0
+    """
+    def __init__(self, serial_interface, pin=None):
+        self._serial_interface = serial_interface
+
+        if not hasattr(serial_interface, "_backlight_enabled"):
+            raise luma.core.error.UnsupportedPlatform('This I2C interface does not support a backlight')
+
+        # If the serial_interface has already been set up to use a backlight
+        # use its setting, otherwise initialize the backlight from the pin arg
+        self._pin = 0 if pin is None else serial_interface._mask(pin) if not \
+            serial_interface._backlight_enabled else \
+            serial_interface._backlight_enabled
+
+        serial_interface._backlight_enabled = self._pin
+
+    def __call__(self, is_enabled):
+        """
+        Toggle the LCD Backlight
+
+        :param is_enabled: Turn on or off the backlight.
+        :type is_enabled: bool
+        """
+        assert is_enabled in (True, False)
+        self._serial_interface._backlight_enabled = self._pin if is_enabled else 0
+
+
 class PWMBacklight:
     """
     Helper class for controlling the LCD backlight using a PWM channel pin.
@@ -139,16 +183,21 @@ class backlit_device(device):
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
     :type pwm_frequency: float
+    :type backpack_pin: If using an I2C backpack, sets the pin on the backpack that
+        is connected to the backlight.
+    :type backpack_pin: int
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.0.0
     """
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, **kwargs):
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
         gpio = gpio or self.__rpi_gpio__()
         if pwm_frequency:
             self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
+        elif backpack_pin:
+            self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
         else:
             self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
 
@@ -762,7 +811,7 @@ class uc1701x(backlit_device):
         self.command(0x81, value >> 2)
 
 
-class hd44780(parallel_device, character):
+class hd44780(backlit_device, parallel_device, character):
     """
     Driver for a HD44780 style LCD display.  This class provides a ``text``
     property which can be used to set and get a text value, which will be
@@ -810,6 +859,10 @@ class hd44780(parallel_device, character):
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
                  selected_font=0, exec_time=1e-6 * 50, framebuffer="diff_to_previous", **kwargs):
         super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface, exec_time=exec_time, **kwargs)
+
+        # Inherited from parallel_device class but multi-inheritence with
+        # backlit_device requires it to be initialized here
+        self._exec_time = exec_time
 
         self.capabilities(width * 5, height * 8, 0)
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)

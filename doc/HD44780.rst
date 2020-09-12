@@ -1,7 +1,7 @@
 HD44780
 -------
 
-.. image:: images/hd44780_20x4.jpg
+.. image:: images/hd44780_clock.jpg
 
 The HD44780 is a popular LCD display that is widely available and cheap.  It
 is available in several sizes with 16 character x 2 line and  20 character

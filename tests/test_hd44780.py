@@ -10,27 +10,10 @@ Tests for the :py:class:`luma.lcd.device.hd44780` device.
 from luma.lcd.device import hd44780
 from luma.core.render import canvas
 from luma.core.util import bytes_to_nibbles
+from luma.lcd.const import hd44780 as CONST
 
 from PIL import Image, ImageDraw
 from unittest.mock import Mock, call
-
-CLEAR = 0x01
-HOME = 0x02
-ENTRY = 0x06
-DISPLAYOFF = 0x08
-DISPLAYON = 0x0C
-FUNCTIONSET = 0x20
-DL8 = 0x10
-DL4 = 0x00
-LINES2 = 0x08
-LINES1 = 0x00
-CHAR5x8 = 0x00
-CHAR5x10 = 0x04
-DL8 = 0x10
-DL4 = 0x00
-DDRAMADDR = 0x80
-CGRAMADDR = 0x40
-LINES = [00, 0x40, 0x14, 0x54]
 
 serial = Mock(unsafe=True, _bitmode=4)
 gpio = Mock()
@@ -47,18 +30,18 @@ def test_init_4bitmode():
     to_4 = \
         [call(0x3), call(0x3), call(0x3, 0x02)]
 
-    fs = [FUNCTIONSET | DL4 | LINES2]
+    fs = [CONST.FUNCTIONSET | CONST.DL4 | CONST.LINES2]
 
     calls = \
         to_8 + \
         to_4 + \
         [call(*bytes_to_nibbles(fs))] + \
-        [call(*bytes_to_nibbles([DISPLAYOFF]))] + \
-        [call(*bytes_to_nibbles([ENTRY]))] + \
-        [call(*bytes_to_nibbles([DISPLAYON]))] + \
-        [call(*bytes_to_nibbles([DDRAMADDR]))] + \
-        [call(*bytes_to_nibbles([DDRAMADDR | LINES[1]]))] + \
-        [call(*bytes_to_nibbles([CLEAR]))]
+        [call(*bytes_to_nibbles([CONST.DISPLAYOFF]))] + \
+        [call(*bytes_to_nibbles([CONST.ENTRY]))] + \
+        [call(*bytes_to_nibbles([CONST.DISPLAYON]))] + \
+        [call(*bytes_to_nibbles([CONST.DDRAMADDR]))] + \
+        [call(*bytes_to_nibbles([CONST.DDRAMADDR | CONST.LINES[1]]))] + \
+        [call(*bytes_to_nibbles([CONST.CLEAR]))]
 
     serial.command.assert_has_calls(calls)
 
@@ -80,17 +63,17 @@ def test_init_8bitmode():
     to_8 = \
         [call(0x30)] * 3
 
-    fs = [FUNCTIONSET | DL8 | LINES2]
+    fs = [CONST.FUNCTIONSET | CONST.DL8 | CONST.LINES2]
 
     calls = \
         to_8 + \
         [call(*fs)] + \
-        [call(*[DISPLAYOFF])] + \
-        [call(*[ENTRY])] + \
-        [call(*[DISPLAYON])] + \
-        [call(*[DDRAMADDR])] + \
-        [call(*[DDRAMADDR | LINES[1]])] + \
-        [call(*[CLEAR])]
+        [call(*[CONST.DISPLAYOFF])] + \
+        [call(*[CONST.ENTRY])] + \
+        [call(*[CONST.DISPLAYON])] + \
+        [call(*[CONST.DDRAMADDR])] + \
+        [call(*[CONST.DDRAMADDR | CONST.LINES[1]])] + \
+        [call(*[CONST.CLEAR])]
 
     serial.command.assert_has_calls(calls)
 
@@ -104,8 +87,8 @@ def test_init_8bitmode():
 
 def test_display():
     """
-    Test the display of a line of text containing and a rectangle to verify
-    auto-create feature
+    Test the display with a line of text and a rectangle to demonstrate correct
+    functioning of the auto-create feature
     """
     device = hd44780(serial, bitmode=8, gpio=gpio)
     serial.reset_mock()
@@ -135,8 +118,7 @@ def test_display():
 
 def test_custom_full():
     """
-    Test of behavior when auto-create feature runs out of custom character
-    space
+    Auto-create feature runs out of custom character space
     """
     device = hd44780(serial, bitmode=8, gpio=gpio)
 

@@ -11,9 +11,10 @@ canvas, and other functionality to support:
 * color/greyscale (where supported),
 * dithering to monochrome
 
-**New**  The HD44780 (and similar) devices are some of the most popular small LCD displays
-available for SBCs.  These are character-based displays but the Luma.LCD driver
-supports a limited ability to display graphical content on them.  See the :doc:`HD44780` for details.
+**New**  The HD44780 (and similar) devices are some of the most popular small LCD
+displays available for SBCs.  These are character-based displays but the Luma.LCD
+driver supports a limited ability to display graphical content on them.  See the
+:doc:`HD44780` documentation for details.
 
 .. image:: images/hd44780_20x4.jpg
 

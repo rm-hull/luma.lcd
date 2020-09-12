@@ -82,7 +82,7 @@ class GPIOBacklight:
         """
         Toggle the LCD Backlight
 
-        :param is_enabled: Turn on or off the backlight.
+        :param is_enabled: Turn backlight on or off.
         :type is_enabled: bool
         """
         assert is_enabled in (True, False)
@@ -827,8 +827,9 @@ class hd44780(backlit_device, parallel_device, character):
     :param undefined: character to use if a requested character is not in the
         font tables
     :type undefined: str
-    :param selected_font: the font table appropriate for the model of display you
-        are using.  The hd44780 normally comes in a version with font A00 (ENGLISH_JAPANESE) or A02 (ENGLISH_EUROPEAN).  You can provide either
+    :param selected_font: the font table appropriate for the model of display
+        you are using.  The hd44780 normally comes in a version with font A00
+        (ENGLISH_JAPANESE) or A02 (ENGLISH_EUROPEAN).  You can provide either
         the name ('A00' or 'A02') or the number (0 for 'A00', 1 for 'A02') for
         the font your display contains.
     :type selected_font: int or str
@@ -841,7 +842,7 @@ class hd44780(backlit_device, parallel_device, character):
         ``diff_to_previous`` or ``full_frame`` are only supported.
     :type framebuffer: str
 
-    To place text on the display, simply assign the text to the 'text'
+    To place text on the display, simply assign the text to the ``text``
     instance variable::
 
         p = parallel(RS=7, E=8, PINS=[25,24,23,18])
@@ -857,8 +858,10 @@ class hd44780(backlit_device, parallel_device, character):
     .. versionadded:: 2.5.0
     """
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
-                 selected_font=0, exec_time=0.000001, framebuffer="diff_to_previous", **kwargs):
-        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface, exec_time=exec_time, **kwargs)
+                 selected_font=0, exec_time=0.000001,
+                 framebuffer="diff_to_previous", **kwargs):
+        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
+        exec_time=exec_time, **kwargs)
 
         # Inherited from parallel_device class but multi-inheritence with
         # backlit_device requires it to be initialized here
@@ -868,7 +871,8 @@ class hd44780(backlit_device, parallel_device, character):
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
 
         # Currently only support 5x8 fonts for the hd44780
-        self.font = embedded_fonts(self._const.FONTDATA, selected_font=selected_font)
+        self.font = embedded_fonts(self._const.FONTDATA,
+            selected_font=selected_font)
         self.glyph_index = self.font.current.glyph_index
         self.device = self
         self._undefined = undefined
@@ -946,8 +950,8 @@ class hd44780(backlit_device, parallel_device, character):
         dl = self._const.DL8 if self._bitmode == 8 else self._const.DL4
         self.command(self._const.FUNCTIONSET | dl | self._const.LINES2)
         self.command(self._const.DISPLAYOFF)  # Set Display Off
-        self.command(self._const.ENTRY)  # Set entry mode to direction right, no shift
-        self.command(self._const.DISPLAYON, exec_time=1e-3 * 100)  # Turn Display back on
+        self.command(self._const.ENTRY)  # Set entry mode to right, no shift
+        self.command(self._const.DISPLAYON, exec_time=1e-3 * 100)  # Turn display on
 
     def display(self, image):
         """
@@ -965,7 +969,7 @@ class hd44780(backlit_device, parallel_device, character):
             Most hd44780s have limited memory to support custom characters
             and typically can only support 8 at any one time.  If this is
             exceeded, the remaining unmatched characters will be replaced by
-            the undefined character.
+            the ``undefined`` character.
         """
         assert(image.mode == self.mode)
         assert(image.size == self.size)
@@ -983,7 +987,8 @@ class hd44780(backlit_device, parallel_device, character):
             for j in range(y0 // 8, y1 // 8):
                 buf = []
                 for i in range(x0 // 5, x1 // 5):
-                    img = self.framebuffer.image.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8))
+                    img = self.framebuffer.image.crop((i * 5, j * 8,
+                        (i + 1) * 5, (j + 1) * 8))
                     bytes = img.tobytes()
                     c = self.glyph_index[bytes] if bytes in self.glyph_index else \
                         self._custom[bytes] if bytes in self._custom else None
@@ -1016,7 +1021,8 @@ class hd44780(backlit_device, parallel_device, character):
         data = [int(bool(i)) for i in img.getdata()]
         buf = []
         for j in range(8):
-            buf.append(sum(v << (4 - i) for i, v in enumerate(data[j * 5:(j + 1) * 5])))
+            buf.append(sum(v << (4 - i) for i, v in
+                enumerate(data[j * 5:(j + 1) * 5])))
         self.data(buf)
         self._custom[img.tobytes()] = idx
 

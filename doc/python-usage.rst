@@ -1,8 +1,12 @@
 Python usage
 ------------
-LCD displays can be driven with python using the various implementations in the :py:mod:`luma.lcd.device` package.  There are several device classes available and usage is very simple if you have ever use `Pillow <https://pillow.readthedocs.io/en/latest/>`_ of PIL.
+LCD displays can be driven with python using the various implementations in the
+:py:mod:`luma.lcd.device` package.  There are several device classes available
+and usage is very simple if you have ever use
+`Pillow <https://pillow.readthedocs.io/en/latest/>`_ of PIL.
 
-To begin you must import the device class you will be using and the interface class that you will use to communicate with your device:
+To begin you must import the device class you will be using and the interface
+class that you will use to communicate with your device:
 
 In this example, we are using an SPI interface with a pcd8544 display.
 
@@ -66,10 +70,10 @@ these device's 262K color-space.
 
 Landscape / Portrait Orientation
 """"""""""""""""""""""""""""""""
-By default the PCD8544, ST7735, UC1701X and ILI9341 displays will all be oriented in
-landscape mode (84x48, 160x128, 128x64 and 320x240 pixels respectively). Should you have
-an application that requires the display to be mounted in a portrait aspect,
-then add a :py:attr:`rotate=N` parameter when creating the device:
+By default the PCD8544, ST7735, UC1701X and ILI9341 displays will all be oriented
+inlandscape mode (84x48, 160x128, 128x64 and 320x240 pixels respectively). Should
+you have an application that requires the display to be mounted in a portrait
+aspect, then add a :py:attr:`rotate=N` parameter when creating the device:
 
 .. code:: python
 
@@ -96,8 +100,8 @@ The HD44780 does not support display rotation.
 Seven-Segment Drivers
 ^^^^^^^^^^^^^^^^^^^^^
 The HT1621 is driven with the :py:class:`luma.lcd.device.ht1621` class, but is
-not accessed directly: it should be wrapped with the :py:class:`luma.core.virtual.sevensegment`
-wrapper, as follows:
+not accessed directly: it should be wrapped with the
+:py:class:`luma.core.virtual.sevensegment` wrapper, as follows:
 
 .. code:: python
 
@@ -138,18 +142,25 @@ buffer allows, but only because dots are folded into their host character.
 Backlight Control
 ^^^^^^^^^^^^^^^^^
 These displays typically require a backlight to illuminate the liquid crystal
-display.  If the display's backlight is connected to one of the single-board computer's gpio pins, you can activate the backlight by specifying ``gpio_LIGHT=n`` where n = the pin number when initializing the
+display.  If the display's backlight is connected to one of the single-board
+computer's gpio pins, you can activate the backlight by specifying
+``gpio_LIGHT=n`` where n = the pin number when initializing the
 device (default GPIO 18 (PWM_CLK0)).
 
-If the display uses an I2C backpack with a pin from the backpack connected to the display's backlight pin, you can activate the backlight by specifying ``backpack_pin=n`` where n = the pin number on the backpack.
+If the display uses an I2C backpack with a pin from the backpack connected to
+the display's backlight pin, you can activate the backlight by specifying
+``backpack_pin=n`` where n = the pin number on the backpack.
 
 The backlight can be programmatically switched on and off by calling
 ``device.backlight(True)`` or ``device.backlight(False)`` respectively.
 
 .. note::
-  If you are using an I2C backpack based device, the backlight will not change until the next time you send a command or data to the device.
+  If you are using an I2C backpack based device, the backlight will not change
+  until the next time you send a command or data to the device.
 
 Examples
 ^^^^^^^^
-After installing the library, head over to the `luma.examples <https://github.com/rm-hull/luma.examples>`_
-repository. Details of how to run the examples is shown in the example repo's README.
+After installing the library, head over to the
+`luma.examples <https://github.com/rm-hull/luma.examples>`_
+repository. Details of how to run the examples is shown in the example repo's
+README.

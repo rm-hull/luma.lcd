@@ -1,7 +1,7 @@
 Installation
 ------------
 .. warning::
-   Ensure that the :ref:`pre-requisites` from the previous section
+   Ensure that the :ref:`Pre-requisites` from the Hardware section
    have been performed, checked and tested before proceeding.
 
 .. note:: The library has been tested against Python 3.5, 3.6, 3.7 and 3.8.
@@ -19,7 +19,6 @@ Installation
    (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W and
    OrangePi Zero (Armbian Jessie).
 
-I
 Installing from PyPI
 ^^^^^^^^^^^^^^^^^^^^
 First, install the dependencies for the library with::

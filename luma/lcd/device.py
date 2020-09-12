@@ -857,7 +857,7 @@ class hd44780(backlit_device, parallel_device, character):
     .. versionadded:: 2.5.0
     """
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
-                 selected_font=0, exec_time=1e-6 * 50, framebuffer="diff_to_previous", **kwargs):
+                 selected_font=0, exec_time=0.000001, framebuffer="diff_to_previous", **kwargs):
         super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface, exec_time=exec_time, **kwargs)
 
         # Inherited from parallel_device class but multi-inheritence with
@@ -955,11 +955,14 @@ class hd44780(backlit_device, parallel_device, character):
         by reversing from glyphs from the image back to the correct
         value from the displays font table.
 
+        :param image: the image to place on the display
+        :type image: :py:class:`PIL.Image.Image`
+
         If needed, it will create custom characters if a glyph is not found
         within the font table
 
         .. note:
-            Most displays have limited memory to support custom characters
+            Most hd44780s have limited memory to support custom characters
             and typically can only support 8 at any one time.  If this is
             exceeded, the remaining unmatched characters will be replaced by
             the undefined character.
@@ -1040,7 +1043,7 @@ class hd44780(backlit_device, parallel_device, character):
         Return one of the devices built-in fonts as a :py:mod:`PIL.ImageFont`
         object
 
-        :param ft: number of the font to return (0 - A00, 1 - A02)
-        :type param: int
+        :param ft: name or number of the font to return (0 - A00, 1 - A02)
+        :type ft: int or str
         """
         return self.font.load(ft)

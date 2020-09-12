@@ -17,18 +17,12 @@ In this example, we are using an SPI interface with a pcd8544 display.
 
 The display device should now be configured for use.
 
-If you were using an hd44780 display using a parallel interface, after the import statements your initialisation would looks like this.
-
-.. code:: python
-
-  serial = parallel(RS=7, E=8, PINS=[25,24,23,18])
-  device = hd44780(serial)
-
 The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
-:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`luma.lcd.device.ili9341` and :py:class:`luma.lcd.device.hd44780`classes all expose a
-:py:meth:`~luma.lcd.device.pcd8544.display` method which
+:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`~luma.lcd.device.ili9341` and :py:class:`~luma.lcd.device.hd44780`
+classes all expose a :py:meth:`~luma.lcd.device.pcd8544.display` method which
 takes an image with attributes consistent with the capabilities of the device.
-However, for most cases [1]_, for drawing text and graphics primitives, the canvas
+
+For most cases, for drawing text and graphics primitives, the canvas
 class should be used as follows:
 
 .. code:: python
@@ -46,13 +40,15 @@ As soon as the with scope is ended, the resultant image is automatically
 flushed to the device's display memory and the :mod:`PIL.ImageDraw` object is
 garbage collected.
 
-.. [1] The use of display for the HD44780 is more limited with the `text` property being the preferred interface for displaying characters.
-
+.. note::
+  The use of the display method for the HD44780 is more limited than the other
+  LCDs.  For it, the `text` property is the preferred interface for displaying
+  characters.
 
 Color Model
 """""""""""
-Any of the standard :py:mod:`PIL.ImageColor` color formats may be used, but
-since the PCD8544 LCD is monochrome, only the HTML color names
+Any of the standard :py:mod:`PIL.ImageColor` color formats may be used if your
+device support them.  For monochrome LCDs, only the HTML color names
 :py:const:`"black"` and :py:const:`"white"` values should really be used; in
 fact, by default, any value *other* than black is treated as white. The
 :py:class:`luma.core.render.canvas` object does have a :py:attr:`dither` flag
@@ -64,8 +60,9 @@ effect (see the *3d_box.py* example, below).
   with canvas(device, dither=True) as draw:
       draw.rectangle((10, 10, 30, 30), outline="white", fill="red")
 
-Note that there is no such limitation for the ST7735 or ILI9341 devices which supports 262K
-colour RGB images, whereby 24-bit RGB images are downscaled to 18-bit RGB.
+The ST7735 and ILI9341 devices can display 262K colour RGB images.  If supplied
+24-bit RGB images, they are automatically downscaled to 18-bit RGB to fit
+these device's 262K color-space.
 
 Landscape / Portrait Orientation
 """"""""""""""""""""""""""""""""
@@ -149,7 +146,7 @@ If the display uses an I2C backpack with a pin from the backpack connected to th
 The backlight can be programmatically switched on and off by calling
 ``device.backlight(True)`` or ``device.backlight(False)`` respectively.
 
-.. note:
+.. note::
   If you are using an I2C backpack based device, the backlight will not change until the next time you send a command or data to the device.
 
 Examples

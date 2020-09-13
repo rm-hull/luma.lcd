@@ -6,7 +6,7 @@ HD44780
 The HD44780 is a popular LCD display that is widely available and cheap.  It
 is available in several sizes with 16 character x 2 line and  20 character
 by 4 line displays the most common.  As with most LCD displays, they come with
-a backlight which Luma.LCD can control either using PWM modulation or with a
+a backlight which luma.lcd can control either using PWM modulation or with a
 simple GPIO driven switch.
 
 They are normally connected to SBCs using a parallel ('bit bang') style interface
@@ -25,7 +25,7 @@ and the A02 ROM (English/European).  See :download:`HD44780 <tech-spec/HD44780.p
 for details on which characters are included in each.
 
 In addition to the built-in characters, HD44780s can have up to eight custom
-written into their RAM.  This feature is used by Luma.LCD to provide a limited
+written into their RAM.  This feature is used by luma.lcd to provide a limited
 graphics capability.
 
 Character-mode Usage
@@ -124,7 +124,7 @@ Here is a small example of how this can be leveraged.
 
 There are a few of things that deserve highlighting in this code.
 
-* We have used the hd44780 classes get_font method to retrieve the internal
+* We have used the hd44780 classes ``get_font`` method to retrieve the internal
   font used by the device.  This enables us to place exact replicas of the
   characters within the font tables on the canvas.  When these characters are
   displayed, because they are already normal characters, they do not consume any
@@ -132,7 +132,7 @@ There are a few of things that deserve highlighting in this code.
   font tables.  You should request the table that matches what is installed in
   your display.
 
-* The progress bar is drawn using normal ImageDraw primitives in this case a
+* The progress bar is drawn using normal :mod:`PIL.ImageDraw` primitives in this case a
   couple of calls to the rectangle method.
 
 * The size of the progress bar was carefully chosen.  It is 70 pixels wide by 8
@@ -167,7 +167,7 @@ A00          English Japanese
 A02          English European
 ===========  ==================
 
-You can retrieve either of these fonts using the `get_font` method.
+You can retrieve either of these fonts using the ``get_font`` method.
 
 .. code:: python
 

@@ -120,9 +120,8 @@ class I2CBackpackBacklight:
 
         # If the serial_interface has already been set up to use a backlight
         # use its setting, otherwise initialize the backlight from the pin arg
-        self._pin = 0 if pin is None else serial_interface._mask(pin) if not \
-            serial_interface._backlight_enabled else \
-            serial_interface._backlight_enabled
+        _be = serial_interface._backlight_enabled
+        self._pin = _be if _be else serial_interface._mask(pin) if pin else 0
 
         serial_interface._backlight_enabled = self._pin
 
@@ -207,10 +206,10 @@ class backlit_device(device):
             self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
         elif pwm_frequency:
             self._gpio = gpio or self.__rpi_gpio__()
-            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
+            self.backlight = PWMBacklight(self._gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
         else:
             self._gpio = gpio or self.__rpi_gpio__()
-            self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
+            self.backlight = GPIOBacklight(self._gpio, pin=gpio_LIGHT, active_low=active_low)
 
         self.persist = True
         self.backlight(True)
@@ -854,6 +853,19 @@ class hd44780(backlit_device, parallel_device, character):
         to finish.  If your display is not working correctly, you may want to
         try increasing the exec_time delay.
     :type exec_time: float
+    :param gpio_LIGHT: The GPIO pin to use for the backlight if it is controlled by
+        one of the GPIO pins.
+    :type gpio_LIGHT: int
+    :param active_low: Set to true if backlight is active low (default), false
+        otherwise.
+    :type active_low: bool
+    :param pwm_frequency: Use PWM for backlight brightness control with the
+        specified frequency when provided.
+    :type pwm_frequency: float
+    :type backpack_pin: If using an I2C backpack, sets the pin on the backpack that
+        is connected to the backlight.  This is unnecessary if it has already been
+        configured on the interface.
+    :type backpack_pin: int
     :param framebuffer: Framebuffering strategy, currently values of
         ``diff_to_previous`` or ``full_frame`` are only supported.
     :type framebuffer: str
@@ -1069,3 +1081,9 @@ class hd44780(backlit_device, parallel_device, character):
         :type ft: int or str
         """
         return self.font.load(ft)
+
+    def contrast(self, *args):
+        """
+        Not support on this device.  Ignore.
+        """
+        pass

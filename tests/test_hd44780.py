@@ -159,6 +159,14 @@ def test_get_font():
         b'\x02\x00\x01\x00H\x00\xab\x80\x90@\x93\xc0l@\x03\xc0'
 
 
+def test_no_contrast():
+    """
+    HD44780 should ignore requests to change contrast
+    """
+    device = hd44780(serial, bitmode=8, gpio=gpio)
+    device.contrast(100)
+
+
 def test_i2c_backlight():
     """
     Test of i2c_backlight

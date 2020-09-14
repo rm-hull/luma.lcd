@@ -41,7 +41,7 @@ def test_init():
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
 
 
-def test_cleanup():
+def test_gpio_cleanup():
     """
     Cleanup of backlit_device using a GPIO interface should turn light off and then
     clean up the GPIO pin associated with the backlight
@@ -51,6 +51,22 @@ def test_cleanup():
     gpio.reset_mock()
     device.cleanup()
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+    gpio.cleanup.assert_called_once_with(gpio_LIGHT)
+
+
+def test_pwm_cleanup():
+    """
+    Cleanup of backlit_device using a GPIO PWM interface should turn light off,
+    shut off the PWM function and then clean up the GPIO pin associated with the
+    backlight
+    """
+    gpio_LIGHT = 11
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT,
+        pwm_frequency=362)
+    gpio.reset_mock()
+    device.cleanup()
+    assert device.backlight._pwm.stop.called, \
+        'PWM stop method should be called during cleanup'
     gpio.cleanup.assert_called_once_with(gpio_LIGHT)
 
 

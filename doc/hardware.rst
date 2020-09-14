@@ -1,12 +1,12 @@
 Hardware
 --------
 
-Identifying your serial interface
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Identifying your interface
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can determine if you have an I2C, SPI or parallel-bus interface by counting
 the number of pins on your card. An I2C display will have 4 pins while an SPI
 interface will have 6 or 7 pins, and a parallel-bus interface will typically need
-to have at least 9 pins connected on a device that will contain as 16+ pins.
+to have at least 9 pins connected on a device that will contain as many as 16 pins.
 
 If you have a SPI display, check the back of your display for a configuration
 such as this:

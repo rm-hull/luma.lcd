@@ -40,17 +40,17 @@ a string containing the values that you want displayed.
   from luma.core.interface.serial import parallel
   from luma.lcd.device import hd44780
 
-  p = parallel(RS=7, E=8, PINS=[25,24,23,27])
-  d = hd44780(p)
+  interface = parallel(RS=7, E=8, PINS=[25,24,23,27])
+  device = hd44780(interface)
 
-  d.text = 'Hello World'
+  device.text = 'Hello World'
 
 The newline character can be used to display characters on the next line of the
 display.
 
 .. code:: python
 
-  d.text = 'Hello\nWorld'
+  device.text = 'Hello\nWorld'
 
 It is the only control character that works however.  Other control characters
 such as carriage return (ascii 13) and line feed (ascii 10) will be silently
@@ -104,8 +104,8 @@ Here is a small example of how this can be leveraged.
   from luma.core.render import canvas
   from PIL import Image, ImageDraw
 
-  serial = parallel(RS=7, E=8, PINS=[25,24,23,27])
-  device = hd44780(serial)
+  interface = parallel(RS=7, E=8, PINS=[25,24,23,27])
+  device = hd44780(interface)
 
   def progress_bar(width, height, percentage):
     img = Image.new('1', (width, height))

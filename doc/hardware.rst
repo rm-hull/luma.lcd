@@ -156,7 +156,7 @@ Raspberry Pi, up to and including the Raspberry Pi 3 B.
     :py:attr:`port=1` in your serial interface create call.
 
 The GPIO pins used for this SPI connection are the same for all versions of the
-Raspberry Pi, up to and including the Raspberry Pi 3 B.
+Raspberry Pi, up to and including the Raspberry Pi 4 B.
 
 ========== ====== ============ ======== ==============
 Device Pin Name   Remarks      RPi Pin  RPi Function
@@ -412,7 +412,7 @@ HD44780 w/PCF8574 Wiring
 """"""""""""""""""""""""
 
 .. note:
-  The please review the :py:class:`luma.core.interface.serial.pcf8574`
+  Please review the :py:class:`luma.core.interface.serial.pcf8574`
   documentation for details on how to correctly assign the PCF8574 pins for
   your display.
 

@@ -2,8 +2,8 @@ Python usage
 ------------
 LCD displays can be driven with python using the various implementations in the
 :py:mod:`luma.lcd.device` package.  There are several device classes available
-and usage is very simple if you have ever use
-`Pillow <https://pillow.readthedocs.io/en/latest/>`_ of PIL.
+and usage is very simple if you have ever used
+`Pillow <https://pillow.readthedocs.io/en/latest/>`_ or PIL.
 
 To begin you must import the device class you will be using and the interface
 class that you will use to communicate with your device:
@@ -19,7 +19,7 @@ In this example, we are using an SPI interface with a pcd8544 display.
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
 
-The display device should now be configured for use.
+The display device should now be properly configured.
 
 The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
 :py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`~luma.lcd.device.ili9341` and :py:class:`~luma.lcd.device.hd44780`
@@ -46,13 +46,13 @@ garbage collected.
 
 .. note::
   The use of the display method for the HD44780 is more limited than the other
-  LCDs.  For it, the `text` property is the preferred interface for displaying
+  LCDs.  The `text` property is the preferred interface for displaying
   characters.
 
 Color Model
 """""""""""
 Any of the standard :py:mod:`PIL.ImageColor` color formats may be used if your
-device support them.  For monochrome LCDs, only the HTML color names
+device supports them.  For monochrome LCDs, only the HTML color names
 :py:const:`"black"` and :py:const:`"white"` values should really be used; in
 fact, by default, any value *other* than black is treated as white. The
 :py:class:`luma.core.render.canvas` object does have a :py:attr:`dither` flag
@@ -64,14 +64,14 @@ effect (see the *3d_box.py* example, below).
   with canvas(device, dither=True) as draw:
       draw.rectangle((10, 10, 30, 30), outline="white", fill="red")
 
-The ST7735 and ILI9341 devices can display 262K colour RGB images.  If supplied
+The ST7735 and ILI9341 devices can display 262K colour RGB images.  When supplying
 24-bit RGB images, they are automatically downscaled to 18-bit RGB to fit
 these device's 262K color-space.
 
 Landscape / Portrait Orientation
 """"""""""""""""""""""""""""""""
 By default the PCD8544, ST7735, UC1701X and ILI9341 displays will all be oriented
-inlandscape mode (84x48, 160x128, 128x64 and 320x240 pixels respectively). Should
+in landscape mode (84x48, 160x128, 128x64 and 320x240 pixels respectively). Should
 you have an application that requires the display to be mounted in a portrait
 aspect, then add a :py:attr:`rotate=N` parameter when creating the device:
 
@@ -144,7 +144,7 @@ Backlight Control
 These displays typically require a backlight to illuminate the liquid crystal
 display.  If the display's backlight is connected to one of the single-board
 computer's gpio pins, you can activate the backlight by specifying
-``gpio_LIGHT=n`` where n = the pin number when initializing the
+``gpio_LIGHT=n`` where ``n`` = the pin number when initializing the
 device (default GPIO 18 (PWM_CLK0)).
 
 If the display uses an I2C backpack with a pin from the backpack connected to
@@ -162,5 +162,4 @@ Examples
 ^^^^^^^^
 After installing the library, head over to the
 `luma.examples <https://github.com/rm-hull/luma.examples>`_
-repository. Details of how to run the examples is shown in the example repo's
-README.
+repository. Details of how to run the examples is shown in the `README <https://github.com/rm-hull/luma.examples/blob/master/README.rst>`_.

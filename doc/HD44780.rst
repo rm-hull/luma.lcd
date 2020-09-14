@@ -176,7 +176,7 @@ You can retrieve either of these fonts using the ``get_font`` method.
 You can also combine fonts together in order to display characters not included
 within your device's character table.
 
-As an example, the 'Black Right-Pointing Triable' symbol (Unicode U+25b6) is not
+As an example, the 'Black Right-Pointing Triable' symbol ``Unicode U+25b6`` is not
 contained in the A00 character table but is frequently used as a 'Play' symbol for
 multi-media systems.  It is however included in the A02 font table.  We can
 pull the symbol from A02 and add it to the current embedded font to enable us to
@@ -189,9 +189,9 @@ use it.
   device.text = '\u25b6 Play'
 
 This feature leverages the custom character capability so it has the same 8
-character limitation.  If you exceed 8 characters within a screen, the `undefined`
+character limitation.  If you exceed 8 characters within a screen, the ``undefined``
 character will be used for all additional characters that are not contained
 within the devices font table.
 
 See the documentation for :py:mod:`luma.core.bitmap_font` for more information on
-how to use the bitmap_font module.
+how to use the ``bitmap_font`` module.

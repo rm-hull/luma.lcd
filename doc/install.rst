@@ -8,8 +8,8 @@ Installation
 
    It was *originally* tested with Raspbian on a rev.2 model B, with a vanilla
    kernel version 4.1.16+, and has subsequently been tested on Raspberry Pi
-   (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W and
-   OrangePi Zero (Armbian Jessie).
+   (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W,
+   OrangePi Zero (Armbian Jessie), and 4B.
 
 Installing from PyPI
 ^^^^^^^^^^^^^^^^^^^^

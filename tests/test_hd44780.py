@@ -178,7 +178,7 @@ def test_i2c_backlight():
 
 def test_i2c_does_not_support_backlight():
     """
-    Test exception is thrown if supplied serial_interface does not support a backlight
+    An exception is thrown if supplied serial_interface does not support a backlight
     """
     import luma.core
     serial = Mock(spec_set=luma.core.interface.serial.i2c)
@@ -194,7 +194,7 @@ def test_i2c_does_not_support_backlight():
 
 def test_unsupported_display_mode():
     """
-    Test exception is thrown if an unsupported display mode is requested
+    An exception is thrown if an unsupported display mode is requested
     """
     import luma.core
     try:

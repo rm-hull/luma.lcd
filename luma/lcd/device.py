@@ -937,8 +937,8 @@ class hd44780(backlit_device, parallel_device, character):
             self.command(0x30, exec_time=1e-6 * 200)
             self.command(0x30)
         else:
-            ''' In case of stubborn display place in 8 bit mode three times and
-                and then try to get it into four bit mode '''
+            # In case of stubborn display place in 8 bit mode three times and
+            # and then try to get it into four bit mode
             for _ in range(3):
                 self.command(0x03, exec_time=1e-3 * 10, only_low_bits=True)
                 self.command(0x03, exec_time=1e-3 * 10, only_low_bits=True)
@@ -963,7 +963,7 @@ class hd44780(backlit_device, parallel_device, character):
         :type image: :py:class:`PIL.Image.Image`
 
         If needed, it will create custom characters if a glyph is not found
-        within the font table
+        within the font table.
 
         .. note:
             Most hd44780s have limited memory to support custom characters

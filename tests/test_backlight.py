@@ -5,7 +5,7 @@
 
 import luma.core.error
 from luma.lcd.device import backlit_device
-from luma.core.interface.serial import noop
+from luma.core.interface.serial import noop, pcf8574
 from unittest.mock import Mock
 import pytest
 
@@ -42,11 +42,29 @@ def test_init():
 
 
 def test_cleanup():
+    """
+    Cleanup of backlit_device using a GPIO interface should turn light off and then
+    clean up the GPIO pin associated with the backlight
+    """
     gpio_LIGHT = 11
     device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
     device.cleanup()
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+    gpio.cleanup.assert_called_once_with(gpio_LIGHT)
+
+
+def test_pcf8574_cleanup():
+    """
+    Cleanup of backlit device using a PCF8574 interface should not cleanup gpio
+    """
+    gpio_LIGHT = 11
+    smbus = Mock(unsafe=True)
+    serial = pcf8574(bus=smbus, address=0x27)
+    gpio.reset_mock()
+    device = backlit_device(serial_interface=serial, gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device.cleanup()
+    assert not gpio.cleanup.called, 'GPIO cleanup not necessary with _backlight_enabled interface'
 
 
 def test_active_low_enable_on():

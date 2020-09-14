@@ -38,7 +38,7 @@ from time import sleep
 
 from luma.core.lib import rpi_gpio
 from luma.core.device import device, parallel_device
-from luma.core.interface.serial import noop
+from luma.core.interface.serial import noop, pcf8574
 import luma.core.error
 import luma.core.framebuffer
 import luma.lcd.const
@@ -87,6 +87,10 @@ class GPIOBacklight:
         """
         assert is_enabled in (True, False)
         self._gpio.output(self._pin, self._enabled if is_enabled else self._disabled)
+
+    def cleanup(self):
+        if self._gpio:
+            self._gpio.cleanup(self._pin)
 
 
 class I2CBackpackBacklight:
@@ -152,6 +156,7 @@ class PWMBacklight:
         try:
             self._pwm = self._gpio.PWM(pin, frequency)
             self._pwm.start(0.0)
+            self._pin = pin
         except RuntimeError as e:
             if str(e) == 'Module not imported correctly!':
                 raise luma.core.error.UnsupportedPlatform('GPIO access not available')
@@ -169,6 +174,11 @@ class PWMBacklight:
             value = 100.0 if value else 0.0
         assert 0.0 <= value <= 100.0
         self._pwm.ChangeDutyCycle(value)
+
+    def cleanup(self):
+        if self._gpio:
+            self._pwm.stop()
+            self._gpio.cleanup(self._pin)
 
 
 @rpi_gpio
@@ -193,12 +203,13 @@ class backlit_device(device):
     def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
-        gpio = gpio or self.__rpi_gpio__()
-        if pwm_frequency:
-            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
-        elif backpack_pin:
+        if backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
             self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
+        elif pwm_frequency:
+            self._gpio = gpio or self.__rpi_gpio__()
+            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
         else:
+            self._gpio = gpio or self.__rpi_gpio__()
             self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
 
         self.persist = True
@@ -209,9 +220,14 @@ class backlit_device(device):
         Attempt to reset the device & switching it off prior to exiting the
         python process.
         """
-        super(backlit_device, self).cleanup()
         if self.persist:
             self.backlight(False)
+        try:
+            self.backlight.cleanup()
+        except AttributeError:
+            # Not all backlights require cleanup
+            pass
+        super(backlit_device, self).cleanup()
 
 
 class pcd8544(backlit_device):

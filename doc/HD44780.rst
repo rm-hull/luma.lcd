@@ -172,7 +172,7 @@ There are a few of things that deserve highlighting in this code.
 .. tip::
   When displaying text, to avoid using custom character space you should:
     * Use the internal font installed in your device which can be retrieved using
-      ``get_font`` and...
+      ``get_font``
     * Make sure to align the placement of the text to the 5x8 cell structure of
       the display
 

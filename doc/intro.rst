@@ -1,7 +1,7 @@
 Introduction
 ============
-Luma.LCD provides a Python3 interface to small LCD displays connected to
-Raspberry Pi and other linux-based single-board computers (SBC).  It provides a
+luma.lcd provides a Python3 interface to small LCD displays connected to
+Raspberry Pi and other Linux-based single-board computers (SBC).  It provides a
 Pillow-compatible drawing canvas, and other functionality to support:
 
 * scrolling/panning capability,

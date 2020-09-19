@@ -17,7 +17,7 @@ add them manually.
 
 ``luma.lcd`` relies on the following packages.
 
-.. csv-table:: 
+.. csv-table::
   :header: "Package", "Description"
   :widths: 15, 25
 
@@ -65,7 +65,7 @@ are available on their pypi pages.
 
 Permissions
 -----------
-``Luma.lcd`` uses hardware interfaces that require permission to access.  After you
+``luma.lcd`` uses hardware interfaces that require permission to access.  After you
 have successfully installed ``luma.lcd`` you may want to add the user account that
 your ``luma.lcd`` program will run as to the groups that grant access to these
 interfaces.::

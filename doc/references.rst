@@ -18,3 +18,4 @@ References
 - http://www.areinhardt.de/news/raspberry-pi-tft-display/
 - http://www.whence.com/rpi/
 - http://harizanov.com/product/1-8-tft-display-for-raspberry-pi/
+- https://www.circuits.dk/everything-about-raspberry-gpio/

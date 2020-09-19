@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-17 Richard Hull and contributors
+# Copyright (c) 2013-20 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -34,16 +34,19 @@ Collection of serial interfaces to LCD devices.
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
+from time import sleep
+
 from luma.core.lib import rpi_gpio
-from luma.core.device import device
-from luma.core.interface.serial import noop
+from luma.core.device import device, parallel_device
+from luma.core.interface.serial import noop, pcf8574
 import luma.core.error
 import luma.core.framebuffer
 import luma.lcd.const
 from luma.lcd.segment_mapper import dot_muncher
+from luma.core.virtual import character
+from luma.core.bitmap_font import embedded_fonts
 
-
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341"]
+__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341", "hd44780"]
 
 
 class GPIOBacklight:
@@ -79,11 +82,58 @@ class GPIOBacklight:
         """
         Toggle the LCD Backlight
 
-        :param is_enabled: Turn on or off the backlight.
+        :param is_enabled: Turn backlight on or off.
         :type is_enabled: bool
         """
         assert is_enabled in (True, False)
         self._gpio.output(self._pin, self._enabled if is_enabled else self._disabled)
+
+    def cleanup(self):
+        if self._gpio:
+            self._gpio.cleanup(self._pin)
+
+
+class I2CBackpackBacklight:
+    """
+    Helper class for controlling the LCD backlight when the device is using
+    an I2C backpack such as the PCF8574
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.pcf8574` instance) that the device
+        uses to communicate.
+    :param pin: the backpack pin number used to control the backlight on the
+        device.
+    :type pin: int
+    :raises luma.core.error.UnsupportedPlatform: This I2C interfaces does not
+        support a backlight.
+
+    .. note: If the I2C interface is already configured to use a backlight, the
+        pin setting here will be ignored.
+
+    .. versionadded:: 2.5.0
+    """
+    def __init__(self, serial_interface, pin=None):
+        self._serial_interface = serial_interface
+
+        if not hasattr(serial_interface, "_backlight_enabled"):
+            raise luma.core.error.UnsupportedPlatform('This I2C interface does not support a backlight')
+
+        # If the serial_interface has already been set up to use a backlight
+        # use its setting, otherwise initialize the backlight from the pin arg
+        _be = serial_interface._backlight_enabled
+        self._pin = _be if _be else serial_interface._mask(pin) if pin else 0
+
+        serial_interface._backlight_enabled = self._pin
+
+    def __call__(self, is_enabled):
+        """
+        Toggle the LCD Backlight
+
+        :param is_enabled: Turn on or off the backlight.
+        :type is_enabled: bool
+        """
+        assert is_enabled in (True, False)
+        self._serial_interface._backlight_enabled = self._pin if is_enabled else 0
 
 
 class PWMBacklight:
@@ -105,6 +155,7 @@ class PWMBacklight:
         try:
             self._pwm = self._gpio.PWM(pin, frequency)
             self._pwm.start(0.0)
+            self._pin = pin
         except RuntimeError as e:
             if str(e) == 'Module not imported correctly!':
                 raise luma.core.error.UnsupportedPlatform('GPIO access not available')
@@ -123,6 +174,11 @@ class PWMBacklight:
         assert 0.0 <= value <= 100.0
         self._pwm.ChangeDutyCycle(value)
 
+    def cleanup(self):
+        if self._gpio:
+            self._pwm.stop()
+            self._gpio.cleanup(self._pin)
+
 
 @rpi_gpio
 class backlit_device(device):
@@ -136,18 +192,24 @@ class backlit_device(device):
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
     :type pwm_frequency: float
+    :type backpack_pin: If using an I2C backpack, sets the pin on the backpack that
+        is connected to the backlight.
+    :type backpack_pin: int
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.0.0
     """
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, **kwargs):
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
-        gpio = gpio or self.__rpi_gpio__()
-        if pwm_frequency:
-            self.backlight = PWMBacklight(gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
+        if backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
+            self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
+        elif pwm_frequency:
+            self._gpio = gpio or self.__rpi_gpio__()
+            self.backlight = PWMBacklight(self._gpio, pin=gpio_LIGHT, frequency=pwm_frequency)
         else:
-            self.backlight = GPIOBacklight(gpio, pin=gpio_LIGHT, active_low=active_low)
+            self._gpio = gpio or self.__rpi_gpio__()
+            self.backlight = GPIOBacklight(self._gpio, pin=gpio_LIGHT, active_low=active_low)
 
         self.persist = True
         self.backlight(True)
@@ -157,9 +219,14 @@ class backlit_device(device):
         Attempt to reset the device & switching it off prior to exiting the
         python process.
         """
-        super(backlit_device, self).cleanup()
         if self.persist:
             self.backlight(False)
+        try:
+            self.backlight.cleanup()
+        except AttributeError:
+            # Not all backlights require cleanup
+            pass
+        super(backlit_device, self).cleanup()
 
 
 class pcd8544(backlit_device):
@@ -313,7 +380,7 @@ class st7735(backlit_device):
     :param width: The number of pixels laid out horizontally.
     :type width: int
     :param height: The number of pixels laid out vertically.
-    :type width: int
+    :type height: int
     :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
@@ -452,7 +519,7 @@ class ili9341(backlit_device):
     :param width: The number of pixels laid out horizontally.
     :type width: int
     :param height: The number of pixels laid out vertically.
-    :type width: int
+    :type height: int
     :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
@@ -757,3 +824,266 @@ class uc1701x(backlit_device):
         """
         assert(0 <= value <= 255)
         self.command(0x81, value >> 2)
+
+
+class hd44780(backlit_device, parallel_device, character):
+    """
+    Driver for a HD44780 style LCD display.  This class provides a ``text``
+    property which can be used to set and get a text value, which will be
+    rendered to the display's screen using the display's built-in font.
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.parallel` instance) to delegate
+        sending data and commands through.
+    :param width: The number of characters that can be displayed on a line.
+    :type width: int
+    :param height: The number of lines the display supports.
+    :type height: int
+    :param undefined: character to use if a requested character is not in the
+        font tables
+    :type undefined: str
+    :param selected_font: the font table appropriate for the model of display
+        you are using.  The hd44780 normally comes in a version with font A00
+        (ENGLISH_JAPANESE) or A02 (ENGLISH_EUROPEAN).  You can provide either
+        the name ('A00' or 'A02') or the number (0 for 'A00', 1 for 'A02') for
+        the font your display contains.
+    :type selected_font: int or str
+    :param exec_time: Time in seconds to wait for a command to complete.
+        Default is 50 μs (1e-6 * 50) which typically is long enough for commands
+        to finish.  If your display is not working correctly, you may want to
+        try increasing the exec_time delay.
+    :type exec_time: float
+    :param gpio_LIGHT: The GPIO pin to use for the backlight if it is controlled by
+        one of the GPIO pins.
+    :type gpio_LIGHT: int
+    :param active_low: Set to true if backlight is active low (default), false
+        otherwise.
+    :type active_low: bool
+    :param pwm_frequency: Use PWM for backlight brightness control with the
+        specified frequency when provided.
+    :type pwm_frequency: float
+    :type backpack_pin: If using an I2C backpack, sets the pin on the backpack that
+        is connected to the backlight.  This is unnecessary if it has already been
+        configured on the interface.
+    :type backpack_pin: int
+    :param framebuffer: Framebuffering strategy, currently values of
+        ``diff_to_previous`` or ``full_frame`` are only supported.
+    :type framebuffer: str
+
+    To place text on the display, simply assign the text to the ``text``
+    instance variable::
+
+        p = parallel(RS=7, E=8, PINS=[25,24,23,18])
+        my_display = hd44780(p, selected_font='A00')
+        my_display.text = 'HD44780 Display\\nFont A00 Eng/Jap'
+
+    For more details on how to use the 'text' interface see
+    :class:`luma.core.virtual.character`
+
+    ..note:
+        This driver currently only supports the hd44780 5x8 display mode.
+
+    .. versionadded:: 2.5.0
+    """
+    def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
+                 selected_font=0, exec_time=0.000001,
+                 framebuffer="diff_to_previous", **kwargs):
+        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
+        exec_time=exec_time, **kwargs)
+
+        # Inherited from parallel_device class but multi-inheritence with
+        # backlit_device requires it to be initialized here
+        self._exec_time = exec_time
+
+        self.capabilities(width * 5, height * 8, 0)
+        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+
+        # Currently only support 5x8 fonts for the hd44780
+        self.font = embedded_fonts(self._const.FONTDATA,
+            selected_font=selected_font)
+        self.glyph_index = self.font.current.glyph_index
+        self.device = self
+        self._undefined = undefined
+        self._custom = {}
+
+        # Supported modes
+        supported = (width, height) in [(16, 2), (16, 4), (20, 2), (20, 4)]
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        self._initialize_device()
+        self.text = ''
+        self.command(self._const.CLEAR, exec_time=1e-3 * 1.5)
+
+    def _initialize_device(self):
+        """
+        HD44780 Initialization Routine
+
+        Command Values
+        FUNCTIONSET = 0x20
+        DL8 = 0x10
+        DL4 = 0x00
+        LINES2 = 0x08
+        LINES1 = 0x00
+        CHAR5x8 = 0x00
+        CHAR5x10 = 0x04
+        DISPLAYOFF = 0x08
+        DISPLAYON = 0x0C
+        CLEAR = 0x01
+        ENTRY = 0x06
+
+        8 bit mode
+        Action                                                            Delay
+        ----------------------------------------------------------------  -------
+        PowerOn                                                           40.0ms
+        Command 0x30                                                       4.1ms
+        Command 0x30                                                       100μs
+        Command 0x30                                                        40μs
+        Command FUNCTIONSET|DL8|(LINES2 or LINES1)|(CHAR5x8 or CHAR5x10)    40μs
+        Command DISPLAYOFF                                                  40μs
+        Command CLEAR                                                       40μs
+        Command ENTRY ; No shift, incrementing display                      40μs
+
+        4bit mode
+        Action                                                            Delay
+        ----------------------------------------------------------------  -------
+        PowerOn                                                           40.0ms
+        Command 0x03 ; 4 bit write                                         4.1ms
+        Command 0x03 ; 4 bit write                                         100μs
+        Command 0x32                                                        40μs
+        Command FUNCTIONSET|DL4|(LINES2 or LINES1)|(CHAR5x8 or CHAR5x10)    40μs
+        Command DISPLAYOFF                                                  40μs
+        Command CLEAR                                                       40μs
+        Command ENTRY ; No shift, incrementing display                      40μs
+
+        Device is now ready to receive data
+        """
+        sleep(1e-3 * 100)
+        if self._bitmode == 8:
+            self.command(0x30, exec_time=1e-3 * 10)
+            self.command(0x30, exec_time=1e-6 * 200)
+            self.command(0x30)
+        else:
+            # In case of stubborn display place in 8 bit mode three times and
+            # and then try to get it into four bit mode
+            for _ in range(3):
+                self.command(0x03, exec_time=1e-3 * 10, only_low_bits=True)
+                self.command(0x03, exec_time=1e-3 * 10, only_low_bits=True)
+                self.command(0x33, exec_time=1e-3 * 100)
+            self.command(0x03, exec_time=1e-3 * 10, only_low_bits=True)
+            self.command(0x03, exec_time=1e-6 * 200, only_low_bits=True)
+            self.command(0x32)
+
+        dl = self._const.DL8 if self._bitmode == 8 else self._const.DL4
+        self.command(self._const.FUNCTIONSET | dl | self._const.LINES2)
+        self.command(self._const.DISPLAYOFF)  # Set Display Off
+        self.command(self._const.ENTRY)  # Set entry mode to right, no shift
+        self.command(self._const.DISPLAYON, exec_time=1e-3 * 100)  # Turn display on
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and converts it to text data
+        by reversing from glyphs from the image back to the correct
+        value from the displays font table.
+
+        :param image: the image to place on the display
+        :type image: :py:class:`PIL.Image.Image`
+
+        If needed, it will create custom characters if a glyph is not found
+        within the font table.
+
+        .. note:
+            Most hd44780s have limited memory to support custom characters
+            and typically can only support 8 at any one time.  If this is
+            exceeded, the remaining unmatched characters will be replaced by
+            the ``undefined`` character.
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        if self.framebuffer.redraw_required(image):
+            self._cleanup_custom(image)
+            # Expand bounding box to align to cell boundaries (5,8)
+            x0, y0, x1, y1 = self.framebuffer.bounding_box
+            x0 = x0 // 5 * 5
+            x1 = x1 // 5 * 5 if not x1 % 5 else (x1 // 5 + 1) * 5
+            y0 = y0 // 8 * 8
+            y1 = y1 // 8 * 8 if not y1 % 8 else (y1 // 8 + 1) * 8
+            self.framebuffer.bounding_box = (x0, y0, x1, y1)
+
+            for j in range(y0 // 8, y1 // 8):
+                buf = []
+                for i in range(x0 // 5, x1 // 5):
+                    img = self.framebuffer.image.crop((i * 5, j * 8,
+                        (i + 1) * 5, (j + 1) * 8))
+                    bytes = img.tobytes()
+                    c = self.glyph_index[bytes] if bytes in self.glyph_index else \
+                        self._custom[bytes] if bytes in self._custom else None
+                    if c is None:
+                        self._make_custom(img)
+                        c = self._custom.get(bytes, ord(self._undefined))
+                    buf.append(c)
+                self.command(self._const.DDRAMADDR | (self._const.LINES[j] + (x0 // 5)))
+                self.data(buf)
+
+    def _make_custom(self, img):
+        """
+        Create a new custom character based upon the provided image
+
+        .. note:
+            The image must be the same size as the font mode of the display.
+        """
+        assert img.size == (5, 8)
+        if len(self._custom) == self._const.CUSTOMCHARS:
+            # Max custom characters already reached
+            return
+        idx = 0
+        for _ in range(self._const.CUSTOMCHARS):
+            if idx not in self._custom.values():
+                break
+            idx += 1
+        assert idx < self._const.CUSTOMCHARS
+
+        self.command(self._const.CGRAMADDR + (idx * 8))
+        data = [int(bool(i)) for i in img.getdata()]
+        buf = []
+        for j in range(8):
+            buf.append(sum(v << (4 - i) for i, v in
+                enumerate(data[j * 5:(j + 1) * 5])))
+        self.data(buf)
+        self._custom[img.tobytes()] = idx
+
+    def _cleanup_custom(self, img):
+        """
+        Look across new image and remove any custom characters that are not
+        needed to render the image
+        """
+
+        # If no custom characters then we can exit without the search
+        if len(self._custom) == 0:
+            return
+
+        in_use = []
+        for j in range(img.size[1] // 8):
+            for i in range(img.size[0] // 5):
+                data = img.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8)).tobytes()
+                if data in self._custom:
+                    in_use.append(data)
+        self._custom = {k: v for k, v in self._custom.items() if k in in_use}
+
+    def get_font(self, ft):
+        """
+        Return one of the devices built-in fonts as a :py:mod:`PIL.ImageFont`
+        object
+
+        :param ft: name or number of the font to return (0 - A00, 1 - A02)
+        :type ft: int or str
+        """
+        return self.font.load(ft)
+
+    def contrast(self, *args):
+        """
+        Not support on this device.  Ignore.
+        """
+        pass

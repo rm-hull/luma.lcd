@@ -48,7 +48,11 @@ setup(
     long_description_content_type="text/x-rst",
     python_requires='>=3.5, <4',
     license="MIT",
-    keywords="raspberry pi rpi lcd nokia 5110 display screen pcd8544 st7735 uc1701x ht1621 ili9341 spi 84x48 160x128",
+    keywords=("raspberry pi rpi lcd display screen "
+              "rgb monochrome greyscale color "
+              "nokia 5110 pcd8544 st7735 uc1701x ht1621 ili9341 hd44780"
+              "spi i2c parallel bitbang 6800 pcf8574"
+              "84x48 160x128 128x64"),
     url=project_url,
     download_url=project_url + "/tarball/" + version,
     project_urls={

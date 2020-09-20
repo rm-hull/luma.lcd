@@ -390,6 +390,8 @@ class st7735(backlit_device):
     :type framebuffer: str
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
+    :param inverse: Set to ``True`` if device pixels are inversed.
+    :type inverse: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -401,7 +403,7 @@ class st7735(backlit_device):
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
-                 bgr=False, **kwargs):
+                 bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
@@ -423,27 +425,27 @@ class st7735(backlit_device):
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
 
-        self.command(0x01)                      # reset
-        self.command(0x11)                      # sleep out & booster on
-        self.command(0xB1, 0x01, 0x2C, 0x2D)    # frame rate control: normal mode
-        self.command(0xB2, 0x01, 0x2C, 0x2D)    # frame rate control: idle mode
-        self.command(0xB3, 0x01, 0x2C, 0x2D,    # frame rate control: partial mode dot inversion mode
-                     0x01, 0x2C, 0x2D)          # frame rate control: line inversion mode
-        self.command(0xB4, 0x07)                # display inversion: none
-        self.command(0xC0, 0xA2, 0x02, 0x84)    # power control 1: -4.6V auto mode
-        self.command(0xC1, 0xC5)                # power control 2: VGH
-        self.command(0xC2, 0x0A, 0x00)          # power control 3: OpAmp current small, boost freq
-        self.command(0xC3, 0x8A, 0x2A)          # power control 4: BCLK/2, Opamp current small & Medium low
-        self.command(0xC4, 0x8A, 0xEE)          # power control 5: partial mode/full-color
-        self.command(0xC5, 0x0E)                # VCOM Control 1
-        self.command(0x36, 0x60 | order)        # memory data access control
-        self.command(0x20)                      # display inversion off
-        self.command(0x3A, 0x06)                # interface pixel format
-        self.command(0x13)                      # partial off (normal)
-        self.command(0xE0,                      # gamma adjustment (+ polarity)
+        self.command(0x01)                       # reset
+        self.command(0x11)                       # sleep out & booster on
+        self.command(0xB1, 0x01, 0x2C, 0x2D)     # frame rate control: normal mode
+        self.command(0xB2, 0x01, 0x2C, 0x2D)     # frame rate control: idle mode
+        self.command(0xB3, 0x01, 0x2C, 0x2D,     # frame rate control: partial mode dot inversion mode
+                     0x01, 0x2C, 0x2D)           # frame rate control: line inversion mode
+        self.command(0xB4, 0x07)                 # display inversion: none
+        self.command(0xC0, 0xA2, 0x02, 0x84)     # power control 1: -4.6V auto mode
+        self.command(0xC1, 0xC5)                 # power control 2: VGH
+        self.command(0xC2, 0x0A, 0x00)           # power control 3: OpAmp current small, boost freq
+        self.command(0xC3, 0x8A, 0x2A)           # power control 4: BCLK/2, Opamp current small & Medium low
+        self.command(0xC4, 0x8A, 0xEE)           # power control 5: partial mode/full-color
+        self.command(0xC5, 0x0E)                 # VCOM Control 1
+        self.command(0x36, 0x60 | order)         # memory data access control
+        self.command(0x21 if inverse else 0x20)  # display inversion on(0x21)/off(0x20)
+        self.command(0x3A, 0x06)                 # interface pixel format
+        self.command(0x13)                       # partial off (normal)
+        self.command(0xE0,                       # gamma adjustment (+ polarity)
                      0x0F, 0x1A, 0x0F, 0x18, 0x2F, 0x28, 0x20, 0x22,
                      0x1F, 0x1B, 0x23, 0x37, 0x00, 0x07, 0x02, 0x10)
-        self.command(0xE1,                      # gamma adjustment (- polarity)
+        self.command(0xE1,                       # gamma adjustment (- polarity)
                      0x0F, 0x1B, 0x0F, 0x17, 0x33, 0x2C, 0x29, 0x2E,
                      0x30, 0x30, 0x39, 0x3F, 0x00, 0x07, 0x03, 0x10)
 

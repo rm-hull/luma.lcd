@@ -359,9 +359,6 @@ class st7735(backlit_device):
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
 
-        # Black and white
-        inv = 0x21 if inverse else 0x20
-        
         self.command(0x01)                      # reset
         self.command(0x11)                      # sleep out & booster on
         self.command(0xB1, 0x01, 0x2C, 0x2D)    # frame rate control: normal mode
@@ -376,7 +373,7 @@ class st7735(backlit_device):
         self.command(0xC4, 0x8A, 0xEE)          # power control 5: partial mode/full-color
         self.command(0xC5, 0x0E)                # VCOM Control 1
         self.command(0x36, 0x60 | order)        # memory data access control
-        self.command(inv)                       # display inversion on(0x21)/off(0x20)
+        self.command(0x21 if inverse else 0x20) # display inversion on(0x21)/off(0x20)
         self.command(0x3A, 0x06)                # interface pixel format
         self.command(0x13)                      # partial off (normal)
         self.command(0xE0,                      # gamma adjustment (+ polarity)

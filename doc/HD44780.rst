@@ -73,8 +73,10 @@ Graphics-mode Usage
 It is also possible to display graphical content using the `display` method
 which works similarly to other ``luma.lcd`` and ``luma.oled`` displays.  However
 there is a significant limitation.  There can only be 8 characters worth of 'custom'
-content displayed at any point in time.  While this is quite limited, with some
-creativity it can be very useful.
+content displayed at any point in time.  If you exceed this limit, the ``undefined``
+character (a value set during initialization of the hd44780) will be displayed
+instead.  While 8 custom characters may seem limited, with some creativity it can
+be very useful.
 
 To understand how to leverage this capability requires some explanation of
 how the screen of the display is organized and how ``luma.lcd`` manages the
@@ -92,6 +94,8 @@ kept in mind though.
 * The custom character must be a 5x8 image
 * It can only be displayed in alignment with the other characters on the display
 * There can be a maximum of 8 special characters on the screen at any given time
+* If the driver has run out of custom characters for a screen, the remaining cells
+  with non-standard content will display the `undefined` character instead.
 
 However there are a few features that can be leveraged to extend beyond these
 restrictions.
@@ -140,27 +144,30 @@ There are a few of things that deserve highlighting in this code.
   your display.
 
 * The progress bar is drawn using normal :mod:`PIL.ImageDraw` primitives in this case a
-  couple of calls to the rectangle method.
+  couple of calls to the ``rectangle`` method and a call to the ``text`` method.
 
 * The size of the progress bar was carefully chosen.  It is 70 pixels wide by 8
-  pixels high.  This will fill 14 characters worth of space.  Normally this
-  would be a problem.  However, the progress bar only requires four custom
-  characters regardless of what position the progress value is set to.
+  pixels high.  This will fill 14 characters worth of space.  This is because
+  each cell is 5 pixels wide (70/5=14) and it is 8 pixels high (8/8=1).
+  Normally 14 cells worth of graphical content would be a problem. However, the
+  progress bar only requires four custom characters regardless of what position
+  the progress value is set to.  To see why that is you need to look at what each
+  cell looks like within the progress bar at each state the progress bar.
 
   The different conditions of the progress bar can be expressed in 5 states:
 
   .. csv-table:: **CUSTOM CHARACTERS**
     :header: "First", "Middle", "End"
-    :widths: 15, 15, 15
+    :widths: 20, 20, 20
 
-      "LEmpty", "MEmpty", "REmpty"
-      "Filling", "MEmpty", "REmpty"
-      "Filled", "Filling, MEmpty", "REmpty"
-      "Filled", "Filled, Filling, MEmpty", "REmpty"
-      "Filled", "Filled", "RFilling"
+      "Left Empty", "Middle Empty", "Right Empty"
+      "Filling", "Middle Empty", "Right Empty"
+      "Filled", "Filling, Middle Empty", "Right Empty"
+      "Filled", "Filled, Filling, Middle Empty", "Right Empty"
+      "Filled", "Filled", "Right Filling"
       "Filled", "Filled", "Filled"
 
-  So the maximum number of custom characters is as little as 1 but never exceeds 4.
+  So the maximum number of custom characters is as little as one but never exceeds four.
 
 * The progress bar was carefully placed to align with the character cell
   boundaries.  If we had placed the progress bar image one pixel to the left

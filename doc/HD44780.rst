@@ -46,7 +46,7 @@ the display is to use the `text` property which operates similarly to the
   from luma.core.interface.parallel import bitbang_6800
   from luma.lcd.device import hd44780
 
-  interface = bitbang_6800(RS=7, E=8, PINS=[25,24,23,27])
+  interface = bitbang_6800(RS=7, E=8, PINS=[25, 24, 23, 27])
   device = hd44780(interface)
 
   device.text = 'Hello World'
@@ -115,7 +115,7 @@ Here is a small example of how this can be leveraged.
   from luma.core.render import canvas
   from PIL import Image, ImageDraw
 
-  interface = bitbang_6800(RS=7, E=8, PINS=[25,24,23,27])
+  interface = bitbang_6800(RS=7, E=8, PINS=[25, 24, 23, 27])
   device = hd44780(interface)
 
   def progress_bar(width, height, percentage):

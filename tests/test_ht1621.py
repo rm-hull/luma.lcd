@@ -107,7 +107,7 @@ class MockHT1621:
         self._pin_states = {}  # Pin IO states
         self._state = 'none'   # Current state
 
-    def cleanup(self):
+    def cleanup(self, *args):
         """
         Mock GPIO.cleanup.
         """

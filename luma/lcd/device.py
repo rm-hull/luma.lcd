@@ -326,8 +326,9 @@ class st7735(backlit_device):
     :type bgr: bool
     :param inverse: Set to ``True`` if device pixels are inversed.
     :type inverse: bool
-    :param timed_reset: Set to ``True`` if device keeps white after init.
-    :type timed_reset: bool
+    :param hard_reset: Set to ``True`` if device keeps white after initialization.
+        Performing a hard reset will force the RESET line low for 100ms.
+    :type hard_reset: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -364,13 +365,15 @@ class st7735(backlit_device):
         # Black and white
         inv = 0x21 if inverse else 0x20
         
-        if timed_reset:
+        # FIXME: longer term, this pause when resetting should be moved into luma.core's
+        # serial implementation
+        if hard_reset:
             spi = self._serial_interface
             spi._gpio.output(spi._RST, spi._gpio.LOW)
             time.sleep(0.1)
             spi._gpio.output(spi._RST, spi._gpio.HIGH)
             time.sleep(0.1)
-            self.command(0x01)                      # reset
+            self.command(0x01)
             time.sleep(0.1)
         else:
             self.command(0x01)                      # reset

@@ -326,9 +326,6 @@ class st7735(backlit_device):
     :type bgr: bool
     :param inverse: Set to ``True`` if device pixels are inversed.
     :type inverse: bool
-    :param hard_reset: Set to ``True`` if device keeps white after initialization.
-        Performing a hard reset will force the RESET line low for 100ms.
-    :type hard_reset: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -340,7 +337,7 @@ class st7735(backlit_device):
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
-                 bgr=False, inverse=False, hard_reset=False, **kwargs):
+                 bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
@@ -365,18 +362,7 @@ class st7735(backlit_device):
         # Black and white
         inv = 0x21 if inverse else 0x20
         
-        # FIXME: longer term, this pause when resetting should be moved into luma.core's
-        # serial implementation
-        if hard_reset:
-            spi = self._serial_interface
-            spi._gpio.output(spi._RST, spi._gpio.LOW)
-            time.sleep(0.1)
-            spi._gpio.output(spi._RST, spi._gpio.HIGH)
-            time.sleep(0.1)
-            self.command(0x01)
-            time.sleep(0.1)
-        else:
-            self.command(0x01)                      # reset
+        self.command(0x01)                      # reset
         self.command(0x11)                      # sleep out & booster on
         self.command(0xB1, 0x01, 0x2C, 0x2D)    # frame rate control: normal mode
         self.command(0xB2, 0x01, 0x2C, 0x2D)    # frame rate control: idle mode

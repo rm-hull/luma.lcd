@@ -19,8 +19,9 @@ Luma.LCD: Display drivers for PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341,
 
    intro
    install
-   python-usage
    hardware
+   software
+   python-usage
    HD44780
    api-documentation
    references

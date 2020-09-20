@@ -1,14 +1,14 @@
-`luma.core <https://github.com/rm-hull/luma.core>`__ **|** 
-`luma.docs <https://github.com/rm-hull/luma.docs>`__ **|** 
-`luma.emulator <https://github.com/rm-hull/luma.emulator>`__ **|** 
-`luma.examples <https://github.com/rm-hull/luma.examples>`__ **|** 
-luma.lcd **|** 
-`luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`__ **|** 
-`luma.oled <https://github.com/rm-hull/luma.oled>`__ 
+`luma.core <https://github.com/rm-hull/luma.core>`__ **|**
+`luma.docs <https://github.com/rm-hull/luma.docs>`__ **|**
+`luma.emulator <https://github.com/rm-hull/luma.emulator>`__ **|**
+`luma.examples <https://github.com/rm-hull/luma.examples>`__ **|**
+luma.lcd **|**
+`luma.led_matrix <https://github.com/rm-hull/luma.led_matrix>`__ **|**
+`luma.oled <https://github.com/rm-hull/luma.oled>`__
 
-Luma.LCD
+luma.lcd
 ========
-**PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
+**HD44780, PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -28,10 +28,9 @@ Luma.LCD
 
 .. image:: https://img.shields.io/maintenance/yes/2020.svg?maxAge=2592000
 
-Python 3 library interfacing LCD displays with the PCD8544, ST7735, ST7567, HT1621, 
-UC1701X and ILI9341 driver using SPI on the Raspberry Pi and other linux-based
-single-board computers - it provides a `Pillow <https://pillow.readthedocs.io/>`_-compatible
-drawing canvas, and other functionality to support:
+luma.lcd provides a Python3 interface to small LCD displays connected to
+Raspberry Pi and other Linux-based single-board computers (SBC).  It provides a
+Pillow-compatible drawing canvas, and other functionality to support:
 
 * scrolling/panning capability,
 * terminal-style printing,
@@ -39,7 +38,12 @@ drawing canvas, and other functionality to support:
 * color/greyscale (where supported),
 * dithering to monochrome
 
+It currently supports devices using the HD44780, PCD8544, ST7735, HT1621,
+and UC1701X controllers.
+
 All modules can be picked up on ebay with a breakout board for a few pounds.
+
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/hd44780_20x4.jpg
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/pcd8544.png
 

@@ -1,25 +1,25 @@
 Installation
-------------
-.. warning::
-   Ensure that the :ref:`Pre-requisites` from the Hardware section
-   have been performed, checked and tested before proceeding.
+============
 
-.. note:: The library has been tested against Python 3.5, 3.6, 3.7 and 3.8.
+The successful installation of a display module to your SBC requires a combination
+of tasks to be completed before the display will operate correctly.
 
-   It was *originally* tested with Raspbian on a rev.2 model B, with a vanilla
-   kernel version 4.1.16+, and has subsequently been tested on Raspberry Pi
-   (both Raspbian Jessie and Stretch) models A, B2, 3B, Zero, Zero W,
-   OrangePi Zero (Armbian Jessie), and 4B.
+First, the device needs to be wired up correctly to your single-board computer
+(SBC) and the interface that will be used needs to be enabled in the kernel
+of the operating system of the SBC.  Instructions to for this are provided in
+:doc:`hardware`.
 
-Installing from PyPI
-^^^^^^^^^^^^^^^^^^^^
-First, install the dependencies for the library with::
+Equally important, the ``luma.lcd`` software needs to be installed including
+the build dependencies that for the python modules it uses.  Instructions
+to complete that task are provided in :doc:`software`.
 
-  $ sudo usermod -a -G spi,gpio pi
-  $ sudo apt-get install python-dev python-pip
+Finally, you need to leverage the appropriate interface class and display
+class for your device to implement your application.  Instructions for that
+are included in :doc:`python-usage`.
 
-And finally, install the latest version of the library directly from
-`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
-with::
+.. note:: This library has been tested against Python 3.5, 3.6, 3.7 and 3.8.
 
-  $ sudo -H pip install --upgrade luma.lcd
+  It was *originally* tested with Raspbian on a rev.2 model B, with a vanilla
+  kernel version 4.1.16+, and has subsequently been tested on Raspberry Pi
+  models A, B2, 3B, Zero, Zero W, OrangePi Zero (Armbian Jessie), and 4B with
+  Raspbian Jessie, Stretch and Buster operating systems.

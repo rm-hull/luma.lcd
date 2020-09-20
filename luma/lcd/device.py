@@ -34,7 +34,6 @@ Collection of serial interfaces to LCD devices.
 # As before, as soon as the with block completes, the canvas buffer is flushed
 # to the device
 
-
 from time import sleep
 
 from luma.core.lib import rpi_gpio

@@ -8,7 +8,7 @@ luma.lcd **|**
 
 luma.lcd
 ========
-**PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
+**HD44780, PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
 .. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
    :target: https://travis-ci.org/rm-hull/luma.lcd
@@ -42,6 +42,8 @@ It currently supports devices using the HD44780, PCD8544, ST7735, HT1621,
 and UC1701X controllers.
 
 All modules can be picked up on ebay with a breakout board for a few pounds.
+
+.. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/hd44780_20x4.jpg
 
 .. image:: https://raw.github.com/rm-hull/luma.lcd/master/doc/images/pcd8544.png
 

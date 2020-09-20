@@ -340,7 +340,7 @@ class st7735(backlit_device):
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer="diff_to_previous", h_offset=0, v_offset=0,
-                 bgr=False, inverse=False, timed_reset=False, **kwargs):
+                 bgr=False, inverse=False, hard_reset=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)

@@ -101,14 +101,14 @@ or::
 If you have no kernel modules listed and nothing is showing using ``dmesg``
 then this implies the kernel I2C driver is not loaded.
 
-For the Raspberry PI running Raspbian, enable the I2C as follows::
+For the Raspberry PI running Raspbian, enable the I2C as follows:
 
-  #. Run ``sudo raspi-config``
-  #. Use the down arrow to select ``5 Interfacing Options``
-  #. Arrow down to ``P5 I2C``
-  #. Select **yes** when it asks you to enable I2C
-  #. Also select **yes** when it asks about automatically loading the kernel module
-  #. Use the right arrow to select the **<Finish>** button
+#. Run ``sudo raspi-config``
+#. Use the down arrow to select ``5 Interfacing Options``
+#. Arrow down to ``P5 I2C``
+#. Select **yes** when it asks you to enable I2C
+#. Also select **yes** when it asks about automatically loading the kernel module
+#. Use the right arrow to select the **<Finish>** button
 
 After rebooting re-check that the ``dmesg | grep i2c`` command shows whether
 I2C driver is loaded before proceeding. You can also
@@ -235,7 +235,7 @@ Then add your user to the *spi* and *gpio* groups::
 Log out and back in again to ensure that the group permissions are applied
 successfully.
 
-PARALLEL
+Parallel
 --------
 Beyond the power and ground connections, you can choose which ever GPIO pins
 you like to connect up your display.  The following is one example for how to

@@ -156,7 +156,7 @@ device is which.
 SPI
 ---
 The GPIO pins used for this SPI connection are the same for all versions of the
-Raspberry Pi, up to and including the Raspberry Pi 3 B.
+Raspberry Pi, up to and including the Raspberry Pi 4 B.
 
 .. warning::
    There appears to be varying pin-out configurations on different display

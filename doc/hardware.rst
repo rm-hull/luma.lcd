@@ -163,9 +163,6 @@ Raspberry Pi, up to and including the Raspberry Pi 4 B.
    modules!  Make sure to verify the pin numbers of your device by their function
    especially VCC and GND.
 
-The GPIO pins used for this SPI connection are the same for all versions of the
-Raspberry Pi, up to and including the Raspberry Pi 4 B.
-
 ========== ====== ============ ======== ==============
 Device Pin Name   Remarks      RPi Pin  RPi Function
 ========== ====== ============ ======== ==============

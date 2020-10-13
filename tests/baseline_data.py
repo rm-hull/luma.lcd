@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-17 Richard Hull and contributors
+# Copyright (c) 2013-2020 Richard Hull and contributors
 # See LICENSE.rst for details.
 
-import io
 import json
-import os.path
+from pathlib import Path
 
 
 __all__ = ['primitives', 'get_reference_data']
@@ -32,7 +31,13 @@ def primitives(device, draw):
 
 
 def get_reference_data(fname):
-    dirname = os.path.abspath(os.path.dirname(__file__))
-    fpath = os.path.join(dirname, 'reference', 'data', fname + '.json')
-    with io.open(fpath) as f:
+    """
+    Load JSON reference data.
+
+    :param fname: Filename without extension.
+    :type fname: str
+    """
+    base_dir = Path(__file__).resolve().parent
+    fpath = base_dir.joinpath('reference', 'data', fname + '.json')
+    with fpath.open() as f:
         return json.load(f)

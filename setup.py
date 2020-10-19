@@ -47,7 +47,7 @@ setup(
     description=("A library to drive PCD8544, HT1621, ST7735, ST7567, UC1701X and ILI9341-based LCDs"),
     long_description="\n\n".join([README, CONTRIB, CHANGES]),
     long_description_content_type="text/x-rst",
-    python_requires='>=3.5, <4',
+    python_requires='>=3.6, <4',
     license="MIT",
     keywords=("raspberry pi rpi lcd display screen "
               "rgb monochrome greyscale color "
@@ -84,9 +84,9 @@ setup(
         "Topic :: Education",
         "Topic :: System :: Hardware",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8"
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9"
     ]
 )

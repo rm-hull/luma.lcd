@@ -237,7 +237,7 @@ def test_display():
     recordings = []
 
     def data(data):
-        recordings.append({'data': data})
+        recordings.append({'data': list(data)})
 
     def command(*cmd):
         recordings.append({'command': list(cmd)})
@@ -252,8 +252,9 @@ def test_display():
     assert serial.data.called
     assert serial.command.called
 
-    assert recordings == [
-        {'command': [0x2a]}, {'data': [0x00, 0x00, 0x01, 0x3f]},
-        {'command': [0x2b]}, {'data': [0x00, 0x00, 0x00, 0xef]},
-        {'command': [0x2c]}, {'data': bytearray(get_reference_data('demo_ili9341'))}
-    ]
+    # To regenerate test data, uncomment the following (remember not to commit though)
+    # ================================================================================
+    # from baseline_data import save_reference_data
+    # save_reference_data("demo_ili9341", recordings)
+
+    assert recordings == get_reference_data('demo_ili9341')

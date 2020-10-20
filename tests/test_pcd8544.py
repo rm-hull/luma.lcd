@@ -53,5 +53,10 @@ def test_display():
     # Initial command to reset the display
     serial.command.assert_called_once_with(32, 128, 64)
 
+    # To regenerate test data, uncomment the following (remember not to commit though)
+    # ================================================================================
+    # from baseline_data import save_reference_data
+    # save_reference_data("demo_pcd8544", serial.data.call_args.args[0])
+
     # Next 1024 bytes are data representing the drawn image
     serial.data.assert_called_once_with(get_reference_data('demo_pcd8544'))

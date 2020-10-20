@@ -78,4 +78,9 @@ def test_display():
     serial.data.assert_called()
     serial.command.assert_called()
 
+    # To regenerate test data, uncomment the following (remember not to commit though)
+    # ================================================================================
+    # from baseline_data import save_reference_data
+    # save_reference_data("demo_uc1701x", recordings)
+
     assert recordings == get_reference_data('demo_uc1701x')

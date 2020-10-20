@@ -240,8 +240,9 @@ def test_display():
     assert serial.data.called
     assert serial.command.called
 
-    assert recordings == [
-        {'command': [42]}, {'data': [0, 0, 0, 159]},
-        {'command': [43]}, {'data': [0, 0, 0, 127]},
-        {'command': [44]}, {'data': get_reference_data('demo_st7735')}
-    ]
+    # To regenerate test data, uncomment the following (remember not to commit though)
+    # ================================================================================
+    # from baseline_data import save_reference_data
+    # save_reference_data("demo_st7735", recordings)
+
+    assert recordings == get_reference_data('demo_st7735')

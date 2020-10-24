@@ -5,6 +5,8 @@ ChangeLog
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
 | *TBA*      | * Drop support for Python 3.5, only 3.6 or newer is supported now   |            |
+|            | * Pin luma.core to 1.x.y line only, in anticipation of performance  |            |
+|            |   improvements in upcoming major release                            |            |
 +------------+---------------------------------------------------------------------+------------+
 | **2.5.0**  | * Add HD44780 LCD display driver                                    | 2020/09/24 |
 +------------+---------------------------------------------------------------------+------------+

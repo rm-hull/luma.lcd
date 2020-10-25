@@ -39,6 +39,7 @@ from time import sleep
 from luma.core.lib import rpi_gpio
 from luma.core.device import device, parallel_device
 from luma.core.interface.serial import noop, pcf8574
+from luma.core.framebuffer import diff_to_previous
 import luma.core.error
 import luma.core.framebuffer
 import luma.lcd.const
@@ -385,9 +386,9 @@ class st7735(backlit_device):
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
-    :param framebuffer: Framebuffering strategy, currently values of
-        ``diff_to_previous`` or ``full_frame`` are only supported.
-    :type framebuffer: str
+    :param framebuffer: Framebuffering strategy, currently instances of
+        ``diff_to_previous()`` or ``full_frame()`` are only supported.
+    :type framebuffer: luma.core.framebuffer.framebuffer
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
     :param inverse: Set to ``True`` if device pixels are inversed.
@@ -402,11 +403,19 @@ class st7735(backlit_device):
     .. versionadded:: 0.3.0
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
-                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 framebuffer=diff_to_previous(num_segments=16), h_offset=0, v_offset=0,
                  bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+        if isinstance(framebuffer, str):
+            import warnings
+            warnings.warn(
+                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
+                RuntimeWarning
+            )
+            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
+        else:
+            self.framebuffer = framebuffer
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -466,26 +475,14 @@ class st7735(backlit_device):
 
         image = self.preprocess(image)
 
-        if self.framebuffer.redraw_required(image):
-            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
-            width = right - left
-            height = bottom - top
+        for image, bounding_box in self.framebuffer.redraw(image):
+            left, top, right, bottom = self.apply_offsets(bounding_box)
 
             self.command(0x2A, left >> 8, left & 0xFF, (right - 1) >> 8, (right - 1) & 0xFF)     # Set column addr
             self.command(0x2B, top >> 8, top & 0xFF, (bottom - 1) >> 8, (bottom - 1) & 0xFF)     # Set row addr
             self.command(0x2C)                                                                   # Memory write
 
-            i = 0
-            buf = bytearray(width * height * 3)
-            for r, g, b in self.framebuffer.getdata():
-                if not(r == g == b == 0):
-                    # 262K format
-                    buf[i] = r
-                    buf[i + 1] = g
-                    buf[i + 2] = b
-                i += 3
-
-            self.data(list(buf))
+            self.data(list(image.tobytes()))
 
     def contrast(self, level):
         """
@@ -526,9 +523,9 @@ class ili9341(backlit_device):
         no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
         represents 270° rotation.
     :type rotate: int
-    :param framebuffer: Framebuffering strategy, currently values of
-        ``diff_to_previous`` or ``full_frame`` are only supported.
-    :type framebuffer: str
+    :param framebuffer: Framebuffering strategy, currently instances of
+        ``diff_to_previous()`` or ``full_frame()`` are only supported.
+    :type framebuffer: luma.core.framebuffer.framebuffer
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
@@ -541,11 +538,19 @@ class ili9341(backlit_device):
     .. versionadded:: 2.2.0
     """
     def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
-                 framebuffer="diff_to_previous", h_offset=0, v_offset=0,
+                 framebuffer=diff_to_previous(num_segments=25), h_offset=0, v_offset=0,
                  bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+        if isinstance(framebuffer, str):
+            import warnings
+            warnings.warn(
+                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
+                RuntimeWarning
+            )
+            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
+        else:
+            self.framebuffer = framebuffer
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -608,14 +613,14 @@ class ili9341(backlit_device):
 
         image = self.preprocess(image)
 
-        if self.framebuffer.redraw_required(image):
-            left, top, right, bottom = self.apply_offsets(self.framebuffer.bounding_box)
+        for image, bounding_box in self.framebuffer.redraw(image):
+            left, top, right, bottom = self.apply_offsets(bounding_box)
 
             self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
             self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
             self.command(0x2c)                                                                   # Memory write
 
-            self.data(self.framebuffer.image.crop(self.framebuffer.bounding_box).tobytes())
+            self.data(image.tobytes())
 
     def contrast(self, level):
         """
@@ -868,9 +873,9 @@ class hd44780(backlit_device, parallel_device, character):
         is connected to the backlight.  This is unnecessary if it has already been
         configured on the interface.
     :type backpack_pin: int
-    :param framebuffer: Framebuffering strategy, currently values of
-        ``diff_to_previous`` or ``full_frame`` are only supported.
-    :type framebuffer: str
+    :param framebuffer: Framebuffering strategy, currently instances of
+        ``diff_to_previous()`` or ``full_frame()`` are only supported.
+    :type framebuffer: luma.core.framebuffer.framebuffer
 
     To place text on the display, simply assign the text to the ``text``
     instance variable::
@@ -889,7 +894,7 @@ class hd44780(backlit_device, parallel_device, character):
     """
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
                  selected_font=0, exec_time=0.000001,
-                 framebuffer="diff_to_previous", **kwargs):
+                 framebuffer=diff_to_previous(num_segments=1), **kwargs):
         super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
         exec_time=exec_time, **kwargs)
 
@@ -898,7 +903,15 @@ class hd44780(backlit_device, parallel_device, character):
         self._exec_time = exec_time
 
         self.capabilities(width * 5, height * 8, 0)
-        self.framebuffer = getattr(luma.core.framebuffer, framebuffer)(self)
+        if isinstance(framebuffer, str):
+            import warnings
+            warnings.warn(
+                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
+                RuntimeWarning
+            )
+            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
+        else:
+            self.framebuffer = framebuffer
 
         # Currently only support 5x8 fonts for the hd44780
         self.font = embedded_fonts(self._const.FONTDATA,
@@ -1004,21 +1017,19 @@ class hd44780(backlit_device, parallel_device, character):
         assert(image.mode == self.mode)
         assert(image.size == self.size)
 
-        if self.framebuffer.redraw_required(image):
-            self._cleanup_custom(image)
+        for image_segment, bounding_box in self.framebuffer.redraw(image):
+            self._cleanup_custom(image_segment)
             # Expand bounding box to align to cell boundaries (5,8)
-            left, top, right, bottom = self.framebuffer.bounding_box
+            left, top, right, bottom = bounding_box
             left = left // 5 * 5
             right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
             top = top // 8 * 8
             bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
-            self.framebuffer.bounding_box = (left, top, right, bottom)
 
             for j in range(top // 8, bottom // 8):
                 buf = []
                 for i in range(left // 5, right // 5):
-                    img = self.framebuffer.image.crop((i * 5, j * 8,
-                        (i + 1) * 5, (j + 1) * 8))
+                    img = image.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8))
                     bytes = img.tobytes()
                     c = self.glyph_index[bytes] if bytes in self.glyph_index else \
                         self._custom[bytes] if bytes in self._custom else None

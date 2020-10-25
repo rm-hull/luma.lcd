@@ -11,6 +11,7 @@ import pytest
 
 from luma.lcd.device import ili9341
 from luma.core.render import canvas
+from luma.core.framebuffer import full_frame
 
 from baseline_data import get_reference_data, primitives
 from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
@@ -29,7 +30,7 @@ def test_init_320x240():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    ili9341(serial, gpio=Mock())
+    ili9341(serial, gpio=Mock(), framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -75,7 +76,7 @@ def test_init_240x240():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    ili9341(serial, gpio=Mock(), width=240, height=240)
+    ili9341(serial, gpio=Mock(), width=240, height=240, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -121,7 +122,7 @@ def test_init_320x180():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    ili9341(serial, gpio=Mock(), width=320, height=180)
+    ili9341(serial, gpio=Mock(), width=320, height=180, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -175,7 +176,7 @@ def test_offsets():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    ili9341(serial, gpio=Mock(), width=240, height=240, h_offset=2, v_offset=1)
+    ili9341(serial, gpio=Mock(), width=240, height=240, h_offset=2, v_offset=1, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -230,8 +231,8 @@ def test_show():
     serial.command.assert_called_once_with(41)
 
 
-def test_display():
-    device = ili9341(serial, gpio=Mock())
+def test_display_full_frame():
+    device = ili9341(serial, gpio=Mock(), framebuffer=full_frame())
     serial.reset_mock()
 
     recordings = []

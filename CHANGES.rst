@@ -4,6 +4,8 @@ ChangeLog
 +------------+---------------------------------------------------------------------+------------+
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
+| *TBC*      | * Improved performance for ST7739 and ILI9341 displays              |            |
++------------+---------------------------------------------------------------------+------------+
 | **2.6.0**  | * Drop support for Python 3.5, only 3.6 or newer is supported now   | 2020/10/25 |
 |            | * Pin luma.core to 1.x.y line only, in anticipation of performance  |            |
 |            |   improvements in upcoming major release                            |            |

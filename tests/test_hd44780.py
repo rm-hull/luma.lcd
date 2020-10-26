@@ -90,7 +90,7 @@ def test_display():
     Test the display with a line of text and a rectangle to demonstrate correct
     functioning of the auto-create feature
     """
-    device = hd44780(interface, bitmode=8, gpio=gpio)
+    device = hd44780(interface, bitmode=8, gpio=gpio, framebuffer="full_frame")
     interface.reset_mock()
 
     # Use canvas to create a screen worth of data
@@ -102,8 +102,8 @@ def test_display():
         drw.rectangle((10, 10, 49, 14), fill='white', outline='white')
 
     # Send DDRAMADDR and ascii for the line of text
-    line1 = [call.command(0x81)] + \
-        [call.data([0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x74, 0x65, 0x73, 0x74])]
+    line1 = [call.command(0x80)] + \
+        [call.data([0x20, 0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x74, 0x65, 0x73, 0x74, 0x20])]
 
     # Create custom characters for the scrollbar
     custom = [call.command(0x40), call.data([0x00, 0x00, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x00])] + \
@@ -111,7 +111,7 @@ def test_display():
         [call.command(0x50), call.data([0x00, 0x00, 0x1f, 0x01, 0x01, 0x01, 0x1f, 0x00])]
 
     # Print the resulting custom characters to form the image of the scrollbar
-    line2 = [call.command(0xc1), call.data([0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x02, 0x20])]
+    line2 = [call.command(0xc0), call.data([0x20, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x02, 0x20, 0x20])]
 
     interface.assert_has_calls(line1 + custom + line2)
 
@@ -120,7 +120,7 @@ def test_custom_full():
     """
     Auto-create feature runs out of custom character space
     """
-    device = hd44780(interface, bitmode=8, gpio=gpio)
+    device = hd44780(interface, bitmode=8, gpio=gpio, framebuffer="diff_to_previous")
 
     # Consume 8 special character positions
     img = Image.new('1', (80, 16), 0)

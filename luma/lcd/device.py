@@ -1007,16 +1007,16 @@ class hd44780(backlit_device, parallel_device, character):
         if self.framebuffer.redraw_required(image):
             self._cleanup_custom(image)
             # Expand bounding box to align to cell boundaries (5,8)
-            x0, y0, x1, y1 = self.framebuffer.bounding_box
-            x0 = x0 // 5 * 5
-            x1 = x1 // 5 * 5 if not x1 % 5 else (x1 // 5 + 1) * 5
-            y0 = y0 // 8 * 8
-            y1 = y1 // 8 * 8 if not y1 % 8 else (y1 // 8 + 1) * 8
-            self.framebuffer.bounding_box = (x0, y0, x1, y1)
+            left, top, right, bottom = self.framebuffer.bounding_box
+            left = left // 5 * 5
+            right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
+            top = top // 8 * 8
+            bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
+            self.framebuffer.bounding_box = (left, top, right, bottom)
 
-            for j in range(y0 // 8, y1 // 8):
+            for j in range(top // 8, bottom // 8):
                 buf = []
-                for i in range(x0 // 5, x1 // 5):
+                for i in range(left // 5, right // 5):
                     img = self.framebuffer.image.crop((i * 5, j * 8,
                         (i + 1) * 5, (j + 1) * 8))
                     bytes = img.tobytes()
@@ -1026,7 +1026,7 @@ class hd44780(backlit_device, parallel_device, character):
                         self._make_custom(img)
                         c = self._custom.get(bytes, ord(self._undefined))
                     buf.append(c)
-                self.command(self._const.DDRAMADDR | (self._const.LINES[j] + (x0 // 5)))
+                self.command(self._const.DDRAMADDR | (self._const.LINES[j] + (left // 5)))
                 self.data(buf)
 
     def _make_custom(self, img):

@@ -367,7 +367,30 @@ class st7567(backlit_device):
         self.command(0x81, value)
 
 
-class st7735(backlit_device):
+class __framebuffer_mixin(object):
+    """
+    Helper class for initializing the framebuffer. Its only purpose is to
+    log a deprecation warning if a string framebuffer is specified.
+
+    .. note::
+        Specifying the framebuffer as a string will be removed at the next
+        major release, and hence this mixin will become redundant and will
+        also be removed at that point.
+    """
+
+    def init_framebuffer(self, framebuffer):
+        if isinstance(framebuffer, str):
+            import warnings
+            warnings.warn(
+                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
+                DeprecationWarning
+            )
+            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
+        else:
+            self.framebuffer = framebuffer
+
+
+class st7735(backlit_device, __framebuffer_mixin):
     """
     Serial interface to a 262K color (6-6-6 RGB) ST7735 LCD display.
 
@@ -407,15 +430,7 @@ class st7735(backlit_device):
                  bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        if isinstance(framebuffer, str):
-            import warnings
-            warnings.warn(
-                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
-                RuntimeWarning
-            )
-            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
-        else:
-            self.framebuffer = framebuffer
+        self.init_framebuffer(framebuffer)
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -504,7 +519,7 @@ class st7735(backlit_device):
             self._serial_interface.data(list(args))
 
 
-class ili9341(backlit_device):
+class ili9341(backlit_device, __framebuffer_mixin):
     """
     Serial interface to a 262k color (6-6-6 RGB) ILI9341 LCD display.
 
@@ -542,15 +557,7 @@ class ili9341(backlit_device):
                  bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        if isinstance(framebuffer, str):
-            import warnings
-            warnings.warn(
-                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
-                RuntimeWarning
-            )
-            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
-        else:
-            self.framebuffer = framebuffer
+        self.init_framebuffer(framebuffer)
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -833,7 +840,7 @@ class uc1701x(backlit_device):
         self.command(0x81, value >> 2)
 
 
-class hd44780(backlit_device, parallel_device, character):
+class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     """
     Driver for a HD44780 style LCD display.  This class provides a ``text``
     property which can be used to set and get a text value, which will be
@@ -903,15 +910,7 @@ class hd44780(backlit_device, parallel_device, character):
         self._exec_time = exec_time
 
         self.capabilities(width * 5, height * 8, 0)
-        if isinstance(framebuffer, str):
-            import warnings
-            warnings.warn(
-                "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
-                RuntimeWarning
-            )
-            self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
-        else:
-            self.framebuffer = framebuffer
+        self.init_framebuffer(framebuffer)
 
         # Currently only support 5x8 fonts for the hd44780
         self.font = embedded_fonts(self._const.FONTDATA,

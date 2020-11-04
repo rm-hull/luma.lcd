@@ -11,6 +11,7 @@ import pytest
 
 from luma.lcd.device import st7735
 from luma.core.render import canvas
+from luma.core.framebuffer import full_frame
 
 from baseline_data import get_reference_data, primitives
 from helpers import serial, setup_function, assert_invalid_dimensions  # noqa: F401
@@ -29,7 +30,7 @@ def test_init_160x128():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, gpio=Mock())
+    st7735(serial, gpio=Mock(), framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -72,7 +73,7 @@ def test_init_128x128():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, gpio=Mock(), width=128, height=128)
+    st7735(serial, gpio=Mock(), width=128, height=128, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -115,7 +116,7 @@ def test_init_160x80():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, gpio=Mock(), width=160, height=80)
+    st7735(serial, gpio=Mock(), width=160, height=80, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -166,7 +167,7 @@ def test_offsets():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7735(serial, gpio=Mock(), width=128, height=128, h_offset=2, v_offset=1)
+    st7735(serial, gpio=Mock(), width=128, height=128, h_offset=2, v_offset=1, framebuffer=full_frame())
 
     assert serial.data.called
     assert serial.command.called
@@ -219,7 +220,7 @@ def test_show():
 
 
 def test_display():
-    device = st7735(serial, gpio=Mock())
+    device = st7735(serial, gpio=Mock(), framebuffer=full_frame())
     serial.reset_mock()
 
     recordings = []

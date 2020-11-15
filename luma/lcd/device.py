@@ -378,8 +378,10 @@ class __framebuffer_mixin(object):
         also be removed at that point.
     """
 
-    def init_framebuffer(self, framebuffer):
-        if isinstance(framebuffer, str):
+    def init_framebuffer(self, framebuffer, default_num_segments):
+        if framebuffer is None:
+            self.framebuffer = diff_to_previous(num_segments=default_num_segments)
+        elif isinstance(framebuffer, str):
             import warnings
             warnings.warn(
                 "Specifying framebuffer as a string is now deprecated; Supply an instance of class full_frame() or diff_to_previous() instead",
@@ -426,11 +428,10 @@ class st7735(backlit_device, __framebuffer_mixin):
     .. versionadded:: 0.3.0
     """
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
-                 framebuffer=diff_to_previous(num_segments=16), h_offset=0, v_offset=0,
-                 bgr=False, inverse=False, **kwargs):
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        self.init_framebuffer(framebuffer)
+        self.init_framebuffer(framebuffer, 16)
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -553,11 +554,10 @@ class ili9341(backlit_device, __framebuffer_mixin):
     .. versionadded:: 2.2.0
     """
     def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
-                 framebuffer=diff_to_previous(num_segments=25), h_offset=0, v_offset=0,
-                 bgr=False, **kwargs):
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
-        self.init_framebuffer(framebuffer)
+        self.init_framebuffer(framebuffer, 25)
 
         if h_offset != 0 or v_offset != 0:
             def offset(bbox):
@@ -900,8 +900,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     .. versionadded:: 2.5.0
     """
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
-                 selected_font=0, exec_time=0.000001,
-                 framebuffer=diff_to_previous(num_segments=1), **kwargs):
+                 selected_font=0, exec_time=0.000001, framebuffer=None, **kwargs):
         super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
         exec_time=exec_time, **kwargs)
 
@@ -910,7 +909,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         self._exec_time = exec_time
 
         self.capabilities(width * 5, height * 8, 0)
-        self.init_framebuffer(framebuffer)
+        self.init_framebuffer(framebuffer, 1)
 
         # Currently only support 5x8 fonts for the hd44780
         self.font = embedded_fonts(self._const.FONTDATA,

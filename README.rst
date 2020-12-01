@@ -26,6 +26,9 @@ luma.lcd
 .. image:: https://img.shields.io/pypi/v/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
 
+.. image:: https://img.shields.io/pypi/dm/luma.lcd
+   :target: https://pypi.python.org/project/luma.lcd
+
 .. image:: https://img.shields.io/maintenance/yes/2020.svg?maxAge=2592000
 
 luma.lcd provides a Python 3 interface to small LCD displays connected to

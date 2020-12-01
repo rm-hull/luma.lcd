@@ -14,6 +14,9 @@ Luma.LCD: Display drivers for PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341,
 .. image:: https://img.shields.io/pypi/v/luma.lcd.svg
    :target: https://pypi.python.org/pypi/luma.lcd
 
+.. image:: https://img.shields.io/pypi/dm/luma.lcd
+   :target: https://pypi.python.org/project/luma.lcd
+
 .. toctree::
    :maxdepth: 2
 

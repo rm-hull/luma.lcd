@@ -23,6 +23,11 @@ class ili9341(object):
     DISPLAYOFF = 0x28
 
 
+class ili9486(object):
+    DISPLAYON = 0x29
+    DISPLAYOFF = 0x28
+
+
 class ht1621(object):
     DISPLAYON = 0x06
     DISPLAYOFF = 0x04

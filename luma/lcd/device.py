@@ -47,7 +47,7 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341", "hd44780"]
+__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
 
 
 class GPIOBacklight:
@@ -625,6 +625,169 @@ class ili9341(backlit_device, __framebuffer_mixin):
 
             self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
             self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2c)                                                                   # Memory write
+
+            self.data(image.tobytes())
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))
+
+
+class ili9486(backlit_device, __framebuffer_mixin):
+    """
+    Serial interface to a 262k color (6-6-6 RGB) ILI9486 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness (if implemented) and other settings.
+
+    Note that the ILI9486 display used for development -- a Waveshare
+    3.5-inch IPS LCD(B) -- used a portrait orientation.  Images were
+    rendered correctly only when specifying that height was 480 pixels
+    and the width was 320.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param width: The number of pixels laid out horizontally.
+    :type width: int
+    :param height: The number of pixels laid out vertically.
+    :type height: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently instances of
+        ``diff_to_previous()`` or ``full_frame()`` are only supported.
+    :type framebuffer: luma.core.framebuffer.framebuffer
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
+    :type bgr: bool
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
+    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
+
+    .. versionadded:: ???
+    """
+    def __init__(self, serial_interface=None, width=320, height=480, rotate=0,
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
+        super(ili9486, self).__init__(luma.lcd.const.ili9486, serial_interface, **kwargs)
+        self.capabilities(width, height, rotate, mode="RGB")
+        self.init_framebuffer(framebuffer, 25)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        # Supported modes
+        supported = (width, height) in [(320, 480)]  # full
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        # RGB or BGR order
+        order = 0x00 if bgr else 0x08
+
+        # Initialization sequence, adapted from MIT Licensed
+        #
+        #   `https://github.com/juj/fbcp-ili9341/blob/master/ili9486.cpp`
+        #
+        # and peer files.  The sequence targets the ILI9486-based
+        # Waveshare "Wavepear" 3.5 inch 320x480 LCD (B)
+        # implementation.  Per comments in the above file and issue
+        # discussion for juj/fbcp-ili9341, the Waveshare
+        # implementation makes use of 16-bit shift register for the
+        # SPI interface, leaving the ILI9486 itself in a parallel
+        # mode.
+        #
+        # The result of that implementation is that registers
+        # effectively become 16-bit quantities.  The sequence below
+        # (and in the display() function) thus ends up padding
+        # commands and subsequent values.  It doesn't seem to have
+        # affected pixel transfers, though.
+        #
+        # A different ILI9486 implementation may NOT need the padding
+        # zeros.  The juj/fbcp-ili9341 code handles that possibility
+        # via a DISPLAY_SPI_BUS_IS_16BITS_WIDE ifdef.
+        #
+        # Yet another initialization sequence can be found at
+        # (MIT Licensed)
+        #
+        #   `https://github.com/ImpulseAdventure/Waveshare_ILI9486/`
+        #
+
+        self.command(0xb0, 0x00, 0x00)                      # Interface Mode Control
+        self.command(0x11)                                  # sleep out
+        sleep(0.150)
+        self.command(0x3a, 0x00, 0x66)                      # Interface Pixel Format 6-6-6
+        self.command(0x21)                                  # Display inversion ON for LCD(B)
+        self.command(0xc0, 0x00, 0x09, 0x00, 0x09)          # Power Control 1
+        self.command(0xc1, 0x00, 0x41, 0x00, 0x00)          # Power Control 2
+        self.command(0xc2, 0x00, 0x33)                      # Power Control 3 (for normal mode)
+        self.command(0xc5, 0x00, 0x00, 0x00, 0x36)          # VCOM control
+
+        self.command(0x36, 0x00, 0x00 | order)              # Memory Access control (MAD), rotations and color order
+        # self.command(0xb1, 0x00, 0xb0, 0x00, 0xe0)          # Frame Rate Control (needed?)
+
+        self.command(0xb6, 0x00, 0x00, 0x00, 0x42, 0x00, 59)        # Display Function Control
+
+        # Initial trials didn't seem to need Positive, Negative, or
+        # Digital Gamma Control settings.
+
+        self.command(0x13)                                  # Normal mode ON
+        self.command(0x34)                                  # Tearing effect line oFF
+        self.command(0x38)                                  # Idle mode OFF
+
+        self.command(0x11)                                  # sleep out
+        sleep(0.150)
+        self.clear()
+        self.show()
+
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ILI9486 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: The image to render.
+        :type image: PIL.Image.Image
+        """
+        assert(image.mode == self.mode)
+        assert(image.size == self.size)
+
+        image = self.preprocess(image)
+
+        for image, bounding_box in self.framebuffer.redraw(image):
+            # Transposing the display shifts the dimension measurements
+            top, left, bottom, right = self.apply_offsets(bounding_box)
+
+            # Per earlier comments, Waveshare's display needs padding
+            # for commands.
+            self.command(0x2a, 0, top >> 8, 0, top & 0xff, 0, (bottom - 1) >> 8, 0, (bottom - 1) & 0xff)     # Set row addr
+            self.command(0x2b, 0, left >> 8, 0, left & 0xff, 0, (right - 1) >> 8, 0, (right - 1) & 0xff)     # Set column addr
             self.command(0x2c)                                                                   # Memory write
 
             self.data(image.tobytes())

@@ -10,8 +10,8 @@ luma.lcd
 ========
 **HD44780, PCD8544, ST7735, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
 
-.. image:: https://travis-ci.org/rm-hull/luma.lcd.svg?branch=master
-   :target: https://travis-ci.org/rm-hull/luma.lcd
+.. image:: https://github.com/rm-hull/luma.lcd/workflows/luma.lcd/badge.svg?branch=master
+   :target: https://github.com/rm-hull/luma.lcd/actions?workflow=luma.lcd
 
 .. image:: https://coveralls.io/repos/github/rm-hull/luma.lcd/badge.svg?branch=master
    :target: https://coveralls.io/github/rm-hull/luma.lcd?branch=master

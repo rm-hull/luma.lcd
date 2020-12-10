@@ -60,7 +60,6 @@ def test_init_320x480():
     ]
 
 
-
 def test_init_invalid_dimensions():
     """
     ILI9486 LCD with an invalid resolution raises a

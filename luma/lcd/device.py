@@ -765,7 +765,6 @@ class ili9486(backlit_device, __framebuffer_mixin):
         self.clear()
         self.show()
 
-
     def display(self, image):
         """
         Renders a 24-bit RGB image to the ILI9486 LCD display. The 8-bit RGB

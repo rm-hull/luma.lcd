@@ -731,12 +731,6 @@ class ili9486(backlit_device, __framebuffer_mixin):
         # A different ILI9486 implementation may NOT need the padding
         # zeros.  The juj/fbcp-ili9341 code handles that possibility
         # via a DISPLAY_SPI_BUS_IS_16BITS_WIDE ifdef.
-        #
-        # Yet another initialization sequence can be found at
-        # (MIT Licensed)
-        #
-        #   `https://github.com/ImpulseAdventure/Waveshare_ILI9486/`
-        #
 
         self.command(0xb0, 0x00, 0x00)                      # Interface Mode Control
         self.command(0x11)                                  # sleep out

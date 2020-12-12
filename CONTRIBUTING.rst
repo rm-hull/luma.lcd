@@ -23,3 +23,4 @@ Contributors
 * Ricardo Amendoeira (@ric2b)
 * Kevin Stone (@kevinastone)
 * Dhrone (@dhrone)
+* Matthew Lovell (@mattblovell)

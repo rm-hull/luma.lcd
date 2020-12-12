@@ -14,7 +14,7 @@ In this example, we are using an SPI interface with a pcd8544 display.
 
   from luma.core.interface.serial import i2c, spi, parallel, pcf8574
   from luma.core.render import canvas
-  from luma.lcd.device import pcd8544, st7735, st7567, uc1701x, ili9341, hd44780
+  from luma.lcd.device import pcd8544, st7735, st7567, uc1701x, ili9341, ili9486, hd44780
 
   serial = spi(port=0, device=0, gpio_DC=23, gpio_RST=24)
   device = pcd8544(serial)
@@ -22,7 +22,8 @@ In this example, we are using an SPI interface with a pcd8544 display.
 The display device should now be properly configured.
 
 The :py:class:`~luma.lcd.device.pcd8544`, :py:class:`~luma.lcd.device.st7735`,
-:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`~luma.lcd.device.ili9341` and :py:class:`~luma.lcd.device.hd44780`
+:py:class:`~luma.lcd.device.st7567`, :py:class:`~luma.lcd.device.uc1701x`,  :py:class:`~luma.lcd.device.ili9341`,
+:py:class:`~luma.lcd.device.ili9486` and :py:class:`~luma.lcd.device.hd44780`
 classes all expose a :py:meth:`~luma.lcd.device.pcd8544.display` method which
 takes an image with attributes consistent with the capabilities of the device.
 
@@ -100,6 +101,9 @@ The :py:attr:`device.size`, :py:attr:`device.width` and :py:attr:`device.height`
 properties reflect the rotated dimensions rather than the physical dimensions.
 
 The HD44780 does not support display rotation.
+
+The ILI9486 display defaults to a portrait orientation (320x480), and rotation
+is required to use the display in landscape mode.
 
 Seven-Segment Drivers
 ---------------------

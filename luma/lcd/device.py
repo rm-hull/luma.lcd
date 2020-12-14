@@ -63,6 +63,7 @@ class GPIOBacklight:
 
     .. versionadded:: 2.3.0
     """
+
     def __init__(self, gpio, pin=18, active_low=True):
         self._gpio = gpio
         self._pin = pin
@@ -113,6 +114,7 @@ class I2CBackpackBacklight:
 
     .. versionadded:: 2.5.0
     """
+
     def __init__(self, serial_interface, pin=None):
         self._serial_interface = serial_interface
 
@@ -150,6 +152,7 @@ class PWMBacklight:
 
     .. versionadded:: 2.3.0
     """
+
     def __init__(self, gpio, pin=18, frequency=362):
         self._gpio = gpio
 
@@ -200,6 +203,7 @@ class backlit_device(device):
 
     .. versionadded:: 2.0.0
     """
+
     def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
@@ -246,6 +250,7 @@ class pcd8544(backlit_device):
         represents 270° rotation.
     :type rotate: int
     """
+
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(pcd8544, self).__init__(luma.lcd.const.pcd8544, serial_interface, **kwargs)
         self.capabilities(84, 48, rotate)
@@ -305,6 +310,7 @@ class st7567(backlit_device):
 
     .. versionadded:: 1.1.0
     """
+
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(st7567, self).__init__(luma.lcd.const.st7567, serial_interface, **kwargs)
         self.capabilities(128, 64, rotate)
@@ -427,6 +433,7 @@ class st7735(backlit_device, __framebuffer_mixin):
 
     .. versionadded:: 0.3.0
     """
+
     def __init__(self, serial_interface=None, width=160, height=128, rotate=0,
                  framebuffer=None, h_offset=0, v_offset=0, bgr=False, inverse=False, **kwargs):
         super(st7735, self).__init__(luma.lcd.const.st7735, serial_interface, **kwargs)
@@ -553,6 +560,7 @@ class ili9341(backlit_device, __framebuffer_mixin):
 
     .. versionadded:: 2.2.0
     """
+
     def __init__(self, serial_interface=None, width=320, height=240, rotate=0,
                  framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
         super(ili9341, self).__init__(luma.lcd.const.ili9341, serial_interface, **kwargs)
@@ -685,8 +693,9 @@ class ili9486(backlit_device, __framebuffer_mixin):
         (default: 0).
     :type v_offset: int
 
-    .. versionadded:: ???
+    .. versionadded:: 2.8.0
     """
+
     def __init__(self, serial_interface=None, width=320, height=480, rotate=0,
                  framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
         super(ili9486, self).__init__(luma.lcd.const.ili9486, serial_interface, **kwargs)
@@ -831,6 +840,7 @@ class ht1621(backlit_device):
 
     .. versionadded:: 0.4.0
     """
+
     def __init__(self, gpio=None, width=6, rotate=0, WR=11, DAT=10, CS=8, **kwargs):
         if 'serial_interface' in kwargs:
             del kwargs['serial_interface']
@@ -930,6 +940,7 @@ class uc1701x(backlit_device):
 
     .. versionadded:: 0.5.0
     """
+
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(uc1701x, self).__init__(luma.lcd.const.uc1701x, serial_interface, **kwargs)
         self.capabilities(128, 64, rotate)
@@ -1055,6 +1066,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
 
     .. versionadded:: 2.5.0
     """
+
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
                  selected_font=0, exec_time=0.000001, framebuffer=None, **kwargs):
         super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,

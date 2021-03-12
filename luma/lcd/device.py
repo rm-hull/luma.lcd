@@ -36,7 +36,6 @@ Collection of serial interfaces to LCD devices.
 
 from time import sleep
 
-import struct
 from luma.core.lib import rpi_gpio
 from luma.core.device import device, parallel_device
 from luma.core.interface.serial import noop, pcf8574
@@ -335,36 +334,10 @@ class st7789(backlit_device):
         self.data([0xA4, 0xA1])
 
         self.command(0xE0)
-        self.data([0xD0])
-        self.data([0x04])
-        self.data([0x0D])
-        self.data([0x11])
-        self.data([0x13])
-        self.data([0x2B])
-        self.data([0x3F])
-        self.data([0x54])
-        self.data([0x4C])
-        self.data([0x18])
-        self.data([0x0D])
-        self.data([0x0B])
-        self.data([0x1F])
-        self.data([0x23])
+        self.data([0xD0, 0x04, 0x0D, 0x11, 0x13, 0x2B, 0x3F, 0x54, 0x4C, 0x18, 0x0D, 0x0B, 0x1F, 0x23])
 
         self.command(0xE1)
-        self.data([0xD0])
-        self.data([0x04])
-        self.data([0x0C])
-        self.data([0x11])
-        self.data([0x13])
-        self.data([0x2C])
-        self.data([0x3F])
-        self.data([0x44])
-        self.data([0x51])
-        self.data([0x2F])
-        self.data([0x1F])
-        self.data([0x1F])
-        self.data([0x20])
-        self.data([0x23])
+        self.data([0xD0, 0x04, 0x0C, 0x11, 0x13, 0x2C, 0x3F, 0x44, 0x51, 0x2F, 0x1F, 0x1F, 0x20, 0x23])
 
         self.command(0x21)
 
@@ -377,10 +350,10 @@ class st7789(backlit_device):
 
     def set_window(self, x1, y1, x2, y2):
         self.command(0x2A)
-        self.data(struct.pack(">HH", x1, x2 - 1))
+        self.data([x1 >> 8, x1 & 0xFF, (x2 - 1) >> 8, (x2 - 1) & 0xFF])
 
         self.command(0x2B)
-        self.data(struct.pack(">HH", y1, y2 - 1))
+        self.data([y1 >> 8, y1 & 0xFF, (y2 - 1) >> 8, (y2 - 1) & 0xFF])
 
         self.command(0x2C)
 

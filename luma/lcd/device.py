@@ -37,8 +37,6 @@ Collection of serial interfaces to LCD devices.
 from time import sleep
 
 import struct
-import numpy as np
-from bitstring import BitArray
 from luma.core.lib import rpi_gpio
 from luma.core.device import device, parallel_device
 from luma.core.interface.serial import noop, pcf8574
@@ -295,14 +293,13 @@ class pcd8544(backlit_device):
         self.command(0x21, 0x14, value | 0x80, 0x20)
 
 
-
 class st7789(backlit_device):
     """
-    Serial interface to a colour ST7789 128x128 pixel LCD display.
+    Serial interface to a colour ST7789 240x240 pixel LCD display.
     """
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
         super(st7789, self).__init__(luma.lcd.const.st7789, serial_interface, **kwargs)
-        self.capabilities(240, 240, rotate)
+        self.capabilities(240, 240, rotate, mode="RGB")
 
         self.command(0x36)
         self.data([0x70])
@@ -391,15 +388,13 @@ class st7789(backlit_device):
         w, h = 240, 240
         self.set_window(0, 0, w, h)
 
-        #packed_image = BitArray().join(BitArray(uint=x & 0x00111111, length=6) for x in image.tobytes()).tobytes()
+        image = self.preprocess(image)
 
-        #self.data(image.tobytes())
-
-        img = np.asarray(image.convert('RGB'))
-        pix = np.zeros((w, h, 2), dtype=np.uint8)
-        pix[...,[0]] = np.add(np.bitwise_and(img[...,[0]], 0xF8), np.right_shift(img[...,[1]], 5))
-        pix[...,[1]] = np.add(np.bitwise_and(np.left_shift(img[...,[1]], 3), 0xE0), np.right_shift(img[...,[2]], 3))
-        pix = pix.flatten().tolist()
+        img = image.convert('RGB').tobytes() # 3 bytes per pixel, RRRRRRRR GGGGGGGG BBBBBBBB
+        pix = [0] * w * h * 2 # 2 Bytes per pixel, RRRRRGGG GGGBBBBB
+        for i in range(w * h):
+            pix[2*i] = (img[3*i] & 0xF8) + (img[3*i + 1] >> 5)
+            pix[2*i + 1] = (img[3*i + 1] << 3 & 0xE0) + (img[3*i + 2] >> 3)
 
         self.data(pix)
         

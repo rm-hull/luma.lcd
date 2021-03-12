@@ -304,14 +304,14 @@ class st7789(backlit_device):
         self.command(0x36)
         self.data([0x70])
 
-        self.command(0x3A) 
+        self.command(0x3A)
         self.data([0x05])
 
         self.command(0xB2)
         self.data([0x0C, 0x0C, 0x00, 0x33, 0x33])
 
         self.command(0xB7)
-        self.data([0x35]) 
+        self.data([0x35])
 
         self.command(0xBB)
         self.data([0x19])
@@ -323,13 +323,13 @@ class st7789(backlit_device):
         self.data([0x01])
 
         self.command(0xC3)
-        self.data([0x12])   
+        self.data([0x12])
 
         self.command(0xC4)
         self.data([0x20])
 
         self.command(0xC6)
-        self.data([0x0F]) 
+        self.data([0x0F])
 
         self.command(0xD0)
         self.data([0xA4, 0xA1])
@@ -365,7 +365,7 @@ class st7789(backlit_device):
         self.data([0x1F])
         self.data([0x20])
         self.data([0x23])
-        
+
         self.command(0x21)
 
         self.command(0x11)
@@ -378,7 +378,7 @@ class st7789(backlit_device):
     def set_window(self, x1, y1, x2, y2):
         self.command(0x2A)
         self.data(struct.pack(">HH", x1, x2 - 1))
-        
+
         self.command(0x2B)
         self.data(struct.pack(">HH", y1, y2 - 1))
 
@@ -390,14 +390,14 @@ class st7789(backlit_device):
 
         image = self.preprocess(image)
 
-        img = image.convert('RGB').tobytes() # 3 bytes per pixel, RRRRRRRR GGGGGGGG BBBBBBBB
-        pix = [0] * w * h * 2 # 2 Bytes per pixel, RRRRRGGG GGGBBBBB
+        img = image.convert('RGB').tobytes()  # 3 bytes per pixel, RRRRRRRR GGGGGGGG BBBBBBBB
+        pix = [0] * w * h * 2                 # 2 Bytes per pixel, RRRRRGGG GGGBBBBB
         for i in range(w * h):
-            pix[2*i] = (img[3*i] & 0xF8) + (img[3*i + 1] >> 5)
-            pix[2*i + 1] = (img[3*i + 1] << 3 & 0xE0) + (img[3*i + 2] >> 3)
+            pix[2 * i] = (img[3 * i] & 0xF8) + (img[3 * i + 1] >> 5)
+            pix[2 * i + 1] = (img[3 * i + 1] << 3 & 0xE0) + (img[3 * i + 2] >> 3)
 
         self.data(pix)
-        
+
     def contrast(self, value):
         pass
 

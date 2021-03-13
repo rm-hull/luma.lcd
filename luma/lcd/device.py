@@ -371,8 +371,14 @@ class st7789(backlit_device):
 
         self.data(pix)
 
-    def contrast(self, value):
-        pass
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
 
 
 class st7567(backlit_device):

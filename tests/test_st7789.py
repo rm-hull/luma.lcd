@@ -6,6 +6,7 @@
 """
 Tests for the :py:class:`luma.lcd.device.st7789` device.
 """
+import pytest
 
 from luma.lcd.device import st7789
 from luma.core.render import canvas
@@ -55,6 +56,13 @@ def test_init_240x240():
         {'command': [44]}, {'data': [0] * (240 * 240 * 2)},
         {'command': [41]}
     ]
+
+
+def test_contrast():
+    device = st7789(serial, gpio=Mock())
+    serial.reset_mock()
+    with pytest.raises(AssertionError):
+        device.contrast(300)
 
 
 def test_hide():

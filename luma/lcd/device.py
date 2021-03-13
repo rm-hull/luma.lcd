@@ -303,7 +303,7 @@ class st7789(backlit_device):
         self.capabilities(240, 240, rotate, mode="RGB")
 
         self.command(0x36, 0x70)     # MADCTL (36h): Memory Data Access Control: Bottom to Top, Right to Left, Reverse Mode
-        self.command(0x3A, 0x05)     # COLMOD (3Ah): Interface Pixel Format: 16bit/pixel
+        self.command(0x3A, 0x06)     # COLMOD (3Ah): Interface Pixel Format: 18bit/pixel
         self.command(0xB2,          # PORCTRL (B2h): Porch Setting: Disable separate porch control, 0xC in normal mode, 0x3 in idle and partial modes
                      0x0C, 0x0C, 0x00, 0x33, 0x33)
         self.command(0xB7, 0x35)      # GCTRL (B7h): Gate Control: VGH = 13.26V, VGL = -10.43V
@@ -338,14 +338,7 @@ class st7789(backlit_device):
         self.set_window(0, 0, w, h)
 
         image = self.preprocess(image)
-
-        img = image.convert('RGB').tobytes()  # 3 bytes per pixel, RRRRRRRR GGGGGGGG BBBBBBBB
-        pix = [0] * w * h * 2                 # 2 Bytes per pixel, RRRRRGGG GGGBBBBB
-        for i in range(w * h):
-            pix[2 * i] = (img[3 * i] & 0xF8) + (img[3 * i + 1] >> 5)
-            pix[2 * i + 1] = (img[3 * i + 1] << 3 & 0xE0) + (img[3 * i + 2] >> 3)
-
-        self.data(pix)
+        self.data(list(image.convert("RGB").tobytes()))
 
     def contrast(self, level):
         """

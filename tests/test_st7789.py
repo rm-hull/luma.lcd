@@ -36,7 +36,7 @@ def test_init_240x240():
 
     assert recordings == [
         'command', 54, 'data', 112,
-        'command', 58, 'data', 5,
+        'command', 58, 'data', 6,
         'command', 178, 'data', 12, 12, 0, 51, 51,
         'command', 183, 'data', 53,
         'command', 187, 'data', 25,
@@ -53,7 +53,7 @@ def test_init_240x240():
         'command', 41, 'data',
         'command', 42, 'data', 0, 0, 0, 239,
         'command', 43, 'data', 0, 0, 0, 239,
-        'command', 44, 'data', *([0] * (240 * 240 * 2)),
+        'command', 44, 'data', *([0] * (240 * 240 * 3)),
         'command', 41, 'data'
     ]
 

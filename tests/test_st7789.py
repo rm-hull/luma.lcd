@@ -7,15 +7,14 @@
 Tests for the :py:class:`luma.lcd.device.st7789` device.
 """
 
-import pytest
-
 from luma.lcd.device import st7789
 from luma.core.render import canvas
 from luma.core.framebuffer import full_frame
 
 from baseline_data import get_reference_data, primitives
-from helpers import serial, setup_function
+from helpers import serial
 from unittest.mock import Mock
+
 
 def test_init_240x240():
     recordings = []
@@ -96,7 +95,7 @@ def test_display():
 
     # To regenerate test data, uncomment the following (remember not to commit though)
     # ================================================================================
-    #from baseline_data import save_reference_data
-    #save_reference_data("demo_st7789", recordings)
+    # from baseline_data import save_reference_data
+    # save_reference_data("demo_st7789", recordings)
 
     assert recordings == get_reference_data('demo_st7789')

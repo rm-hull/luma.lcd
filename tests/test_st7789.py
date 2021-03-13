@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-17 Richard Hull and contributors
+# Copyright (c) 2021 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -21,10 +21,10 @@ def test_init_240x240():
     recordings = []
 
     def data(data):
-        recordings.append({'data': data})
+        recordings.extend(data)
 
     def command(*cmd):
-        recordings.append({'command': list(cmd)})
+        recordings.extend(['command', list(cmd)[0], 'data', *list(cmd)[1:]])
 
     serial.command.side_effect = command
     serial.data.side_effect = data
@@ -35,26 +35,26 @@ def test_init_240x240():
     assert serial.command.called
 
     assert recordings == [
-        {'command': [54]}, {'data': [112]},
-        {'command': [58]}, {'data': [5]},
-        {'command': [178]}, {'data': [12, 12, 0, 51, 51]},
-        {'command': [183]}, {'data': [53]},
-        {'command': [187]}, {'data': [25]},
-        {'command': [192]}, {'data': [44]},
-        {'command': [194]}, {'data': [1]},
-        {'command': [195]}, {'data': [18]},
-        {'command': [196]}, {'data': [32]},
-        {'command': [198]}, {'data': [15]},
-        {'command': [208]}, {'data': [164, 161]},
-        {'command': [224]}, {'data': [208, 4, 13, 17, 19, 43, 63, 84, 76, 24, 13, 11, 31, 35]},
-        {'command': [225]}, {'data': [208, 4, 12, 17, 19, 44, 63, 68, 81, 47, 31, 31, 32, 35]},
-        {'command': [33]},
-        {'command': [17]},
-        {'command': [41]},
-        {'command': [42]}, {'data': [0, 0, 0, 239]},
-        {'command': [43]}, {'data': [0, 0, 0, 239]},
-        {'command': [44]}, {'data': [0] * (240 * 240 * 2)},
-        {'command': [41]}
+        'command', 54, 'data', 112,
+        'command', 58, 'data', 5,
+        'command', 178, 'data', 12, 12, 0, 51, 51,
+        'command', 183, 'data', 53,
+        'command', 187, 'data', 25,
+        'command', 192, 'data', 44,
+        'command', 194, 'data', 1,
+        'command', 195, 'data', 18,
+        'command', 196, 'data', 32,
+        'command', 198, 'data', 15,
+        'command', 208, 'data', 164, 161,
+        'command', 224, 'data', 208, 4, 13, 17, 19, 43, 63, 84, 76, 24, 13, 11, 31, 35,
+        'command', 225, 'data', 208, 4, 12, 17, 19, 44, 63, 68, 81, 47, 31, 31, 32, 35,
+        'command', 33, 'data',
+        'command', 17, 'data',
+        'command', 41, 'data',
+        'command', 42, 'data', 0, 0, 0, 239,
+        'command', 43, 'data', 0, 0, 0, 239,
+        'command', 44, 'data', *([0] * (240 * 240 * 2)),
+        'command', 41, 'data'
     ]
 
 
@@ -86,10 +86,10 @@ def test_display():
     recordings = []
 
     def data(data):
-        recordings.append({'data': data})
+        recordings.extend(data)
 
     def command(*cmd):
-        recordings.append({'command': list(cmd)})
+        recordings.extend(['command', list(cmd)[0], 'data', *list(cmd)[1:]])
 
     serial.command.side_effect = command
     serial.data.side_effect = data

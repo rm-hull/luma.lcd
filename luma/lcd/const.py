@@ -38,6 +38,11 @@ class uc1701x(object):
     DISPLAYOFF = 0xAE
 
 
+class st7789(object):
+    DISPLAYON = 0x29
+    DISPLAYOFF = 0x28
+
+
 class hd44780(object):
     """
     Values to be used by the hd44780 class during initialization of the display.

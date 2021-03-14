@@ -24,3 +24,4 @@ Contributors
 * Kevin Stone (@kevinastone)
 * Dhrone (@dhrone)
 * Matthew Lovell (@mattblovell)
+* Maciej Sokolowski (@matemaciek)

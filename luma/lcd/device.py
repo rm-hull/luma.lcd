@@ -47,7 +47,7 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
 
 
 class GPIOBacklight:
@@ -290,6 +290,64 @@ class pcd8544(backlit_device):
         """
         assert(0 <= value <= 255)
         self.command(0x21, 0x14, value | 0x80, 0x20)
+
+
+class st7789(backlit_device):
+    """
+    Serial interface to a colour ST7789 240x240 pixel LCD display.
+
+    .. versionadded:: 2.9.0
+    """
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(st7789, self).__init__(luma.lcd.const.st7789, serial_interface, **kwargs)
+        self.capabilities(240, 240, rotate, mode="RGB")
+
+        self.command(0x36, 0x70)     # MADCTL (36h): Memory Data Access Control: Bottom to Top, Right to Left, Reverse Mode
+        self.command(0x3A, 0x06)     # COLMOD (3Ah): Interface Pixel Format: 18bit/pixel
+        self.command(0xB2,          # PORCTRL (B2h): Porch Setting: Disable separate porch control, 0xC in normal mode, 0x3 in idle and partial modes
+                     0x0C, 0x0C, 0x00, 0x33, 0x33)
+        self.command(0xB7, 0x35)      # GCTRL (B7h): Gate Control: VGH = 13.26V, VGL = -10.43V
+        self.command(0xBB, 0x19)      # VCOMS (BBh): VCOM Setting: 0.725V
+        self.command(0xC0, 0x2C)    # LCMCTRL (C0h): LCM Control: XBGR, XMX, XMH
+        self.command(0xC2, 0x01)   # VDVVRHEN (C2h): VDV and VRH Command Enable: VDV and VRH register value comes from command write
+        self.command(0xC3, 0x12)       # VRHS (C3h): VRH Set: 4.45V + (vcom + vcom offset + vdv)
+        self.command(0xC4, 0x20)       # VDVS (C4h): VDV Set: 0V
+        self.command(0xC6, 0x0F)    # FRCTRL2 (C6h): Frame Rate Control in Normal Mode: 60Hz
+        self.command(0xD0,          # PWCTRL1 (D0h): Power Control 1: AVDD = 6.8V, AVCL = -4.8V, VDDS = 2.3V
+                     0xA4, 0xA1)
+        self.command(0xE0,        # PVGAMCTRL (E0h): Positive Voltage Gamma Control
+                     0xD0, 0x04, 0x0D, 0x11, 0x13, 0x2B, 0x3F, 0x54, 0x4C, 0x18, 0x0D, 0x0B, 0x1F, 0x23)
+        self.command(0xE1,        # NVGAMCTRL (E1h): Negative Voltage Gamma Control
+                     0xD0, 0x04, 0x0C, 0x11, 0x13, 0x2C, 0x3F, 0x44, 0x51, 0x2F, 0x1F, 0x1F, 0x20, 0x23)
+        self.command(0x21)            # INVON (21h): Display Inversion On
+        self.command(0x11)           # SLPOUT (11h): Sleep Out
+        self.command(0x29)           # DISPON (29h): Display On
+
+        self.clear()
+        self.show()
+
+    def set_window(self, x1, y1, x2, y2):
+        self.command(0x2A,            # CASET (2Ah): Column Address Set
+                     x1 >> 8, x1 & 0xFF, (x2 - 1) >> 8, (x2 - 1) & 0xFF)
+        self.command(0x2B,            # RASET (2Bh): Row Address Set
+                     y1 >> 8, y1 & 0xFF, (y2 - 1) >> 8, (y2 - 1) & 0xFF)
+        self.command(0x2C)            # RAMWR (2Ch): Memory Write
+
+    def display(self, image):
+        w, h = 240, 240
+        self.set_window(0, 0, w, h)
+
+        image = self.preprocess(image)
+        self.data(list(image.convert("RGB").tobytes()))
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert(0 <= level <= 255)
 
 
 class st7567(backlit_device):

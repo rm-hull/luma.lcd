@@ -669,6 +669,7 @@ class ili9341(backlit_device, __framebuffer_mixin):
                      0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
                      0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f)
         self.command(0x11)                                # Sleep out
+        sleep(0.12)
         self.clear()
         self.show()
 

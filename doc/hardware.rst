@@ -277,7 +277,10 @@ Device Pin Name   Remarks          RPi Pin  RPi Function
 
 Suggested Wiring
 ----------------
-
+.. note::
+   * The default GPIO for backlight is GPIO 18. This pin is also used for PCM_CLK in I2S. So
+     when you use the I2S please specifying the new BCM pin number with the ``gpio_LIGHT`` argument. 
+     
 PCD8544
 ~~~~~~~
 
@@ -329,7 +332,7 @@ RESET or RST  Reset             P01-18   GPIO 24
 DC            Data/command      P01-16   GPIO 23
 SDI(MOSI)     SPI data          P01-19   GPIO 10 (MOSI)
 SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
-LED           Backlight control P01-12   GPIO 18
+LED           Backlight control P01-12   GPIO 18 (PCM_CLK)
 ============= ================= ======== ==============
 
 ST7567

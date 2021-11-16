@@ -231,7 +231,7 @@ character limitation.  If you exceed 8 characters within a screen, the ``undefin
 character will be used for all additional characters that are not contained
 within the devices font table.
 
-The table for all display characters can be found in the :py:class:`luma.lcd.const.hd44780.FONTDATA`
+The table for all display characters can be found in the :py:attr:`luma.lcd.const.hd44780.FONTDATA`
 attribute.
 
 See the documentation for :py:mod:`luma.core.bitmap_font` for more information on

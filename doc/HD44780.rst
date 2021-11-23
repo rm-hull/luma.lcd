@@ -39,7 +39,7 @@ Character-mode Usage
 When using :py:class:`luma.lcd.device.hd44780` the most common way of controlling
 the display is to use the `text` property which operates similarly to the
 :py:class:`luma.core.virtual.sevensegment` wrapper class.  To use it, assign the
-`text` property a string containing the values that you want displayed.
+`text` property a string containing the values that you want displayed:
 
 .. code:: python
 
@@ -52,7 +52,7 @@ the display is to use the `text` property which operates similarly to the
   device.text = 'Hello World'
 
 The newline character can be used to display characters on the next line of the
-display.
+display:
 
 .. code:: python
 
@@ -89,26 +89,25 @@ address in RAM that corresponds to the current character position.  If there is
 not a character within the font table that matches what needs to be displayed,
 a custom character can be created within a small space in the display's RAM that
 is reserved for this purpose.  There are several restrictions that have to be
-kept in mind though.
+kept in mind though:
 
-* The custom character must be a 5x8 image
-* It can only be displayed in alignment with the other characters on the display
-* There can be a maximum of 8 special characters on the screen at any given time
-* If the driver has run out of custom characters for a screen, the remaining cells
+- The custom character must be a 5x8 image
+- It can only be displayed in alignment with the other characters on the display
+- There can be a maximum of 8 special characters on the screen at any given time
+- If the driver has run out of custom characters for a screen, the remaining cells
   with non-standard content will display the `undefined` character instead.
 
 However there are a few features that can be leveraged to extend beyond these
-restrictions.
+restrictions:
 
-* The HD44780 class will automatically create the appropriate custom characters
-* The content of a special character can be used multiple times on the screen
-* The content of all of the special characters can be changed every time the
-  screen is redrawn.
+- The HD44780 class will automatically create the appropriate custom characters
+- The content of a special character can be used multiple times on the screen
+- The content of all of the special characters can be changed every time the
+  screen is redrawn
 
-Here is a small example of how this can be leveraged.
+Here is a small example of how this can be leveraged:
 
 .. code:: python
-
 
   from luma.core.interface.parallel import bitbang_6800
   from luma.lcd.device import hd44780
@@ -135,7 +134,7 @@ Here is a small example of how this can be leveraged.
 
 There are a few of things that deserve highlighting in this code.
 
-* The ``get_font`` method of the ``hd44780`` class is used to retrieve the internal
+- The ``get_font`` method of the ``hd44780`` class is used to retrieve the internal
   font used by the device.  This enables us to place exact replicas of the
   characters within the font tables on the canvas.  When these characters are
   displayed, because they are already normal characters, they do not consume any
@@ -143,10 +142,10 @@ There are a few of things that deserve highlighting in this code.
   font tables.  You should request the table that matches what is installed in
   your display.
 
-* The progress bar is drawn using normal :mod:`PIL.ImageDraw` primitives in this case a
+- The progress bar is drawn using normal :mod:`PIL.ImageDraw` primitives in this case a
   couple of calls to the ``rectangle`` method and a call to the ``text`` method.
 
-* The size of the progress bar was carefully chosen.  It is 70 pixels wide by 8
+- The size of the progress bar was carefully chosen.  It is 70 pixels wide by 8
   pixels high.  This will fill 14 characters worth of space.  This is because
   each cell is 5 pixels wide (70/5=14) and it is 8 pixels high (8/8=1).
   Normally 14 cells worth of graphical content would be a problem. However, the
@@ -170,7 +169,7 @@ There are a few of things that deserve highlighting in this code.
   So the maximum number of custom characters is as little as one, but never exceeds
   four.
 
-* The progress bar was carefully placed to align with the character cell
+- The progress bar was carefully placed to align with the character cell
   boundaries.  If we had placed the progress bar image one pixel to the left
   if would have consumed two additional custom characters as the beginning and
   end of the progress bar would be spread across character cell boundaries.  In
@@ -206,7 +205,7 @@ A00          English Japanese
 A02          English European
 ===========  ==================
 
-You can retrieve either of these fonts using the ``get_font`` method.
+You can retrieve either of these fonts using the ``get_font`` method:
 
 .. code:: python
 

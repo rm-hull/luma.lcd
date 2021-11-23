@@ -60,7 +60,7 @@ display.
 
 It is the only control character that works however.  Other control characters
 such as carriage return (ascii 13) and line feed (ascii 10) will be silently
-ignores.
+ignored.
 
 .. note:
   Unlike sevensegment's text property which throws an exception if you exceed
@@ -119,27 +119,27 @@ Here is a small example of how this can be leveraged.
   device = hd44780(interface, width=16, height=2)
 
   def progress_bar(width, height, percentage):
-    img = Image.new('1', (width, height))
-    drw = ImageDraw.Draw(img)
-    drw.rectangle((0, 0, width-1, height-1), fill='black', outline='white')
-    drw.rectangle((0, 0, width*percentage, height-1), fill='white', outline='white')
-    return img
+      img = Image.new('1', (width, height))
+      drw = ImageDraw.Draw(img)
+      drw.rectangle((0, 0, width-1, height-1), fill='black', outline='white')
+      drw.rectangle((0, 0, width*percentage, height-1), fill='white', outline='white')
+      return img
 
   progress = 0.25
   fnt = device.get_font('A00')
   with canvas(device) as draw:
-    draw.text( (5,0), f'Installing {progress*100:.0f}%', font=fnt, fill='white')
-    draw.bitmap( (5,8), progress_bar(70, 8, progress), fill='white')
+      draw.text( (5,0), f'Installing {progress*100:.0f}%', font=fnt, fill='white')
+      draw.bitmap( (5,8), progress_bar(70, 8, progress), fill='white')
 
 .. image:: images/hd44780_progress.jpg
 
 There are a few of things that deserve highlighting in this code.
 
-* We have used the hd44780 classes ``get_font`` method to retrieve the internal
+* The ``get_font`` method of the ``hd44780`` class is used to retrieve the internal
   font used by the device.  This enables us to place exact replicas of the
   characters within the font tables on the canvas.  When these characters are
   displayed, because they are already normal characters, they do not consume any
-  of the customer character RAM.  The hd44780 class contains both the A00 and A02
+  of the customer character RAM. The ``hd44780`` class contains both the A00 and A02
   font tables.  You should request the table that matches what is installed in
   your display.
 
@@ -167,7 +167,8 @@ There are a few of things that deserve highlighting in this code.
       "Filled", "Filled", "Right Filling"
       "Filled", "Filled", "Filled"
 
-  So the maximum number of custom characters is as little as one but never exceeds four.
+  So the maximum number of custom characters is as little as one, but never exceeds
+  four.
 
 * The progress bar was carefully placed to align with the character cell
   boundaries.  If we had placed the progress bar image one pixel to the left
@@ -196,7 +197,7 @@ Embedded Font Tables
 ~~~~~~~~~~~~~~~~~~~~
 The :py:class:`luma.lcd.device.hd44780` class leverages
 :py:mod:`luma.core.bitmap_font` to include two fonts that replicate the two font
-tables that are commonly available for the hd44780.  These are:
+tables that are commonly available for the hd44780 device.  These are:
 
 ===========  ==================
 Font Table   Font Name

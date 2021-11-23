@@ -121,15 +121,15 @@ Here is a small example of how this can be leveraged.
   def progress_bar(width, height, percentage):
       img = Image.new('1', (width, height))
       drw = ImageDraw.Draw(img)
-      drw.rectangle((0, 0, width-1, height-1), fill='black', outline='white')
-      drw.rectangle((0, 0, width*percentage, height-1), fill='white', outline='white')
+      drw.rectangle((0, 0, width - 1, height - 1), fill='black', outline='white')
+      drw.rectangle((0, 0, width * percentage, height - 1), fill='white', outline='white')
       return img
 
   progress = 0.25
   fnt = device.get_font('A00')
   with canvas(device) as draw:
-      draw.text( (5,0), f'Installing {progress*100:.0f}%', font=fnt, fill='white')
-      draw.bitmap( (5,8), progress_bar(70, 8, progress), fill='white')
+      draw.text((5, 0), f'Installing {progress*100:.0f}%', font=fnt, fill='white')
+      draw.bitmap((5, 8), progress_bar(70, 8, progress), fill='white')
 
 .. image:: images/hd44780_progress.jpg
 

@@ -57,14 +57,14 @@ class GPIOBacklight:
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param pin: the GPIO pin to use for the backlight.
     :type pin: int
-    :param active_low: Set to True if active low (default), False otherwise.
+    :param active_low: Set to True if active low, False otherwise (default).
     :type active_low: bool
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.3.0
     """
 
-    def __init__(self, gpio, pin=18, active_low=True):
+    def __init__(self, gpio, pin=18, active_low=False):
         self._gpio = gpio
         self._pin = pin
         if active_low:
@@ -187,12 +187,12 @@ class PWMBacklight:
 @rpi_gpio
 class backlit_device(device):
     """
-    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+    Controls a backlight (active high), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
 
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param gpio_LIGHT: The GPIO pin to use for the backlight.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if active low (default), false otherwise.
+    :param active_low: Set to true if active low, false otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
     :type pwm_frequency: float
@@ -204,7 +204,7 @@ class backlit_device(device):
     .. versionadded:: 2.0.0
     """
 
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=False, pwm_frequency=None, backpack_pin=None, **kwargs):
         super(backlit_device, self).__init__(const, serial_interface)
 
         if backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
@@ -1096,8 +1096,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     :param gpio_LIGHT: The GPIO pin to use for the backlight if it is controlled by
         one of the GPIO pins.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if backlight is active low (default), false
-        otherwise.
+    :param active_low: Set to true if backlight is active low, false
+        otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the
         specified frequency when provided.

@@ -330,7 +330,8 @@ class st7789(backlit_device):
         """Send a command to the display, with optional arguments.
            The arguments are sent as data bytes, in accordance with the ST7789 datasheet."""
         super(st7789, self).command(cmd)
-        self.data(args)
+        if args:
+            self.data(args)
 
     def set_window(self, x1, y1, x2, y2):
         self.command(0x2A,            # CASET (2Ah): Column Address Set

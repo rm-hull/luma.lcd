@@ -298,9 +298,9 @@ class st7789(backlit_device):
 
     .. versionadded:: 2.9.0
     """
-    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+    def __init__(self, serial_interface=None, width=240, height=240, rotate=0, **kwargs):
         super(st7789, self).__init__(luma.lcd.const.st7789, serial_interface, **kwargs)
-        self.capabilities(240, 240, rotate, mode="RGB")
+        self.capabilities(width, height, rotate, mode="RGB")
 
         self.command(0x36, 0x70)     # MADCTL (36h): Memory Data Access Control: Bottom to Top, Right to Left, Reverse Mode
         self.command(0x3A, 0x06)     # COLMOD (3Ah): Interface Pixel Format: 18bit/pixel
@@ -326,6 +326,12 @@ class st7789(backlit_device):
         self.clear()
         self.show()
 
+    def command(self, cmd, *args):
+        """Send a command to the display, with optional arguments.
+           The arguments are sent as data bytes, in accordance with the ST7789 datasheet."""
+        super(st7789, self).command(cmd)
+        self.data(args)
+
     def set_window(self, x1, y1, x2, y2):
         self.command(0x2A,            # CASET (2Ah): Column Address Set
                      x1 >> 8, x1 & 0xFF, (x2 - 1) >> 8, (x2 - 1) & 0xFF)
@@ -334,8 +340,7 @@ class st7789(backlit_device):
         self.command(0x2C)            # RAMWR (2Ch): Memory Write
 
     def display(self, image):
-        w, h = 240, 240
-        self.set_window(0, 0, w, h)
+        self.set_window(0, 0, self._w, self._h)
 
         image = self.preprocess(image)
         self.data(list(image.convert("RGB").tobytes()))

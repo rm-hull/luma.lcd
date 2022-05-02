@@ -25,3 +25,4 @@ Contributors
 * Dhrone (@dhrone)
 * Matthew Lovell (@mattblovell)
 * Maciej Sokolowski (@matemaciek)
+* Frederic Meeuwissen (@Frederic98)

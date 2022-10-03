@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-20 Richard Hull and contributors
+# Copyright (c) 2013-2022 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -267,8 +267,8 @@ class pcd8544(backlit_device):
         Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the PCD8544
         LCD display.
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -288,7 +288,7 @@ class pcd8544(backlit_device):
         """
         Sets the LCD contrast
         """
-        assert(0 <= value <= 255)
+        assert 0 <= value <= 255
         self.command(0x21, 0x14, value | 0x80, 0x20)
 
 
@@ -353,7 +353,7 @@ class st7789(backlit_device):
         :param level: Desired contrast level in the range of 0-255.
         :type level: int
         """
-        assert(0 <= level <= 255)
+        assert 0 <= level <= 255
 
 
 class st7567(backlit_device):
@@ -400,8 +400,8 @@ class st7567(backlit_device):
         Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the ST7567
         LCD display
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -433,7 +433,7 @@ class st7567(backlit_device):
         """
         Sets the LCD contrast
         """
-        assert(0 <= value <= 255)
+        assert 0 <= value <= 255
         self.command(0x81, value)
 
 
@@ -557,8 +557,8 @@ class st7735(backlit_device, __framebuffer_mixin):
         :param image: The image to render.
         :type image: PIL.Image.Image
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -578,7 +578,7 @@ class st7735(backlit_device, __framebuffer_mixin):
         :param level: Desired contrast level in the range of 0-255.
         :type level: int
         """
-        assert(0 <= level <= 255)
+        assert 0 <= level <= 255
 
     def command(self, cmd, *args):
         """
@@ -688,8 +688,8 @@ class ili9341(backlit_device, __framebuffer_mixin):
         :param image: The image to render.
         :type image: PIL.Image.Image
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -709,7 +709,7 @@ class ili9341(backlit_device, __framebuffer_mixin):
         :param level: Desired contrast level in the range of 0-255.
         :type level: int
         """
-        assert(0 <= level <= 255)
+        assert 0 <= level <= 255
 
     def command(self, cmd, *args):
         """
@@ -842,8 +842,8 @@ class ili9486(backlit_device, __framebuffer_mixin):
         :param image: The image to render.
         :type image: PIL.Image.Image
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -866,7 +866,7 @@ class ili9486(backlit_device, __framebuffer_mixin):
         :param level: Desired contrast level in the range of 0-255.
         :type level: int
         """
-        assert(0 <= level <= 255)
+        assert 0 <= level <= 255
 
     def command(self, cmd, *args):
         """
@@ -935,8 +935,8 @@ class ht1621(backlit_device):
         Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the PCD8544
         LCD display.
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -1036,8 +1036,8 @@ class uc1701x(backlit_device):
         Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the UC1701X
         LCD display.
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         image = self.preprocess(image)
 
@@ -1068,7 +1068,7 @@ class uc1701x(backlit_device):
         """
         Sets the LCD contrast
         """
-        assert(0 <= value <= 255)
+        assert 0 <= value <= 255
         self.command(0x81, value >> 2)
 
 
@@ -1245,8 +1245,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
             exceeded, the remaining unmatched characters will be replaced by
             the ``undefined`` character.
         """
-        assert(image.mode == self.mode)
-        assert(image.size == self.size)
+        assert image.mode == self.mode
+        assert image.size == self.size
 
         for image_segment, bounding_box in self.framebuffer.redraw(image):
             self._cleanup_custom(image_segment)

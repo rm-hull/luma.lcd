@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2017 Richard Hull and contributors
+# Copyright (c) 2017-2022 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 import pytest
@@ -25,4 +25,4 @@ def assert_invalid_dimensions(deviceType, serial_interface, width, height):
     """
     with pytest.raises(luma.core.error.DeviceDisplayModeError) as ex:
         deviceType(serial_interface, gpio=Mock(), width=width, height=height)
-    assert "Unsupported display mode: {} x {}".format(width, height) in str(ex.value)
+    assert f"Unsupported display mode: {width} x {height}" in str(ex.value)

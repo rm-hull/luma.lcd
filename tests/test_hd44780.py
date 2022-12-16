@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020 Richard Hull and contributors
+# Copyright (c) 2020-2022 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -97,8 +97,8 @@ def test_display():
     # Use canvas to create a screen worth of data
     with canvas(device) as drw:
         # Include unprintable character to show it gets ignored
-        size = device.font.getsize('This is a test\uFFFF')
-        drw.text(((80 - size[0]) // 2, 0), 'This is a test\uFFFF', font=device.font, fill='white')
+        width = device.font.getlength('This is a test\uFFFF')
+        drw.text(((80 - width) // 2, 0), 'This is a test\uFFFF', font=device.font, fill='white')
         drw.rectangle((10, 10, 69, 14), fill='black', outline='white')
         drw.rectangle((10, 10, 49, 14), fill='white', outline='white')
 

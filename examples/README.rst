@@ -1,1 +1,1 @@
-Examples have been moved to http://github.com/rm-hull/luma.examples
+Examples can be found at https://github.com/rm-hull/luma.examples

@@ -29,8 +29,6 @@ luma.lcd
 .. image:: https://img.shields.io/pypi/dm/luma.lcd
    :target: https://pypi.python.org/project/luma.lcd
 
-.. image:: https://img.shields.io/maintenance/yes/2022.svg?maxAge=2592000
-
 luma.lcd provides a Python 3 interface to small LCD displays connected to
 Raspberry Pi and other Linux-based single-board computers (SBC).  It provides a
 Pillow-compatible drawing canvas, and other functionality to support:

@@ -47,7 +47,7 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "hd44780"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "ili9488", "hd44780"]
 
 
 class GPIOBacklight:
@@ -855,6 +855,131 @@ class ili9486(backlit_device, __framebuffer_mixin):
             # for commands.
             self.command(0x2a, 0, top >> 8, 0, top & 0xff, 0, (bottom - 1) >> 8, 0, (bottom - 1) & 0xff)     # Set row addr
             self.command(0x2b, 0, left >> 8, 0, left & 0xff, 0, (right - 1) >> 8, 0, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2c)                                                                   # Memory write
+
+            self.data(image.tobytes())
+
+    def contrast(self, level):
+        """
+        NOT SUPPORTED
+
+        :param level: Desired contrast level in the range of 0-255.
+        :type level: int
+        """
+        assert 0 <= level <= 255
+
+    def command(self, cmd, *args):
+        """
+        Sends a command and an (optional) sequence of arguments through to the
+        delegated serial interface. Note that the arguments are passed through
+        as data.
+        """
+        self._serial_interface.command(cmd)
+        if len(args) > 0:
+            self._serial_interface.data(list(args))
+
+
+class ili9488(backlit_device, __framebuffer_mixin):
+    """
+    Serial interface to a 262k color (6-6-6 RGB) ILI9488 LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: the serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param width: The number of pixels laid out horizontally.
+    :type width: int
+    :param height: The number of pixels laid out vertically.
+    :type height: int
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+    :param framebuffer: Framebuffering strategy, currently instances of
+        ``diff_to_previous()`` or ``full_frame()`` are only supported.
+    :type framebuffer: luma.core.framebuffer.framebuffer
+    :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
+    :type bgr: bool
+    :param h_offset: Horizontal offset (in pixels) of screen to device memory
+        (default: 0).
+    :type h_offset: int
+    :param v_offset: Vertical offset (in pixels) of screen to device memory
+        (default: 0).
+    :type v_offset: int
+
+    
+    """
+
+    def __init__(self, serial_interface=None, width=480, height=320, rotate=0,
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
+        super(ili9488, self).__init__(luma.lcd.const.ili9488, serial_interface, **kwargs)
+        self.capabilities(width, height, rotate, mode="RGB")
+        self.init_framebuffer(framebuffer, 25)
+
+        if h_offset != 0 or v_offset != 0:
+            def offset(bbox):
+                left, top, right, bottom = bbox
+                return (left + h_offset, top + v_offset, right + h_offset, bottom + v_offset)
+            self.apply_offsets = offset
+        else:
+            self.apply_offsets = lambda bbox: bbox
+
+        # Supported modes
+        supported = (width, height) in [(480, 320)]  # full
+        if not supported:
+            raise luma.core.error.DeviceDisplayModeError(
+                "Unsupported display mode: {0} x {1}".format(width, height))
+
+        # RGB or BGR order
+        order = 0x00 if bgr else 0x08
+
+        # Initialization sequence, adapted from
+        #
+        #   `https://github.com/birdtechstep/fbtft/blob/master/fb_ili9488.c`
+        #
+        
+        #self.command(0xE0, 0x00, 0x03, 0x09, 0x08, 0x16, 0x0A, 0x37,   # Positive Gamma Control
+        #              0x78, 0x4C, 0x09, 0x0A, 0x08, 0x16, 0x1A, 0x0F)
+        #self.command(0xE1, 0x00, 0x16, 0x19, 0x03, 0x0F, 0x05, 0x32,
+        #              0x45, 0x46, 0x04, 0x0E, 0x0D, 0x35, 0x37, 0x0F)  # Negative Gamma Control
+        self.command(0xC0, 0x17, 0x15)                                 # Power Control 1
+        self.command(0xC1, 0x41)                                       # Power Control 2
+        self.command(0xC5, 0x00, 0x12, 0x80)                           # VCOM Control
+        self.command(0x36, 0x20 | order)                               # Memory Access Control
+        self.command(0x3A, 0x66)                                       # Interface Pixel Format 6-6-6
+        self.command(0xB0, 0x00)                                       # Interface Mode Control
+        self.command(0xB1, 0xA0)                                       # Frame Rate Control
+        self.command(0xB4, 0x02)                                       # Display Inversion Control
+        self.command(0xB6, 0x02, 0x02, 0x3B)                           # Display Function Control
+        self.command(0xB7, 0xC6)                                       # Entry Mode Set
+        self.command(0xF7, 0xA9, 0x51, 0x2C, 0x82)                     # Interface Mode Control
+        self.command(0x11)                                             # Sleep Out
+        sleep(0.120)
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Renders a 24-bit RGB image to the ILI9488 LCD display. The 8-bit RGB
+        values are passed directly to the devices internal storage, but only
+        the 6 most-significant bits are used by the display.
+
+        :param image: The image to render.
+        :type image: PIL.Image.Image
+        """
+        assert image.mode == self.mode
+        assert image.size == self.size
+
+        image = self.preprocess(image)
+
+        for image, bounding_box in self.framebuffer.redraw(image):
+            left, top, right, bottom = self.apply_offsets(bounding_box)
+
+            self.command(0x2a, left >> 8, left & 0xff, (right - 1) >> 8, (right - 1) & 0xff)     # Set column addr
+            self.command(0x2b, top >> 8, top & 0xff, (bottom - 1) >> 8, (bottom - 1) & 0xff)     # Set row addr
             self.command(0x2c)                                                                   # Memory write
 
             self.data(image.tobytes())

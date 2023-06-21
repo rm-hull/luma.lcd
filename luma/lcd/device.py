@@ -938,7 +938,7 @@ class ili9488(backlit_device, __framebuffer_mixin):
 
         # Initialization sequence, adapted from
         #
-        # `https://github.com/birdtechstep/fbtft/blob/master/fb_ili9488.c`
+        # https://github.com/birdtechstep/fbtft/blob/master/fb_ili9488.c
         #
 
         self.command(0xe0, 0x00, 0x03, 0x09, 0x08, 0x16, 0x0a, 0x37,   # Positive Gamma Control

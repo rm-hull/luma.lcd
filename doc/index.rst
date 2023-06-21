@@ -1,4 +1,4 @@
-Luma.LCD: Display drivers for PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341, HD44780
+Luma.LCD: Display drivers for PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341, ILI9488, HD44780
 ================================================================================================
 .. image:: https://github.com/rm-hull/luma.lcd/workflows/luma.lcd/badge.svg?branch=master
    :target: https://github.com/rm-hull/luma.lcd/actions?workflow=luma.lcd

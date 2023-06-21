@@ -74,7 +74,7 @@ The ST7567 display supports a resolution of 128 x 64 monochrome pixels:
    - :download:`HT1621 <tech-spec/HT1621.pdf>`
    - :download:`UC1701X <tech-spec/UC1701X.pdf>`
    - :download:`ILI9341 <tech-spec/ILI9341.pdf>`
-   - :download:`ILI9341 <tech-spec/ILI9488.pdf>`   
+   - :download:`ILI9488 <tech-spec/ILI9488.pdf>`   
    - :download:`HD44780 <tech-spec/HD44780.pdf>`
 
 Examples and Emulators

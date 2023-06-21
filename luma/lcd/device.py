@@ -910,7 +910,7 @@ class ili9488(backlit_device, __framebuffer_mixin):
         (default: 0).
     :type v_offset: int
 
-    
+
     """
 
     def __init__(self, serial_interface=None, width=480, height=320, rotate=0,
@@ -938,24 +938,24 @@ class ili9488(backlit_device, __framebuffer_mixin):
 
         # Initialization sequence, adapted from
         #
-        #   `https://github.com/birdtechstep/fbtft/blob/master/fb_ili9488.c`
+        # `https://github.com/birdtechstep/fbtft/blob/master/fb_ili9488.c`
         #
-        
-        #self.command(0xE0, 0x00, 0x03, 0x09, 0x08, 0x16, 0x0A, 0x37,   # Positive Gamma Control
-        #              0x78, 0x4C, 0x09, 0x0A, 0x08, 0x16, 0x1A, 0x0F)
-        #self.command(0xE1, 0x00, 0x16, 0x19, 0x03, 0x0F, 0x05, 0x32,
-        #              0x45, 0x46, 0x04, 0x0E, 0x0D, 0x35, 0x37, 0x0F)  # Negative Gamma Control
-        self.command(0xC0, 0x17, 0x15)                                 # Power Control 1
-        self.command(0xC1, 0x41)                                       # Power Control 2
-        self.command(0xC5, 0x00, 0x12, 0x80)                           # VCOM Control
+
+        self.command(0xe0, 0x00, 0x03, 0x09, 0x08, 0x16, 0x0a, 0x37,   # Positive Gamma Control
+                     0x78, 0x4c, 0x09, 0x0a, 0x08, 0x16, 0x1a, 0x0f)
+        self.command(0xe1, 0x00, 0x16, 0x19, 0x03, 0x0f, 0x05, 0x32,
+                     0x45, 0x46, 0x04, 0x0e, 0x0d, 0x35, 0x37, 0x0f)  # Negative Gamma Control
+        self.command(0xc0, 0x17, 0x15)                                 # Power Control 1
+        self.command(0xc1, 0x41)                                       # Power Control 2
+        self.command(0xc5, 0x00, 0x12, 0x80)                           # VCOM Control
         self.command(0x36, 0x20 | order)                               # Memory Access Control
-        self.command(0x3A, 0x66)                                       # Interface Pixel Format 6-6-6
-        self.command(0xB0, 0x00)                                       # Interface Mode Control
-        self.command(0xB1, 0xA0)                                       # Frame Rate Control
-        self.command(0xB4, 0x02)                                       # Display Inversion Control
-        self.command(0xB6, 0x02, 0x02, 0x3B)                           # Display Function Control
-        self.command(0xB7, 0xC6)                                       # Entry Mode Set
-        self.command(0xF7, 0xA9, 0x51, 0x2C, 0x82)                     # Interface Mode Control
+        self.command(0x3a, 0x66)                                       # Interface Pixel Format 6-6-6
+        self.command(0xb0, 0x00)                                       # Interface Mode Control
+        self.command(0xb1, 0xa0)                                       # Frame Rate Control
+        self.command(0xb4, 0x02)                                       # Display Inversion Control
+        self.command(0xb6, 0x02, 0x02, 0x3b)                           # Display Function Control
+        self.command(0xb7, 0xc6)                                       # Entry Mode Set
+        self.command(0xf7, 0xa9, 0x51, 0x2c, 0x82)                     # Interface Mode Control
         self.command(0x11)                                             # Sleep Out
         sleep(0.120)
         self.clear()

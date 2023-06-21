@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020 Richard Hull and contributors
+# Copyright (c) 2023 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """

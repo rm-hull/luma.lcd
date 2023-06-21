@@ -339,7 +339,7 @@ ILI9488
 ~~~~~~~
 No support for the touch-screen, leave the MISO and Touch pins disconnected.
 LED(Backlight) draws around 120ma, you may need to add a current driver to avoid
-overloading the IO pin.Depending on the board you bought, there may be 
+overloading the IO pin. Depending on the board you bought, there may be 
 different names for the same pins, as detailed below.
 
 ============= ================= ======== ==============

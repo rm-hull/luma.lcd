@@ -928,7 +928,7 @@ class ili9488(backlit_device, __framebuffer_mixin):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(480, 320)]  # full
+        supported = (width, height) in [(480, 320)]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
                 "Unsupported display mode: {0} x {1}".format(width, height))

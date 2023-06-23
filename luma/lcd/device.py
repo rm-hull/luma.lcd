@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013-2022 Richard Hull and contributors
+# Copyright (c) 2013-2023 Richard Hull and contributors
 # See LICENSE.rst for details.
 
 """
@@ -910,7 +910,7 @@ class ili9488(backlit_device, __framebuffer_mixin):
         (default: 0).
     :type v_offset: int
 
-
+    .. versionadded:: 2.11.0
     """
 
     def __init__(self, serial_interface=None, width=480, height=320, rotate=0,
@@ -931,7 +931,7 @@ class ili9488(backlit_device, __framebuffer_mixin):
         supported = (width, height) in [(480, 320)]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
+                f"Unsupported display mode: {width} x {height}")
 
         # RGB or BGR order
         order = 0x00 if bgr else 0x08

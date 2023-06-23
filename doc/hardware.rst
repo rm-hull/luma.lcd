@@ -335,6 +335,26 @@ SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
 LED           Backlight control P01-12   GPIO 18 (PCM_CLK)
 ============= ================= ======== ==============
 
+ILI9488
+~~~~~~~
+No support for the touch-screen, leave the MISO and Touch pins disconnected.
+LED(Backlight) draws around 120ma, you may need to add a current driver to avoid
+overloading the IO pin. Depending on the board you bought, there may be 
+different names for the same pins, as detailed below.
+
+============= ================= ======== ==============
+LCD Pin       Remarks           RPi Pin  RPi Function
+============= ================= ======== ==============
+VCC           +3.3V Power       P01-01   3V3
+GND           Ground            P01-06   GND
+CS            SPI chip select   P01-24   GPIO 8 (CE0)
+RESET or RST  Reset             P01-18   GPIO 24
+DC            Data/command      P01-16   GPIO 23
+SDI(MOSI)     SPI data          P01-19   GPIO 10 (MOSI)
+SCK or CLK    SPI clock         P01-23   GPIO 11 (SCLK)
+LED           Backlight control P01-12   GPIO 18 (PCM_CLK)
+============= ================= ======== ==============
+
 ST7567
 ~~~~~~
 This driver is designed for the ST7567 in 4-line SPI mode and does not include

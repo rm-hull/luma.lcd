@@ -8,7 +8,7 @@ class st7567(object):
     DISPLAYOFF = 0xAE
 
 
-class st7567(object):
+class st7565(object):
     DISPLAYON = 0xAF
     DISPLAYOFF = 0xAE
     

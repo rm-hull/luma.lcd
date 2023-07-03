@@ -478,7 +478,7 @@ class st7565(backlit_device):
         represents 270° rotation.
     :type rotate: int
 
-    .. versionadded:: 1.1.0
+    .. versionadded:: 2.12.0
     """
 
     def __init__(self, serial_interface=None, rotate=0, **kwargs):
@@ -487,10 +487,10 @@ class st7565(backlit_device):
 
         self._pages = self._h // 8
 
-        self.command(0xA2)  # Bias 1/7
+        self.command(0xA2)  # Bias 1/9
         self.command(0xA0)
-        self.command(0xC8)  # Normal Orientation
-        self.command(0xA6)  # Normal Display (0xA7 = inverse)
+        self.command(0xC8)  
+        self.command(0xA6)  
         self.command(0x2F)
         self.command(0x2F)
         self.command(0x22)

@@ -47,7 +47,7 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "ili9341", "ili9486", "ili9488", "hd44780"]
+__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "st7565", "ili9341", "ili9486", "ili9488", "hd44780"]
 
 
 class GPIOBacklight:
@@ -460,6 +460,87 @@ class __framebuffer_mixin(object):
             self.framebuffer = getattr(luma.core.framebuffer, framebuffer)()
         else:
             self.framebuffer = framebuffer
+
+
+class st7565(backlit_device):
+    """
+    Serial interface to a monochrome ST7565 128x64 pixel LCD display.
+
+    On creation, an initialization sequence is pumped to the display to properly
+    configure it. Further control commands can then be called to affect the
+    brightness and other settings.
+
+    :param serial_interface: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.spi` instance) to delegate sending
+        data and commands through.
+    :param rotate: An integer value of 0 (default), 1, 2 or 3 only, where 0 is
+        no rotation, 1 is rotate 90° clockwise, 2 is 180° rotation and 3
+        represents 270° rotation.
+    :type rotate: int
+
+    .. versionadded:: 1.1.0
+    """
+
+    def __init__(self, serial_interface=None, rotate=0, **kwargs):
+        super(st7565, self).__init__(luma.lcd.const.st7565, serial_interface, **kwargs)
+        self.capabilities(128, 64, rotate)
+
+        self._pages = self._h // 8
+
+        self.command(0xA2)  # Bias 1/7
+        self.command(0xA0)
+        self.command(0xC8)  # Normal Orientation
+        self.command(0xA6)  # Normal Display (0xA7 = inverse)
+        self.command(0x2F)
+        self.command(0x2F)
+        self.command(0x22)
+        self.command(0xAF)
+
+        self.contrast(0x27)
+
+        self.clear()
+        self.show()
+
+    def display(self, image):
+        """
+        Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the ST7565
+        LCD display
+        """
+        assert image.mode == self.mode
+        assert image.size == self.size
+
+        image = self.preprocess(image)
+
+        set_page_address = 0xB0
+
+        image_data = image.getdata()
+        pixels_per_page = self.width * 8
+        buf = bytearray(self.width)
+
+        for y in range(0, int(self._pages * pixels_per_page), pixels_per_page):
+            self.command(set_page_address, 0x04, 0x10)
+            set_page_address += 1
+            offsets = [y + self.width * i for i in range(8)]
+
+            for x in range(self.width):
+                buf[x] = \
+                    (image_data[x + offsets[0]] and 0x01) | \
+                    (image_data[x + offsets[1]] and 0x02) | \
+                    (image_data[x + offsets[2]] and 0x04) | \
+                    (image_data[x + offsets[3]] and 0x08) | \
+                    (image_data[x + offsets[4]] and 0x10) | \
+                    (image_data[x + offsets[5]] and 0x20) | \
+                    (image_data[x + offsets[6]] and 0x40) | \
+                    (image_data[x + offsets[7]] and 0x80)
+
+            self.data(list(buf))
+
+    def contrast(self, value):
+        """
+        Sets the LCD contrast
+        """
+        assert 0 <= value <= 255
+        self.command(0x81, value)
 
 
 class st7735(backlit_device, __framebuffer_mixin):

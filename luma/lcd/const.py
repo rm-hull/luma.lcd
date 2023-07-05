@@ -11,7 +11,7 @@ class st7567(object):
 class st7565(object):
     DISPLAYON = 0xAF
     DISPLAYOFF = 0xAE
-    
+
 
 class pcd8544(object):
     DISPLAYON = 0x0C

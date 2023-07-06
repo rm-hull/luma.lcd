@@ -489,8 +489,8 @@ class st7565(backlit_device):
 
         self.command(0xA2)  # Bias 1/9
         self.command(0xA0)
-        self.command(0xC8)  
-        self.command(0xA6)  
+        self.command(0xC8)
+        self.command(0xA6)
         self.command(0x2F)
         self.command(0x2F)
         self.command(0x22)

@@ -496,7 +496,7 @@ class st7565(backlit_device):
         self.command(0x22)
         self.command(0xAF)
 
-        self.contrast(0x27)
+        self.contrast(0x21)
 
         self.clear()
         self.show()
@@ -518,7 +518,7 @@ class st7565(backlit_device):
         buf = bytearray(self.width)
 
         for y in range(0, int(self._pages * pixels_per_page), pixels_per_page):
-            self.command(set_page_address, 0x04, 0x10)
+            self.command(set_page_address, 0x00, 0x10)
             set_page_address += 1
             offsets = [y + self.width * i for i in range(8)]
 

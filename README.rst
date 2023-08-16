@@ -8,7 +8,7 @@ luma.lcd **|**
 
 luma.lcd
 ========
-**HD44780, PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341 Display Drivers**
+**HD44780, PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341, ILI9486, ILI9488 Display Drivers**
 
 .. image:: https://github.com/rm-hull/luma.lcd/workflows/luma.lcd/badge.svg?branch=master
    :target: https://github.com/rm-hull/luma.lcd/actions?workflow=luma.lcd
@@ -39,8 +39,8 @@ Pillow-compatible drawing canvas, and other functionality to support:
 * color/greyscale (where supported),
 * dithering to monochrome
 
-It currently supports devices using the HD44780, PCD8544, ST7735, HT1621,
-and UC1701X controllers.
+It currently supports devices using the HD44780, PCD8544, ST7735, ST7567, ST7789, ILI9341,
+ILI9486, ILI9488 and UC1701X controllers.
 
 All modules can be picked up on ebay with a breakout board for a few pounds.
 
@@ -71,7 +71,7 @@ License
 -------
 The MIT License (MIT)
 
-Copyright (c) 2013-2022 Richard Hull & Contributors
+Copyright (c) 2013-2023 Richard Hull & Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

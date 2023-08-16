@@ -47,7 +47,11 @@ from luma.lcd.segment_mapper import dot_muncher
 from luma.core.virtual import character
 from luma.core.bitmap_font import embedded_fonts
 
-__all__ = ["pcd8544", "st7735", "st7789", "ht1621", "uc1701x", "st7567", "st7565", "ili9341", "ili9486", "ili9488", "hd44780"]
+
+__all__ = [
+    "pcd8544", "st7735", "st7565", "st7567", "st7789", "ht1621", "uc1701x", "ili9341",
+    "ili9486", "ili9488", "hd44780"
+]
 
 
 class GPIOBacklight:
@@ -594,10 +598,14 @@ class st7735(backlit_device, __framebuffer_mixin):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(160, 80), (160, 128), (128, 128)]
+        supported = (width, height) in [
+            (160, 80),
+            (160, 128),
+            (128, 128)
+        ]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
+                f"Unsupported display mode: {width} x {height}")
 
         # RGB or BGR order
         order = 0x08 if bgr else 0x00
@@ -721,10 +729,14 @@ class ili9341(backlit_device, __framebuffer_mixin):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(320, 240), (240, 240), (320, 180)]  # full, 1x1, 16x9
+        supported = (width, height) in [
+            (320, 240),  # full
+            (240, 240),  # 1x1
+            (320, 180)   # 16x9
+        ]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
+                f"Unsupported display mode: {width} x {height}")
 
         # RGB or BGR order
         order = 0x00 if bgr else 0x08
@@ -857,10 +869,12 @@ class ili9486(backlit_device, __framebuffer_mixin):
             self.apply_offsets = lambda bbox: bbox
 
         # Supported modes
-        supported = (width, height) in [(320, 480)]  # full
+        supported = (width, height) in [
+            (320, 480)  # full
+        ]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
+                f"Unsupported display mode: {width} x {height}")
 
         # RGB or BGR order
         order = 0x00 if bgr else 0x08
@@ -1359,10 +1373,15 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         self._custom = {}
 
         # Supported modes
-        supported = (width, height) in [(16, 2), (16, 4), (20, 2), (20, 4)]
+        supported = (width, height) in [
+            (16, 2),
+            (16, 4),
+            (20, 2),
+            (20, 4)
+        ]
         if not supported:
             raise luma.core.error.DeviceDisplayModeError(
-                "Unsupported display mode: {0} x {1}".format(width, height))
+                f"Unsupported display mode: {width} x {height}")
 
         self._initialize_device()
         self.text = ''

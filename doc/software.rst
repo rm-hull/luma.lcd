@@ -1,11 +1,19 @@
 Software
 ========
 
-Install the latest version of the library directly from
-`PyPI <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
-with::
+Before installing the library, create a
+`virtual environment <https://docs.python.org/3/library/venv.html>`__ for your
+project using::
 
-  $ sudo -H pip install --upgrade luma.lcd
+  $ python3 -m venv ~/luma-env
+
+This creates a virtual environment in the home directory called `luma-env`
+and a Python executable at `~/luma-env/bin/python`.
+
+Next, install the `latest version of the library <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
+in the virtual environment with::
+
+  $ ~/luma-env/bin/python -m pip install --upgrade luma.lcd
 
 This will normally retrieve all of the dependencies ``luma.lcd`` requires and
 install them automatically.
@@ -16,14 +24,13 @@ If ``pip`` is unable to automatically install its dependencies you will have to
 add them manually.  To resolve the issues you will need to add the appropriate
 development packages to continue.
 
-If you are using Raspbian Stretch or Raspberry Pi OS (Buster) you should
+If you are using Raspbian or Raspberry Pi OS you should
 be able to use the following commands to add the required packages::
 
 $ sudo apt-get update
 $ sudo apt-get install python3 python3-pip python3-pil libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5 -y
-$ sudo -H pip3 install luma.lcd
 
-If you are not using Raspbian you will need to consult the documentation for
+If you are not using Raspberry Pi OS or Raspbian you will need to consult the documentation for
 your Linux distribution to determine the correct procedure to install
 the dependencies.
 

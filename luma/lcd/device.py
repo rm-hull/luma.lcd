@@ -762,6 +762,8 @@ class ili9486(backlit_device, __framebuffer_mixin):
     :type framebuffer: luma.core.framebuffer.framebuffer
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
+    :param invert: Set to ``False`` if device does not require inverted colors.
+    :type invert: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -773,7 +775,8 @@ class ili9486(backlit_device, __framebuffer_mixin):
     """
 
     def __init__(self, serial_interface=None, width=320, height=480, rotate=0,
-                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, invert=True,
+                 **kwargs):
         super(ili9486, self).__init__(luma.lcd.const.ili9486, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.init_framebuffer(framebuffer, 25)
@@ -823,7 +826,10 @@ class ili9486(backlit_device, __framebuffer_mixin):
         self.command(0x11)                                  # sleep out
         sleep(0.150)
         self.command(0x3a, 0x00, 0x66)                      # Interface Pixel Format 6-6-6
-        self.command(0x21)                                  # Display inversion ON for LCD(B)
+
+        if invert:
+            self.command(0x21)                              # Display inversion ON for LCD(B)
+
         self.command(0xc0, 0x00, 0x09, 0x00, 0x09)          # Power Control 1
         self.command(0xc1, 0x00, 0x41, 0x00, 0x00)          # Power Control 2
         self.command(0xc2, 0x00, 0x33)                      # Power Control 3 (for normal mode)

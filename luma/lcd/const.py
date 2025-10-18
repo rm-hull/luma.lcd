@@ -8,6 +8,11 @@ class st7567(object):
     DISPLAYOFF = 0xAE
 
 
+class st7565(object):
+    DISPLAYON = 0xAF
+    DISPLAYOFF = 0xAE
+
+
 class pcd8544(object):
     DISPLAYON = 0x0C
     DISPLAYOFF = 0x08

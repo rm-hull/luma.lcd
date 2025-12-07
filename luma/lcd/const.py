@@ -587,7 +587,6 @@ class hd44780(object):
                 0x00f5:   0xad,  # õ LATIN SMALL LETTER O WITH TILDE
                 0x00d8:   0xae,  # Ø LATIN CAPITAL LETTER O WITH STROKE
                 0x00f8:   0xaf,  # ø LATIN SMALL LETTER O WITH STROKE
-                #         0xa0,  # ???
                 0x00a8:   0xb1,  # ¨ DIAERESIS
                 0x00b0:   0xb2,  # ° DEGREE SIGN
                 0x0060:   0xb3,  # ` GRAVE ACCENT

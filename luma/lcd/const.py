@@ -508,7 +508,7 @@ class hd44780(object):
             },
             {   # AiP31068L-003 WESTERN EUROPEAN CHARACTER FONT
                 # Missing maps for
-                # 12, 13, 14, 15, 16, 17, 18, 19, 9d, 9e, a0, c0, c1
+                # 12, 13, 14, 15, 16, 17, 18, 19, 9d, 9e, c0, c1
                 0x00b1:   0x10,  # ± PLUS-MINUS SIGN
                 0x2261:   0x11,  # ≡ IDENTICAL TO
                 #         0x12,  # ???

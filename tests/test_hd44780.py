@@ -212,3 +212,12 @@ def test_unsupported_display_mode():
         hd44780(interface, width=12, height=3, gpio=gpio, framebuffer=full_frame())
     except luma.core.error.DeviceDisplayModeError as ex:
         assert str(ex) == "Unsupported display mode: 12 x 3"
+
+
+def test_custom_backlight():
+    """
+    The custom backlight should be enabled after init.
+    """
+    backlight = Mock()
+    device = hd44780(interface, backlight = backlight)
+    backlight.assert_called_once_with(True)

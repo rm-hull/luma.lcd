@@ -424,7 +424,7 @@ class hd44780(object):
                 0x0428:   0xac,  # Ш CYRILLIC CAPITAL LETTER SHA
                 0x042a:   0xad,  # Ъ CYRILLIC CAPITAL LETTER HARD SIGN
                 0x042b:   0xae,  # Ы CYRILLIC CAPITAL LETTER YERU
-                0x042d:   0xaf,  # з CYRILLIC SMALL LETTER ZE
+                0x042d:   0xaf,  # Э CYRILLIC CAPITAL LETTER E
                 0x042e:   0xb0,  # Ю CYRILLIC CAPITAL LETTER YU
                 0x042f:   0xb1,  # Я CYRILLIC CAPITAL LETTER YA
                 0x0431:   0xb2,  # б CYRILLIC SMALL LETTER BE

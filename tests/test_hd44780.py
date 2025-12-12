@@ -221,5 +221,5 @@ def test_custom_backlight():
     The custom backlight should be enabled after init.
     """
     backlight = Mock()
-    device = hd44780(interface, backlight = backlight)
+    hd44780(interface, backlight=backlight)
     backlight.assert_called_once_with(True)

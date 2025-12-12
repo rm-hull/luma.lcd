@@ -38,6 +38,7 @@ def test_init_4bitmode():
         to_4 + \
         [call(*bytes_to_nibbles(fs))] + \
         [call(*bytes_to_nibbles([CONST.DISPLAYOFF]))] + \
+        [call(*bytes_to_nibbles([CONST.CLEAR]))] + \
         [call(*bytes_to_nibbles([CONST.ENTRY]))] + \
         [call(*bytes_to_nibbles([CONST.DISPLAYON]))] + \
         [call(*bytes_to_nibbles([CONST.DDRAMADDR]))] + \
@@ -70,6 +71,7 @@ def test_init_8bitmode():
         to_8 + \
         [call(*fs)] + \
         [call(*[CONST.DISPLAYOFF])] + \
+        [call(*[CONST.CLEAR])] + \
         [call(*[CONST.ENTRY])] + \
         [call(*[CONST.DISPLAYON])] + \
         [call(*[CONST.DDRAMADDR])] + \

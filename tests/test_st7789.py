@@ -10,7 +10,6 @@ import pytest
 
 from luma.lcd.device import st7789
 from luma.core.render import canvas
-from luma.core.framebuffer import full_frame
 
 from baseline_data import get_reference_data, primitives
 from helpers import serial
@@ -29,7 +28,7 @@ def test_init_240x240():
     serial.command.side_effect = command
     serial.data.side_effect = data
 
-    st7789(serial, gpio=Mock(), framebuffer=full_frame())
+    st7789(serial, gpio=Mock())
 
     assert serial.data.called
     assert serial.command.called
@@ -80,7 +79,7 @@ def test_show():
 
 
 def test_display():
-    device = st7789(serial, gpio=Mock(), framebuffer=full_frame())
+    device = st7789(serial, gpio=Mock())
     serial.reset_mock()
 
     recordings = []

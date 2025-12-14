@@ -208,7 +208,7 @@ class backlit_device(device):
     """
 
     def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=False, pwm_frequency=None, backpack_pin=None, backlight=None, **kwargs):
-        super(backlit_device, self).__init__(const, serial_interface)
+        super(backlit_device, self).__init__(const, serial_interface, **kwargs)
 
         if backlight:
             self.backlight = backlight

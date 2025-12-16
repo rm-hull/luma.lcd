@@ -27,3 +27,5 @@ Contributors
 * Maciej Sokolowski (@matemaciek)
 * Frederic Meeuwissen (@Frederic98)
 * Ed Wightman (@wightmanjr)
+* @CutterXYZ
+* @Kyuchumimo

@@ -4,7 +4,11 @@ ChangeLog
 +------------+---------------------------------------------------------------------+------------+
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
-| **2.12.0** | * Drop support for Python 3.7                                       | TBD        |
+| **2.12.0** | * Drop support for Python 3.7                                       | 2025/12/16 |
+|            | * Added param to control ili9486 display inversion                  |            |
+|            | * Active_low default parameter should be False, since usually the   |            |
+|            |   backlight (BL/LED) pin is a VCC pin to power an LED (active high) |            |
+|            | * Added support for AiP31068 and PCA9633.                           |            |
 +------------+---------------------------------------------------------------------+------------+
 | **2.11.0** | * Add ILI9488 Colour LCD display driver                             | 2023/07/02 |
 +------------+---------------------------------------------------------------------+------------+

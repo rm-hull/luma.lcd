@@ -60,14 +60,14 @@ class GPIOBacklight:
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param pin: the GPIO pin to use for the backlight.
     :type pin: int
-    :param active_low: Set to True if active low (default), False otherwise.
+    :param active_low: Set to True if active low, False otherwise (default).
     :type active_low: bool
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.3.0
     """
 
-    def __init__(self, gpio, pin=18, active_low=True):
+    def __init__(self, gpio, pin=18, active_low=False):
         self._gpio = gpio
         self._pin = pin
         if active_low:
@@ -190,12 +190,12 @@ class PWMBacklight:
 @rpi_gpio
 class backlit_device(device):
     """
-    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+    Controls a backlight (active high), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
 
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param gpio_LIGHT: The GPIO pin to use for the backlight.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if active low (default), false otherwise.
+    :param active_low: Set to true if active low, false otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
     :type pwm_frequency: float
@@ -207,10 +207,12 @@ class backlit_device(device):
     .. versionadded:: 2.0.0
     """
 
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
-        super(backlit_device, self).__init__(const, serial_interface)
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=False, pwm_frequency=None, backpack_pin=None, backlight=None, **kwargs):
+        super(backlit_device, self).__init__(const, serial_interface, **kwargs)
 
-        if backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
+        if backlight:
+            self.backlight = backlight
+        elif backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
             self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
         elif pwm_frequency:
             self._gpio = gpio or self.__rpi_gpio__()
@@ -219,7 +221,6 @@ class backlit_device(device):
             self._gpio = gpio or self.__rpi_gpio__()
             self.backlight = GPIOBacklight(self._gpio, pin=gpio_LIGHT, active_low=active_low)
 
-        self.persist = True
         self.backlight(True)
 
     def cleanup(self):
@@ -227,7 +228,7 @@ class backlit_device(device):
         Attempt to reset the device & switching it off prior to exiting the
         python process.
         """
-        if self.persist:
+        if not self.persist:
             self.backlight(False)
         try:
             self.backlight.cleanup()
@@ -1246,8 +1247,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     :param gpio_LIGHT: The GPIO pin to use for the backlight if it is controlled by
         one of the GPIO pins.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if backlight is active low (default), false
-        otherwise.
+    :param active_low: Set to true if backlight is active low, false
+        otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the
         specified frequency when provided.
@@ -1259,6 +1260,9 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     :param framebuffer: Framebuffering strategy, currently instances of
         ``diff_to_previous()`` or ``full_frame()`` are only supported.
     :type framebuffer: luma.core.framebuffer.framebuffer
+    :param backlight: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.parallel` instance) to delegate
+        sending backlight control commands through.
 
     To place text on the display, simply assign the text to the ``text``
     instance variable::
@@ -1277,8 +1281,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     """
 
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
-                 selected_font=0, exec_time=0.000001, framebuffer=None, **kwargs):
-        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
+                 selected_font=0, exec_time=0.000001, framebuffer=None, backlight=None, **kwargs):
+        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface, backlight=backlight,
         exec_time=exec_time, **kwargs)
 
         # Inherited from parallel_device class but multi-inheritence with
@@ -1373,6 +1377,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         dl = self._const.DL8 if self._bitmode == 8 else self._const.DL4
         self.command(self._const.FUNCTIONSET | dl | self._const.LINES2)
         self.command(self._const.DISPLAYOFF)  # Set Display Off
+        self.command(self._const.CLEAR, exec_time=1e-3 * 1.6)  # Clear display
         self.command(self._const.ENTRY)  # Set entry mode to right, no shift
         self.command(self._const.DISPLAYON, exec_time=1e-3 * 100)  # Turn display on
 

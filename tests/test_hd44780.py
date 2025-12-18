@@ -12,6 +12,7 @@ from luma.core.render import canvas
 from luma.core.util import bytes_to_nibbles
 from luma.core.framebuffer import full_frame, diff_to_previous
 from luma.lcd.const import hd44780 as CONST
+from pathlib import Path
 
 from PIL import Image, ImageDraw
 from unittest.mock import Mock, call
@@ -223,3 +224,47 @@ def test_custom_backlight():
     backlight = Mock()
     hd44780(interface, backlight=backlight)
     backlight.assert_called_once_with(True)
+
+
+def test_image_move_by_pixel():
+    """
+    A static image is moved pixel-by-pixel.
+    New custom characters should be created on each loop.
+    """
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
+    device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
+    interface.reset_mock()
+
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
+    undefined = [call(0x5f)]  # Undefined character '_'
+
+    for i in range(5):
+        with canvas(device) as draw:
+            interface.reset_mock()
+            draw.bitmap((i, 0), img, fill='white')
+        interface.assert_has_calls(calls, any_order=True)
+        assert undefined not in interface.data.mock_calls
+
+
+def test_image_move_by_segment():
+    """
+    A static image is moved segment-by-segment.
+    Custom characters should be created the first time only, then re-used from memory.
+    """
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
+    device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
+    interface.reset_mock()
+
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
+    undefined = [call(0x5f)]  # Undefined character '_'
+
+    for i in range(5):
+        with canvas(device) as draw:
+            interface.reset_mock()
+            draw.bitmap((i * 5, 0), img, fill='white')
+        for c in calls:
+            if i == 0:
+                assert c in interface.mock_calls
+            else:
+                assert c not in interface.mock_calls
+        assert undefined not in interface.data.mock_calls

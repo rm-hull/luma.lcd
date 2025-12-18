@@ -1403,27 +1403,41 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         assert image.size == self.size
 
         for image_segment, bounding_box in self.framebuffer.redraw(image):
-            self._cleanup_custom(image_segment)
-            # Expand bounding box to align to cell boundaries (5,8)
-            left, top, right, bottom = bounding_box
-            left = left // 5 * 5
-            right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
-            top = top // 8 * 8
-            bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
+            changed_segments = self._get_changed_segments(image, bounding_box)
 
-            for j in range(top // 8, bottom // 8):
+            self._cleanup_custom(changed_segments)
+
+            for y, x, line in changed_segments:
                 buf = []
-                for i in range(left // 5, right // 5):
-                    img = image.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8))
-                    bytes = img.tobytes()
+                for segment in line:
+                    bytes = segment.tobytes()
                     c = self.glyph_index[bytes] if bytes in self.glyph_index else \
                         self._custom[bytes] if bytes in self._custom else None
                     if c is None:
-                        self._make_custom(img)
+                        self._make_custom(segment)
                         c = self._custom.get(bytes, ord(self._undefined))
                     buf.append(c)
-                self.command(self._const.DDRAMADDR | (self._const.LINES[j] + (left // 5)))
+                self.command(self._const.DDRAMADDR | (self._const.LINES[y] + x))
                 self.data(buf)
+
+    def _get_changed_segments(self, image, bounding_box):
+        # Expand bounding box to align to cell boundaries (5,8)
+        left, top, right, bottom = bounding_box
+        left = left // 5 * 5
+        right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
+        top = top // 8 * 8
+        bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
+
+        lines = []
+
+        for y in range(top, bottom, 8):
+            line = []
+            for x in range(left, right, 5):
+                crop = image.crop((x, y, (x + 5), (y + 8)))
+                line.append(crop)
+            lines.append((y // 8, left // 5, line))
+
+        return lines
 
     def _make_custom(self, img):
         """
@@ -1452,7 +1466,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         self.data(buf)
         self._custom[img.tobytes()] = idx
 
-    def _cleanup_custom(self, img):
+    def _cleanup_custom(self, segments):
         """
         Look across new image and remove any custom characters that are not
         needed to render the image
@@ -1463,9 +1477,9 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
             return
 
         in_use = []
-        for j in range(img.size[1] // 8):
-            for i in range(img.size[0] // 5):
-                data = img.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8)).tobytes()
+        for x, y, line in segments:
+            for segment in line:
+                data = segment.tobytes()
                 if data in self._custom:
                     in_use.append(data)
         self._custom = {k: v for k, v in self._custom.items() if k in in_use}

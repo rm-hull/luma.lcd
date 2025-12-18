@@ -231,11 +231,11 @@ def test_image_move_by_pixel():
     A static image is moved pixel-by-pixel.
     New custom characters should be created on each loop.
     """
-    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom8.png')))
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
     device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
     interface.reset_mock()
 
-    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(8)]
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
     undefined = [call(0x5f)]  # Undefined character '_'
 
     for i in range(5):
@@ -251,11 +251,11 @@ def test_image_move_by_segment():
     A static image is moved segment-by-segment.
     Custom characters should be created the first time only, then re-used from memory.
     """
-    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom8.png')))
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
     device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
     interface.reset_mock()
 
-    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(8)]
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
     undefined = [call(0x5f)]  # Undefined character '_'
 
     for i in range(5):

@@ -1421,7 +1421,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
                     buf.append(c)
                 self.command(self._const.DDRAMADDR | (self._const.LINES[y] + x))
                 self.data(buf)
-    
+
     def _get_changed_segments(self, image, bounding_box):
         # Expand bounding box to align to cell boundaries (5,8)
         left, top, right, bottom = bounding_box
@@ -1431,16 +1431,15 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
 
         lines = []
-        
+
         for y in range(top, bottom, 8):
             line = []
             for x in range(left, right, 5):
                 crop = image.crop((x, y, (x + 5), (y + 8)))
                 line.append(crop)
             lines.append((y // 8, left // 5, line))
-        
-        return lines
 
+        return lines
 
     def _make_custom(self, img):
         """

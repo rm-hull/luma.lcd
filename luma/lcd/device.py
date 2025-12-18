@@ -1289,8 +1289,6 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         # backlit_device requires it to be initialized here
         self._exec_time = exec_time
 
-        self.imgnr = 0
-
         self.capabilities(width * 5, height * 8, 0)
         self.init_framebuffer(framebuffer, 1)
 

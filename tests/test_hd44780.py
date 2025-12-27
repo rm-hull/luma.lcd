@@ -12,6 +12,7 @@ from luma.core.render import canvas
 from luma.core.util import bytes_to_nibbles
 from luma.core.framebuffer import full_frame, diff_to_previous
 from luma.lcd.const import hd44780 as CONST
+from luma.lcd.big_digits import device as big_digits
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -268,3 +269,19 @@ def test_image_move_by_segment():
             else:
                 assert c not in interface.mock_calls
         assert undefined not in interface.data.mock_calls
+
+
+def test_big_digits():
+    """
+    Test that custom characters are constructed to form the number 5 from font 'classic'.
+    """
+    interface._bitmode = 8
+    device = hd44780(serial_interface=interface, gpio=gpio, bitmode=8)
+    interface.reset_mock()
+
+    big_digit_device = big_digits(device=device, selected_font='classic')
+    big_digit_device.text = '5'
+
+    interface.assert_has_calls([call.command(CONST.CGRAMADDR), call.data([0x1f, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x1f]),
+                               call.command(CONST.CGRAMADDR + 8), call.data([0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f]),
+                               call.command(CONST.CGRAMADDR + 16), call.data([0x1f, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x1f])], any_order=True)

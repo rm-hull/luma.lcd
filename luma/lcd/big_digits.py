@@ -3,252 +3,35 @@ from luma.core.bitmap_font import embedded_fonts
 
 
 class fonts(object):
+    """
+    Fonts designed by Upiir (https://github.com/upiir/character_display_big_digits)
+    Licensed under the MIT License
+    """
+
+    fontnames = [
+        'real', 'real_bold', 'rounded', 'rounded_bold', 'skewed',
+        'skewed_bold', 'dots_small', 'dots_big', 'dashed',
+        'dashed_bold', 'angled', 'angled_bold', 'blocks',
+        'blocks_crossed', 'blocks_cut', 'classic', 'classic_bold',
+        'classic_serif', 'tron', 'tron_bold', 'square_two',
+        'square_three', 'square_four', 'square_five'
+    ]
+
     FONTDATA = {
         'metrics': [
-            # Big-digits - real
             {
-                'name': 'real',
+                'name': name,
                 'index': range(48, 58),
                 'xwidth': 10,
                 'cell_size': (10, 16),
                 'glyph_size': (10, 16),
                 'table_size': (100, 16)
-
-            },
-            # Big-digits - real_bold
-            {
-                'name': 'real_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - rounded
-            {
-                'name': 'rounded',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - rounded_bold
-            {
-                'name': 'rounded_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - skewed
-            {
-                'name': 'skewed',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - skewed_bold
-            {
-                'name': 'skewed_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - dots_small
-            {
-                'name': 'dots_small',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - dots_big
-            {
-                'name': 'dots_big',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - dashed
-            {
-                'name': 'dashed',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - dashed_bold
-            {
-                'name': 'dashed_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - angled
-            {
-                'name': 'angled',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - angled_bold
-            {
-                'name': 'angled_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - blocks
-            {
-                'name': 'blocks',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - blocks_crossed
-            {
-                'name': 'blocks_crossed',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - blocks_cut
-            {
-                'name': 'blocks_cut',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - classic
-            {
-                'name': 'classic',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - classic_bold
-            {
-                'name': 'classic_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - classic_serif
-            {
-                'name': 'classic_serif',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - tron
-            {
-                'name': 'tron',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - tron_bold
-            {
-                'name': 'tron_bold',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - square_two
-            {
-                'name': 'square_two',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - square_three
-            {
-                'name': 'square_three',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - square_four
-            {
-                'name': 'square_four',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
-            },
-            # Big-digits - square_five
-            {
-                'name': 'square_five',
-                'index': range(48, 58),
-                'xwidth': 10,
-                'cell_size': (10, 16),
-                'glyph_size': (10, 16),
-                'table_size': (100, 16)
-
             }
+            for name in fontnames
         ],
 
         'mappings': [
-            dict() for i in range(24)
+            dict() for _ in range(len(fontnames))
         ],
 
         'fonts': [
@@ -282,8 +65,8 @@ class fonts(object):
 
 class device(character):
     def __init__(self, device, selected_font='classic', undefined="_"):
-        super(__class__, self).__init__(device=device, font=embedded_fonts(fonts.FONTDATA, selected_font=selected_font), undefined=undefined)
+        super().__init__(device=device, font=embedded_fonts(fonts.FONTDATA, selected_font=selected_font), undefined=undefined)
 
     def _flush(self, buf):
         self.font.combine(font=self.device.font.current, characters=' ' + self._undefined)
-        super(__class__, self)._flush(buf)
+        super()._flush(buf)

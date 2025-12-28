@@ -1403,9 +1403,9 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         assert image.size == self.size
 
         for image_segment, bounding_box in self.framebuffer.redraw(image):
-            changed_segments = self._get_changed_segments(image, bounding_box)
+            changed_segments = self._get_segments(image, bounding_box)
 
-            self._cleanup_custom(changed_segments)
+            self._cleanup_custom(image)
 
             for y, x, line in changed_segments:
                 buf = []
@@ -1420,7 +1420,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
                 self.command(self._const.DDRAMADDR | (self._const.LINES[y] + x))
                 self.data(buf)
 
-    def _get_changed_segments(self, image, bounding_box):
+    def _get_segments(self, image, bounding_box):
         # Expand bounding box to align to cell boundaries (5,8)
         left, top, right, bottom = bounding_box
         left = left // 5 * 5
@@ -1466,7 +1466,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         self.data(buf)
         self._custom[img.tobytes()] = idx
 
-    def _cleanup_custom(self, segments):
+    def _cleanup_custom(self, image):
         """
         Look across new image and remove any custom characters that are not
         needed to render the image
@@ -1475,6 +1475,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         # If no custom characters then we can exit without the search
         if len(self._custom) == 0:
             return
+
+        segments = self._get_segments(image, (0, 0, image.size[0], image.size[1]))
 
         in_use = []
         for x, y, line in segments:

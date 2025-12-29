@@ -125,7 +125,7 @@ def test_custom_full():
     """
     Auto-create feature runs out of custom character space
     """
-    device = hd44780(interface, bitmode=8, gpio=gpio, framebuffer=diff_to_previous(num_segments=1))
+    device = hd44780(interface, undefined='_', bitmode=8, gpio=gpio, framebuffer=diff_to_previous(num_segments=1))
 
     # Consume 8 special character positions
     img = Image.new('1', (80, 16), 0)
@@ -140,9 +140,9 @@ def test_custom_full():
     drw.line((75, 8, 79, 15), fill='white')
     device.display(img)
 
-    interface.assert_has_calls([
-        call.command(0x40), call.data([0x10, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01]),
-        call.command(0xcf), call.data([0x0])])
+    # Existing custom chars should not be replaced and the last custom char should be undefined
+    assert call.command(0x40) not in interface.mock_calls
+    interface.assert_has_calls([call.command(0xcf), call.data([0x5f])])
 
 
 def test_get_font():

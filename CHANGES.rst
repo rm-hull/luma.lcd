@@ -5,6 +5,8 @@ ChangeLog
 | Version    | Description                                                         | Date       |
 +============+=====================================================================+============+
 | **2.13.0** | * Drop support for Python 3.8                                       | TBD        |
+|            | * Fixed custom chars unnecessarily being cleaned up for HD44780     |            |
+|            | * Added 24 big digits fonts for HD44780                             |            |
 +------------+---------------------------------------------------------------------+------------+
 | **2.12.0** | * Drop support for Python 3.7                                       | 2025/12/16 |
 |            | * Added param to control ili9486 display inversion                  |            |

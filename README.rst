@@ -10,8 +10,8 @@ luma.lcd
 ========
 **HD44780, PCD8544, ST7735, ST7789, ST7567, HT1621, UC1701X, ILI9341, ILI9486, ILI9488 Display Drivers**
 
-.. image:: https://github.com/rm-hull/luma.lcd/workflows/luma.lcd/badge.svg?branch=master
-   :target: https://github.com/rm-hull/luma.lcd/actions?workflow=luma.lcd
+.. image:: https://github.com/rm-hull/luma.lcd/actions/workflows/main.yml/badge.svg
+   :target: https://github.com/rm-hull/luma.lcd/actions/workflows/main.yml
 
 .. image:: https://coveralls.io/repos/github/rm-hull/luma.lcd/badge.svg?branch=master
    :target: https://coveralls.io/github/rm-hull/luma.lcd?branch=master
@@ -20,14 +20,14 @@ luma.lcd
    :target: http://luma-lcd.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://img.shields.io/pypi/pyversions/luma.lcd.svg
-   :target: https://pypi.python.org/pypi/luma.lcd
+.. image:: https://img.shields.io/pypi/pyversions/luma.lcd
+   :target: https://pypi.org/project/luma.lcd
 
-.. image:: https://img.shields.io/pypi/v/luma.lcd.svg
-   :target: https://pypi.python.org/pypi/luma.lcd
+.. image:: https://img.shields.io/pypi/v/luma.lcd
+   :target: https://pypi.org/project/luma.lcd
 
 .. image:: https://img.shields.io/pypi/dm/luma.lcd
-   :target: https://pypi.python.org/project/luma.lcd
+   :target: https://pypi.org/project/luma.lcd
 
 luma.lcd provides a Python 3 interface to small LCD displays connected to
 Raspberry Pi and other Linux-based single-board computers (SBC).  It provides a

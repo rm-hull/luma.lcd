@@ -101,11 +101,11 @@ or::
 If you have no kernel modules listed and nothing is showing using ``dmesg``
 then this implies the kernel I2C driver is not loaded.
 
-For the Raspberry PI running Raspbian, enable the I2C as follows:
+For the Raspberry Pi OS, enable the I2C as follows:
 
 #. Run ``sudo raspi-config``
-#. Use the down arrow to select ``5 Interfacing Options``
-#. Arrow down to ``P5 I2C``
+#. Use the down arrow to select ``Interface Options``
+#. Arrow down to ``I2C``
 #. Select **yes** when it asks you to enable I2C
 #. Also select **yes** when it asks about automatically loading the kernel module
 #. Use the right arrow to select the **<Finish>** button
@@ -146,7 +146,7 @@ use 0 for the bus, not 1) and determine its address using ``i2cdetect``::
     70: -- -- -- -- -- -- -- --
 
 The address for your device will be needed when you initialize the interface.
-In the example above, the display address is 0x3c.  Keep in mind that I2C buses
+In the example above, the display address is ``0x3c``. Keep in mind that I2C buses
 can have more than one device attached. If more than one address is shown when
 you run i2cdetect, you will need to determine which one is associated with your
 display.  Typically displays will only support a limited set of possible
@@ -156,7 +156,7 @@ device is which.
 SPI
 ---
 The GPIO pins used for this SPI connection are the same for all versions of the
-Raspberry Pi, up to and including the Raspberry Pi 4 B.
+Raspberry Pi.
 
 .. warning::
    There appears to be varying pin-out configurations on different display
@@ -206,10 +206,10 @@ Device Pin Name   Remarks      RPi Pin  RPi Function
 
 Enabling The SPI Interface
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-To enable the SPI port on a Raspberry Pi running Raspbian::
+To enable the SPI port in the Raspberry Pi OS::
 
     $ sudo raspi-config
-    > Advanced Options > A6 SPI
+    > Interface Options > SPI
 
 If ``raspi-config`` is not available, enabling the SPI port can be done
 `manually <http://elinux.org/RPiconfig#Device_Tree>`_.

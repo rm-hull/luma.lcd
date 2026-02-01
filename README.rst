@@ -13,8 +13,8 @@ luma.lcd
 .. image:: https://github.com/rm-hull/luma.lcd/actions/workflows/main.yml/badge.svg
    :target: https://github.com/rm-hull/luma.lcd/actions/workflows/main.yml
 
-.. image:: https://coveralls.io/repos/github/rm-hull/luma.lcd/badge.svg?branch=master
-   :target: https://coveralls.io/github/rm-hull/luma.lcd?branch=master
+.. image:: https://coveralls.io/repos/github/rm-hull/luma.lcd/badge.svg?branch=main
+   :target: https://coveralls.io/github/rm-hull/luma.lcd?branch=main
 
 .. image:: https://readthedocs.org/projects/luma-lcd/badge/?version=latest
    :target: http://luma-lcd.readthedocs.io/en/latest/?badge=latest

@@ -7,10 +7,10 @@ project using::
 
   $ python3 -m venv ~/luma-env
 
-This creates a virtual environment in the home directory called `luma-env`
-and a Python executable at `~/luma-env/bin/python`.
+This creates a virtual environment in the home directory called ``luma-env``
+and a Python executable at ``~/luma-env/bin/python``.
 
-Next, install the `latest version of the library <https://pypi.python.org/pypi?:action=display&name=luma.lcd>`__
+Next, install the `latest version of the library <https://pypi.org/project/luma.lcd>`__
 in the virtual environment with::
 
   $ ~/luma-env/bin/python -m pip install --upgrade luma.lcd

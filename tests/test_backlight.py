@@ -5,12 +5,17 @@
 
 import luma.core.error
 from luma.lcd.device import backlit_device
+from luma.core.device import dummy
 from luma.core.interface.serial import noop, pcf8574
 from unittest.mock import Mock
 import pytest
 
 
 gpio = Mock(unsafe=True)
+
+
+class dummy_backlit_device(dummy, backlit_device):
+    pass
 
 
 def setup_function(function):
@@ -38,7 +43,7 @@ def test_init():
     gpio_LIGHT = 11
     backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.setup.assert_called_once_with(gpio_LIGHT, gpio.OUT)
-    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
 
 
 def test_gpio_cleanup():
@@ -47,10 +52,10 @@ def test_gpio_cleanup():
     clean up the GPIO pin associated with the backlight
     """
     gpio_LIGHT = 11
-    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = dummy_backlit_device(gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     gpio.reset_mock()
     device.cleanup()
-    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)
+    gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
     gpio.cleanup.assert_called_once_with(gpio_LIGHT)
 
 
@@ -61,7 +66,7 @@ def test_pwm_cleanup():
     backlight
     """
     gpio_LIGHT = 11
-    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT,
+    device = dummy_backlit_device(gpio=gpio, gpio_LIGHT=gpio_LIGHT,
         pwm_frequency=362)
     gpio.reset_mock()
     device.cleanup()
@@ -78,14 +83,14 @@ def test_pcf8574_cleanup():
     smbus = Mock(unsafe=True)
     serial = pcf8574(bus=smbus, address=0x27)
     gpio.reset_mock()
-    device = backlit_device(serial_interface=serial, gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = dummy_backlit_device(serial_interface=serial, gpio=gpio, gpio_LIGHT=gpio_LIGHT)
     device.cleanup()
     assert not gpio.cleanup.called, 'GPIO cleanup not necessary with _backlight_enabled interface'
 
 
 def test_active_low_enable_on():
     gpio_LIGHT = 14
-    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=True)
     gpio.reset_mock()
     device.backlight(True)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.LOW)
@@ -93,7 +98,7 @@ def test_active_low_enable_on():
 
 def test_active_low_enable_off():
     gpio_LIGHT = 19
-    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT)
+    device = backlit_device(serial_interface=noop(), gpio=gpio, gpio_LIGHT=gpio_LIGHT, active_low=True)
     gpio.reset_mock()
     device.backlight(False)
     gpio.output.assert_called_once_with(gpio_LIGHT, gpio.HIGH)

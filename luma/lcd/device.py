@@ -61,14 +61,14 @@ class GPIOBacklight:
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param pin: the GPIO pin to use for the backlight.
     :type pin: int
-    :param active_low: Set to True if active low (default), False otherwise.
+    :param active_low: Set to True if active low, False otherwise (default).
     :type active_low: bool
     :raises luma.core.error.UnsupportedPlatform: GPIO access not available.
 
     .. versionadded:: 2.3.0
     """
 
-    def __init__(self, gpio, pin=18, active_low=True):
+    def __init__(self, gpio, pin=18, active_low=False):
         self._gpio = gpio
         self._pin = pin
         if active_low:
@@ -191,12 +191,12 @@ class PWMBacklight:
 @rpi_gpio
 class backlit_device(device):
     """
-    Controls a backlight (active low), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
+    Controls a backlight (active high), assumed to be on GPIO 18 (``PWM_CLK0``) by default.
 
     :param gpio: GPIO interface (must be compatible with `RPi.GPIO <https://pypi.python.org/pypi/RPi.GPIO>`_).
     :param gpio_LIGHT: The GPIO pin to use for the backlight.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if active low (default), false otherwise.
+    :param active_low: Set to true if active low, false otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the specified frequency when provided.
     :type pwm_frequency: float
@@ -208,10 +208,12 @@ class backlit_device(device):
     .. versionadded:: 2.0.0
     """
 
-    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=True, pwm_frequency=None, backpack_pin=None, **kwargs):
-        super(backlit_device, self).__init__(const, serial_interface)
+    def __init__(self, const=None, serial_interface=None, gpio=None, gpio_LIGHT=18, active_low=False, pwm_frequency=None, backpack_pin=None, backlight=None, **kwargs):
+        super(backlit_device, self).__init__(const, serial_interface, **kwargs)
 
-        if backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
+        if backlight:
+            self.backlight = backlight
+        elif backpack_pin or (isinstance(serial_interface, pcf8574) and hasattr(serial_interface, "_backlight_enabled")):
             self.backlight = I2CBackpackBacklight(serial_interface, pin=backpack_pin)
         elif pwm_frequency:
             self._gpio = gpio or self.__rpi_gpio__()
@@ -220,7 +222,6 @@ class backlit_device(device):
             self._gpio = gpio or self.__rpi_gpio__()
             self.backlight = GPIOBacklight(self._gpio, pin=gpio_LIGHT, active_low=active_low)
 
-        self.persist = True
         self.backlight(True)
 
     def cleanup(self):
@@ -228,7 +229,7 @@ class backlit_device(device):
         Attempt to reset the device & switching it off prior to exiting the
         python process.
         """
-        if self.persist:
+        if not self.persist:
             self.backlight(False)
         try:
             self.backlight.cleanup()
@@ -844,6 +845,8 @@ class ili9486(backlit_device, __framebuffer_mixin):
     :type framebuffer: luma.core.framebuffer.framebuffer
     :param bgr: Set to ``True`` if device pixels are BGR order (rather than RGB).
     :type bgr: bool
+    :param invert: Set to ``False`` if device does not require inverted colors.
+    :type invert: bool
     :param h_offset: Horizontal offset (in pixels) of screen to device memory
         (default: 0).
     :type h_offset: int
@@ -855,7 +858,8 @@ class ili9486(backlit_device, __framebuffer_mixin):
     """
 
     def __init__(self, serial_interface=None, width=320, height=480, rotate=0,
-                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, **kwargs):
+                 framebuffer=None, h_offset=0, v_offset=0, bgr=False, invert=True,
+                 **kwargs):
         super(ili9486, self).__init__(luma.lcd.const.ili9486, serial_interface, **kwargs)
         self.capabilities(width, height, rotate, mode="RGB")
         self.init_framebuffer(framebuffer, 25)
@@ -905,7 +909,10 @@ class ili9486(backlit_device, __framebuffer_mixin):
         self.command(0x11)                                  # sleep out
         sleep(0.150)
         self.command(0x3a, 0x00, 0x66)                      # Interface Pixel Format 6-6-6
-        self.command(0x21)                                  # Display inversion ON for LCD(B)
+
+        if invert:
+            self.command(0x21)                              # Display inversion ON for LCD(B)
+
         self.command(0xc0, 0x00, 0x09, 0x00, 0x09)          # Power Control 1
         self.command(0xc1, 0x00, 0x41, 0x00, 0x00)          # Power Control 2
         self.command(0xc2, 0x00, 0x33)                      # Power Control 3 (for normal mode)
@@ -1322,8 +1329,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     :param gpio_LIGHT: The GPIO pin to use for the backlight if it is controlled by
         one of the GPIO pins.
     :type gpio_LIGHT: int
-    :param active_low: Set to true if backlight is active low (default), false
-        otherwise.
+    :param active_low: Set to true if backlight is active low, false
+        otherwise (default).
     :type active_low: bool
     :param pwm_frequency: Use PWM for backlight brightness control with the
         specified frequency when provided.
@@ -1335,6 +1342,9 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     :param framebuffer: Framebuffering strategy, currently instances of
         ``diff_to_previous()`` or ``full_frame()`` are only supported.
     :type framebuffer: luma.core.framebuffer.framebuffer
+    :param backlight: The serial interface (usually a
+        :py:class:`luma.core.interface.serial.parallel` instance) to delegate
+        sending backlight control commands through.
 
     To place text on the display, simply assign the text to the ``text``
     instance variable::
@@ -1353,8 +1363,8 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
     """
 
     def __init__(self, serial_interface=None, width=16, height=2, undefined='_',
-                 selected_font=0, exec_time=0.000001, framebuffer=None, **kwargs):
-        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface,
+                 selected_font=0, exec_time=0.000001, framebuffer=None, backlight=None, **kwargs):
+        super(hd44780, self).__init__(luma.lcd.const.hd44780, serial_interface, backlight=backlight,
         exec_time=exec_time, **kwargs)
 
         # Inherited from parallel_device class but multi-inheritence with
@@ -1449,6 +1459,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         dl = self._const.DL8 if self._bitmode == 8 else self._const.DL4
         self.command(self._const.FUNCTIONSET | dl | self._const.LINES2)
         self.command(self._const.DISPLAYOFF)  # Set Display Off
+        self.command(self._const.CLEAR, exec_time=1e-3 * 1.6)  # Clear display
         self.command(self._const.ENTRY)  # Set entry mode to right, no shift
         self.command(self._const.DISPLAYON, exec_time=1e-3 * 100)  # Turn display on
 
@@ -1473,28 +1484,42 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         assert image.mode == self.mode
         assert image.size == self.size
 
-        for image_segment, bounding_box in self.framebuffer.redraw(image):
-            self._cleanup_custom(image_segment)
-            # Expand bounding box to align to cell boundaries (5,8)
-            left, top, right, bottom = bounding_box
-            left = left // 5 * 5
-            right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
-            top = top // 8 * 8
-            bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
+        self._cleanup_custom(image)
 
-            for j in range(top // 8, bottom // 8):
+        for image_segment, bounding_box in self.framebuffer.redraw(image):
+            changed_segments = self._get_segments(image, bounding_box)
+
+            for y, x, line in changed_segments:
                 buf = []
-                for i in range(left // 5, right // 5):
-                    img = image.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8))
-                    bytes = img.tobytes()
+                for segment in line:
+                    bytes = segment.tobytes()
                     c = self.glyph_index[bytes] if bytes in self.glyph_index else \
                         self._custom[bytes] if bytes in self._custom else None
                     if c is None:
-                        self._make_custom(img)
+                        self._make_custom(segment)
                         c = self._custom.get(bytes, ord(self._undefined))
                     buf.append(c)
-                self.command(self._const.DDRAMADDR | (self._const.LINES[j] + (left // 5)))
+                self.command(self._const.DDRAMADDR | (self._const.LINES[y] + x))
                 self.data(buf)
+
+    def _get_segments(self, image, bounding_box):
+        # Expand bounding box to align to cell boundaries (5,8)
+        left, top, right, bottom = bounding_box
+        left = left // 5 * 5
+        right = right // 5 * 5 if not right % 5 else (right // 5 + 1) * 5
+        top = top // 8 * 8
+        bottom = bottom // 8 * 8 if not bottom % 8 else (bottom // 8 + 1) * 8
+
+        lines = []
+
+        for y in range(top, bottom, 8):
+            line = []
+            for x in range(left, right, 5):
+                crop = image.crop((x, y, (x + 5), (y + 8)))
+                line.append(crop)
+            lines.append((y // 8, left // 5, line))
+
+        return lines
 
     def _make_custom(self, img):
         """
@@ -1523,7 +1548,7 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         self.data(buf)
         self._custom[img.tobytes()] = idx
 
-    def _cleanup_custom(self, img):
+    def _cleanup_custom(self, image):
         """
         Look across new image and remove any custom characters that are not
         needed to render the image
@@ -1533,10 +1558,12 @@ class hd44780(backlit_device, parallel_device, character, __framebuffer_mixin):
         if len(self._custom) == 0:
             return
 
+        segments = self._get_segments(image, (0, 0, image.size[0], image.size[1]))
+
         in_use = []
-        for j in range(img.size[1] // 8):
-            for i in range(img.size[0] // 5):
-                data = img.crop((i * 5, j * 8, (i + 1) * 5, (j + 1) * 8)).tobytes()
+        for x, y, line in segments:
+            for segment in line:
+                data = segment.tobytes()
                 if data in self._custom:
                     in_use.append(data)
         self._custom = {k: v for k, v in self._custom.items() if k in in_use}

@@ -12,6 +12,8 @@ from luma.core.render import canvas
 from luma.core.util import bytes_to_nibbles
 from luma.core.framebuffer import full_frame, diff_to_previous
 from luma.lcd.const import hd44780 as CONST
+from luma.lcd.big_digits import device as big_digits
+from pathlib import Path
 
 from PIL import Image, ImageDraw
 from unittest.mock import Mock, call
@@ -38,6 +40,7 @@ def test_init_4bitmode():
         to_4 + \
         [call(*bytes_to_nibbles(fs))] + \
         [call(*bytes_to_nibbles([CONST.DISPLAYOFF]))] + \
+        [call(*bytes_to_nibbles([CONST.CLEAR]))] + \
         [call(*bytes_to_nibbles([CONST.ENTRY]))] + \
         [call(*bytes_to_nibbles([CONST.DISPLAYON]))] + \
         [call(*bytes_to_nibbles([CONST.DDRAMADDR]))] + \
@@ -70,6 +73,7 @@ def test_init_8bitmode():
         to_8 + \
         [call(*fs)] + \
         [call(*[CONST.DISPLAYOFF])] + \
+        [call(*[CONST.CLEAR])] + \
         [call(*[CONST.ENTRY])] + \
         [call(*[CONST.DISPLAYON])] + \
         [call(*[CONST.DDRAMADDR])] + \
@@ -121,7 +125,7 @@ def test_custom_full():
     """
     Auto-create feature runs out of custom character space
     """
-    device = hd44780(interface, bitmode=8, gpio=gpio, framebuffer=diff_to_previous(num_segments=1))
+    device = hd44780(interface, undefined='_', bitmode=8, gpio=gpio, framebuffer=diff_to_previous(num_segments=1))
 
     # Consume 8 special character positions
     img = Image.new('1', (80, 16), 0)
@@ -136,9 +140,9 @@ def test_custom_full():
     drw.line((75, 8, 79, 15), fill='white')
     device.display(img)
 
-    interface.assert_has_calls([
-        call.command(0x40), call.data([0x10, 0x08, 0x08, 0x04, 0x04, 0x02, 0x02, 0x01]),
-        call.command(0xcf), call.data([0x0])])
+    # Existing custom chars should not be replaced and the last custom char should be undefined
+    assert call.command(0x40) not in interface.mock_calls
+    interface.assert_has_calls([call.command(0xcf), call.data([0x5f])])
 
 
 def test_get_font():
@@ -212,3 +216,72 @@ def test_unsupported_display_mode():
         hd44780(interface, width=12, height=3, gpio=gpio, framebuffer=full_frame())
     except luma.core.error.DeviceDisplayModeError as ex:
         assert str(ex) == "Unsupported display mode: 12 x 3"
+
+
+def test_custom_backlight():
+    """
+    The custom backlight should be enabled after init.
+    """
+    backlight = Mock()
+    hd44780(interface, backlight=backlight)
+    backlight.assert_called_once_with(True)
+
+
+def test_image_move_by_pixel():
+    """
+    A static image is moved pixel-by-pixel.
+    New custom characters should be created on each loop.
+    """
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
+    device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
+    interface.reset_mock()
+
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
+    undefined = [call(0x5f)]  # Undefined character '_'
+
+    for i in range(5):
+        with canvas(device) as draw:
+            interface.reset_mock()
+            draw.bitmap((i, 0), img, fill='white')
+        interface.assert_has_calls(calls, any_order=True)
+        assert undefined not in interface.data.mock_calls
+
+
+def test_image_move_by_segment():
+    """
+    A static image is moved segment-by-segment.
+    Custom characters should be created the first time only, then re-used from memory.
+    """
+    img = Image.open(str(Path(__file__).resolve().parent.joinpath('reference', 'images', 'custom6.png')))
+    device = hd44780(interface, gpio=gpio, bitmode=8, undefined='_')
+    interface.reset_mock()
+
+    calls = [call.command(CONST.CGRAMADDR + i * 8) for i in range(6)]
+    undefined = [call(0x5f)]  # Undefined character '_'
+
+    for i in range(5):
+        with canvas(device) as draw:
+            interface.reset_mock()
+            draw.bitmap((i * 5, 0), img, fill='white')
+        for c in calls:
+            if i == 0:
+                assert c in interface.mock_calls
+            else:
+                assert c not in interface.mock_calls
+        assert undefined not in interface.data.mock_calls
+
+
+def test_big_digits():
+    """
+    Test that custom characters are constructed to form the number 5 from font 'classic'.
+    """
+    interface._bitmode = 8
+    device = hd44780(serial_interface=interface, gpio=gpio, bitmode=8)
+    interface.reset_mock()
+
+    big_digit_device = big_digits(device=device, selected_font='classic')
+    big_digit_device.text = '5'
+
+    interface.assert_has_calls([call.command(CONST.CGRAMADDR), call.data([0x1f, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x1f]),
+                               call.command(CONST.CGRAMADDR + 8), call.data([0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f]),
+                               call.command(CONST.CGRAMADDR + 16), call.data([0x1f, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x1f])], any_order=True)
